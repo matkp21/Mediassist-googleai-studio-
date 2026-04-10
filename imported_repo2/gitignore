@@ -1,0 +1,75 @@
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Next.js
+.next/
+out/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# IDE and Editor specific files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Operating System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Build artifacts
+dist/
+coverage/
+*.log
+logs
+*.pid
+*.seed
+*.pid.lock
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Firebase
+.firebase/
+firebase-debug.log
+database-debug.log
+
+# Genkit (if any local state or compiled outputs are not meant for git)
+# Add specific Genkit ignore patterns if necessary based on your local setup.
+# For example, if Genkit creates local output directories:
+# .genkit/local_state/
+# .genkit/compiled/
+
+# IDX specific
+.idx/
+# Keep .idx/integrations.json if you want to version control IDX integrations
+!.idx/integrations.json
+
+# Trunk (if any local cache or state files are generated)
+# .trunk/out/
+
+# Test files
+junit.xml
