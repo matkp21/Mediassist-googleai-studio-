@@ -148,7 +148,9 @@ export function SidebarNav({ unreadNotificationCount }: SidebarNavProps) {
           <SidebarMenuItem>
              <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link href="/settings" passHref legacyBehavior>
+                  <Link href="/settings">
+                    {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                    }
                     <SidebarMenuButton
                         as="a" // Important for legacyBehavior with Link
                         isActive={pathname.startsWith('/settings')}

@@ -31,7 +31,6 @@ import '@/ai/agents/medico/ProgressTrackerAgent.ts';
 import '@/ai/agents/medico/CaseChallengeGeneratorAgent.ts'; // Newly added
 import '@/ai/agents/medico/NoteStructurerAgent.ts'; // Newly added
 
-
 // Professional tools
 import '@/ai/agents/pro/DischargeSummaryGeneratorAgent.ts';
 import '@/ai/agents/pro/TriageAndReferralAgent.ts'; 
@@ -40,3 +39,23 @@ import '@/ai/agents/pro/OnCallHandoverAssistantAgent.ts';
 import '@/ai/schemas/pro-schemas.ts'; // Ensure pro schemas are included
 import '@/ai/schemas/symptom-analyzer-schemas.ts'; // Ensure symptom schemas are included
 import '@/ai/schemas/medico-tools-schemas.ts'; // Ensure medico schemas are included
+
+// Claw-Code Inspired Architectural Flows
+import '@/ai/flows/medGemmaAgentFlow.ts';
+import '@/ai/tools/studyTasks.ts';
+import '@/ai/flows/dailyStudyCoachTrigger.ts';
+import '@/ai/flows/clinicalCaseSimulator.ts';
+import '@/ai/flows/smartNoteSummarizerFlow.ts';
+import '@/ai/flows/epidemiologyAnalysisFlow.ts';
+import '@/ai/flows/secureStudyPlanUpdateFlow.ts';
+import '@/ai/flows/hybridOrchestratorFlow.ts';
+import '@/ai/tools/flashcardSync.ts';
+import '@/ai/flows/osceGrading.ts';
+import '@/ai/tools/webSearch.ts';
+import '@/ai/tools/semanticSearch.ts';
+import '@/ai/flows/scenarioBranching.ts';
+import '@/ai/flows/spacedRepetition.ts';
+import '@/ai/flows/soapRefactoring.ts';
+import '@/ai/tools/anatomyCorrelator.ts';
+import '@/ai/tools/checklistUpdate.ts';
+import '@/ai/tools/codeExecution.ts';
