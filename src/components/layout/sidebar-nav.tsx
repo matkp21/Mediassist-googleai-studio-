@@ -222,7 +222,7 @@ export function SidebarNav({ unreadNotificationCount }: SidebarNavProps) {
             <div className="flex flex-col overflow-hidden">
                 <span className="text-sm font-medium text-sidebar-foreground truncate">Dr. Medi User</span>
                 <span className="text-xs text-sidebar-foreground/70 truncate">
-                {userRole === 'pro' ? 'Professional' : userRole === 'medico' ? 'Medical Student' : 'Patient/User'}
+                {userRole === 'pro' ? 'Professional' : userRole === 'medico' ? 'Medical Student' : 'Guest'}
                 </span>
             </div>
           )}

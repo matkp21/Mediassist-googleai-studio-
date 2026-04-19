@@ -46,6 +46,15 @@ Your task is to generate a JSON object with 'prompt', 'feedback', 'updatedCaseSu
 4.  **Update the Case Summary**: In 'updatedCaseSummary', append the new information (the student's question and the patient's answer) to the 'currentCaseSummary'.
 5.  **Prompt for Next Step**: In the 'prompt' field, ask the student for their next question, action, or if they are ready to suggest some differential diagnoses. (e.g., "Excellent. What would you like to ask or check next?").
 6.  **Check for Completion**: If the student provides a list of differential diagnoses, evaluate them, provide final feedback, and set 'isCompleted' to true.
+    **CRITICAL FOR COMPLETION**: When providing the final review, you MUST format the feedback using the DrMat 8-Step Clinical Structure:
+    1. Differential Diagnosis
+    2. Definition
+    3. Etiology
+    4. Signs & Symptoms
+    5. Lab Findings
+    6. Investigation Interpretation
+    7. Management (Medical and Surgical)
+    8. Latest Updates
 7.  **Suggest Next Steps**: If 'isCompleted' is true, you MUST provide a 'nextSteps' field. Format it as a JSON array of objects, each with "title", "description", "toolId", "prefilledTopic", and "cta".
 
 **CRITICAL: The 'nextSteps' field MUST be present if 'isCompleted' is true. This field must not be omitted on session completion.**

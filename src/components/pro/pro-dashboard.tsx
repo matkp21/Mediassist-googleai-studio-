@@ -2,7 +2,7 @@
 "use client";
 
 import type { ReactNode } from 'react';
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '../ui/scroll-area';
@@ -14,18 +14,19 @@ import {
 } from 'lucide-react';
 import { motion, Reorder } from 'framer-motion';
 import { ProToolCard } from './pro-tool-card'; 
+import dynamic from 'next/dynamic';
 
-// Dynamic imports for performance
-const TriageAndReferral = React.lazy(() => import('./triage-and-referral').then(m => ({ default: m.TriageAndReferral })));
-const DifferentialDiagnosisAssistant = React.lazy(() => import('./differential-diagnosis-assistant').then(m => ({ default: m.DifferentialDiagnosisAssistant })));
-const DischargeSummaryGenerator = React.lazy(() => import('./discharge-summary-generator').then(m => ({ default: m.DischargeSummaryGenerator })));
-const TreatmentProtocolNavigator = React.lazy(() => import('./treatment-protocol-navigator').then(m => ({ default: m.TreatmentProtocolNavigator })));
-const PharmacopeiaChecker = React.lazy(() => import('./pharmacopeia-checker').then(m => ({ default: m.PharmacopeiaChecker })));
-const SmartDictation = React.lazy(() => import('./smart-dictation').then(m => ({ default: m.SmartDictation })));
-const ClinicalCalculatorSuite = React.lazy(() => import('./clinical-calculator-suite').then(m => ({ default: m.ClinicalCalculatorSuite })));
-const PatientCommunicationDrafter = React.lazy(() => import('./patient-communication-drafter').then(m => ({ default: m.PatientCommunicationDrafter })));
-const OnCallHandoverAssistant = React.lazy(() => import('./on-call-handover-assistant').then(m => ({ default: m.OnCallHandoverAssistant })));
-const ResearchSummarizer = React.lazy(() => import('./research-summarizer').then(m => ({ default: m.ResearchSummarizer })));
+// Dynamic imports for performance using next/dynamic
+const TriageAndReferral = dynamic(() => import('./triage-and-referral').then(m => m.TriageAndReferral), { ssr: false });
+const DifferentialDiagnosisAssistant = dynamic(() => import('./differential-diagnosis-assistant').then(m => m.DifferentialDiagnosisAssistant), { ssr: false });
+const DischargeSummaryGenerator = dynamic(() => import('./discharge-summary-generator').then(m => m.DischargeSummaryGenerator), { ssr: false });
+const TreatmentProtocolNavigator = dynamic(() => import('./treatment-protocol-navigator').then(m => m.TreatmentProtocolNavigator), { ssr: false });
+const PharmacopeiaChecker = dynamic(() => import('./pharmacopeia-checker').then(m => m.PharmacopeiaChecker), { ssr: false });
+const SmartDictation = dynamic(() => import('./smart-dictation').then(m => m.SmartDictation), { ssr: false });
+const ClinicalCalculatorSuite = dynamic(() => import('./clinical-calculator-suite').then(m => m.ClinicalCalculatorSuite), { ssr: false });
+const PatientCommunicationDrafter = dynamic(() => import('./patient-communication-drafter').then(m => m.PatientCommunicationDrafter), { ssr: false });
+const OnCallHandoverAssistant = dynamic(() => import('./on-call-handover-assistant').then(m => m.OnCallHandoverAssistant), { ssr: false });
+const ResearchSummarizer = dynamic(() => import('./research-summarizer').then(m => m.ResearchSummarizer), { ssr: false });
 
 
 type ActiveToolId =
@@ -46,7 +47,7 @@ interface ProTool {
   title: string;
   description: string;
   icon: React.ElementType;
-  component: React.LazyExoticComponent<React.ComponentType<any>>;
+  component: React.ComponentType<any>;
 }
 
 const allProToolsList: ProTool[] = [

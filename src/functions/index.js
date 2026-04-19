@@ -214,7 +214,84 @@ exports.invokeMedGemma = functions.runWith({
   }
 });
 
-// New Function for YouTube Search
+// Daily Proactive Coaching (Automated Scheduling)
+exports.dailyStudyCoach = functions.pubsub.schedule('every day 07:00').onRun(async (context) => {
+  console.log('Daily Study Coach Triggered');
+  
+  try {
+    const db = admin.firestore();
+    const usersSnapshot = await db.collection('users').get();
+    
+    // We connect Genkit/Vertex for the packet generation
+    const { GoogleGenAI } = require("@google/genai");
+    const aiInstance = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }); // Standard Server Init
+    
+    const batch = db.batch();
+
+    for (const userDoc of usersSnapshot.docs) {
+      const userId = userDoc.id;
+      
+      // Query "Pending" tasks for today
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      
+      const tasksSnapshot = await db.collection(`users/${userId}/tasks`)
+        .where('isCompleted', '==', false)
+        .where('dueDate', '<=', today)
+        .where('status', '==', 'Pending')
+        .limit(1)
+        .get();
+        
+      if (tasksSnapshot.empty) continue;
+      
+      const taskDoc = tasksSnapshot.docs[0];
+      const taskData = taskDoc.data();
+
+      console.log(`Generating study packet for User ${userId}, Topic: ${taskData.title}`);
+
+      // Grounding via MCP (simulated here via prompt strictness prior to MCP server connection)
+      const prompt = `Act as an expert Medical Professor. Generate a comprehensive daily study packet for the medical topic: "${taskData.title}".
+      You MUST strictly format the output with these exact headings:
+      - Definition
+      - Etiology
+      - Clinical Features
+      - Investigations
+      - Management
+      - Flowcharts (Describe textually)
+      - High-yield points
+      
+      Ensure you cite authoritative clinical guidelines where appropriate.`;
+
+      const aiResponse = await aiInstance.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: prompt
+      });
+      
+      if (aiResponse.text) {
+          // Push notification/packet document directly to dashboard
+          const packetRef = db.collection(`users/${userId}/studyPackets`).doc();
+          batch.set(packetRef, {
+             taskId: taskDoc.id,
+             topic: taskData.title,
+             content: aiResponse.text,
+             generatedAt: admin.firestore.FieldValue.serverTimestamp(),
+             isRead: false
+          });
+          
+          // Mark task as generated to avoid duplicates
+          batch.update(taskDoc.ref, { status: "PacketGenerated", packetId: packetRef.id });
+      }
+    }
+    
+    await batch.commit();
+    console.log('Daily Study Packets successfully generated and queued.');
+
+  } catch (error) {
+     console.error("Daily Study Coach cron failed:", error);
+  }
+  
+  return null;
+});
 exports.searchYouTubeVideos = functions.https.onCall(async (data, context) => {
   const query = data.query;
   const apiKey = functions.config().youtube ? functions.config().youtube.key : null;

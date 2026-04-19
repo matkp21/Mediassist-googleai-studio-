@@ -10,12 +10,20 @@ import { Loader2 } from 'lucide-react';
 import { ProSuiteAnimation } from '@/components/pro/pro-suite-animation'; 
 
 export default function ProPage() {
-  const { userRole } = useProMode();
+  const { userRole, selectUserRole } = useProMode();
   const router = useRouter();
   const [isLoadingRole, setIsLoadingRole] = useState(true);
   const [showProAnimation, setShowProAnimation] = useState(false);
 
   useEffect(() => {
+    // If the user's role is null, explicitly assume they want the pro experience since they navigated here
+    if (userRole === null) {
+      const timeout = setTimeout(() => {
+         selectUserRole('pro');
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+
     if (userRole !== null) { 
       if (userRole === 'pro') {
         const animationShown = sessionStorage.getItem('proSuiteAnimationShown');
@@ -28,7 +36,7 @@ export default function ProPage() {
       }
       setIsLoadingRole(false); 
     }
-  }, [userRole, router]);
+  }, [userRole, router, selectUserRole]);
 
   if (isLoadingRole) {
     return (

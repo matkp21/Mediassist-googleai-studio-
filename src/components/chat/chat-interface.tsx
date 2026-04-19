@@ -5,19 +5,17 @@ import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { HeartPulse, Mic, MicOff, Volume2, VolumeX, ArrowDownCircle } from 'lucide-react';
+import { HeartPulse, Mic, MicOff, Volume2, VolumeX, ArrowDownCircle, Network, Zap, Settings2, Image as ImageIcon, Video, Search, BrainCircuit } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { processChatMessage, type ChatMessageInput } from '@/ai/agents/ChatAgent';
-import { generateStudyNotes, type StudyNotesGeneratorInput, type StudyNotesGeneratorOutput } from '@/ai/agents/medico/StudyNotesAgent';
-import { generateMCQs, type MedicoMCQGeneratorInput, type MedicoMCQGeneratorOutput, type MCQSchema as SingleMCQ } from '@/ai/agents/medico/MCQGeneratorAgent';
+import { generateStudyNotes, type StudyNotesGeneratorOutput } from '@/ai/agents/medico/StudyNotesAgent';
+import { generateMCQs, type MedicoMCQGeneratorOutput, type MCQSchema as SingleMCQ } from '@/ai/agents/medico/MCQGeneratorAgent';
 import { useToast } from '@/hooks/use-toast';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { TypewriterText } from './typewriter-text';
 import { useProMode } from '@/contexts/pro-mode-context';
 import { ChatMessage, type Message } from './chat-message';
 import { ChatCommands } from './chat-commands';
 import { ChatThinkingIndicator } from './chat-thinking-indicator';
-
+import { executeGeminiAction, generateTTS, type ChatOptions } from '@/lib/gemini-client';
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -25,14 +23,20 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { userRole } = useProMode();
+  const { userRole, user } = useProMode();
 
   const [isListening, setIsListening] = useState(false);
   const [isVoiceOutputEnabled, setIsVoiceOutputEnabled] = useState(false);
   const [hasMicPermission, setHasMicPermission] = useState<boolean | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
-
+  const recognitionRef = useRef<any>(null);
+  
+  // New Gemini Advance specific feature flags
+  const [activeModel, setActiveModel] = useState<'general' | 'fast' | 'complex'>('general');
+  const [useSearchGrounding, setUseSearchGrounding] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [attachedFiles, setAttachedFiles] = useState<Array<{name: string, mimeType: string, data: string}>>([]);
+  const [nextSteps, setNextSteps] = useState<string[]>([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
@@ -43,40 +47,42 @@ export function ChatInterface() {
         recognitionRef.current.interimResults = false;
         recognitionRef.current.lang = 'en-US';
 
-        recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+        recognitionRef.current.onresult = (event: any) => {
           const transcript = event.results[event.results.length - 1][0].transcript.trim();
           setInputValue(transcript);
           setIsListening(false);
         };
 
-        recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
+        recognitionRef.current.onerror = (event: any) => {
           console.error('Speech recognition error:', event.error);
           toast({ variant: 'destructive', title: 'Voice Input Error', description: `Could not recognize speech: ${event.error}` });
           setIsListening(false);
         };
-
-        recognitionRef.current.onend = () => {};
       }
-    } else {
-      console.warn("Speech Recognition API not supported in this browser.");
     }
   }, [toast]);
 
-  const speakText = (text: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window && text) {
-      speechSynthesis.cancel(); 
-      const utterance = new SpeechSynthesisUtterance(text);
-      speechSynthesis.speak(utterance);
-    } else if (!text) {
-      console.warn("SpeakText: No text to speak.");
+  const speakText = async (text: string) => {
+    if (!text) return;
+    const base64Audio = await generateTTS(text);
+    if (base64Audio) {
+      const binary = atob(base64Audio);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: 'audio/mp3' });
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.play();
     } else {
-      console.warn("Speech Synthesis API not supported or no text provided.");
+        toast({ title: 'TTS Error', description: 'Failed to generate audio playback.', variant: 'destructive' })
     }
   };
 
   useEffect(() => {
     if (messages.length === 0 && !isLoading) {
-      let welcomeText = "Welcome to MediAssistant Chat! I'm here to assist with your queries. How can I help you today?";
+      let welcomeText = "Welcome to MediAssistant Chat! I'm here to assist with your queries.";
       if (userRole === 'medico') {
         welcomeText += "\nAs a medico user, you can try commands like `/notes <topic>` or `/mcq <topic> <number_of_questions>`."
       }
@@ -89,7 +95,6 @@ export function ChatInterface() {
       setMessages([welcomeMessage]);
       if (isVoiceOutputEnabled) speakText(welcomeText);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userRole]); 
 
   const toggleListening = async () => {
@@ -101,20 +106,39 @@ export function ChatInterface() {
         try {
           await navigator.mediaDevices.getUserMedia({ audio: true });
           setHasMicPermission(true);
-          toast({ title: "Microphone access granted." });
           recognitionRef.current?.start();
           setIsListening(true);
         } catch (err) {
           setHasMicPermission(false);
-          toast({ variant: "destructive", title: "Microphone Access Denied", description: "Please enable microphone permissions." });
         }
       } else if (hasMicPermission) {
         recognitionRef.current?.start();
         setIsListening(true);
-      } else {
-        toast({ variant: "destructive", title: "Microphone Access Required", description: "Enable it in browser settings." });
       }
     }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    
+    Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const result = reader.result as string;
+            // The result looks like "data:image/png;base64,....."
+            // We need to extract the base64 part for Gemini inlineData
+            const dataParts = result.split(',');
+            if (dataParts.length === 2) {
+                setAttachedFiles(prev => [...prev, {
+                    name: file.name,
+                    mimeType: file.type,
+                    data: dataParts[1]
+                }]);
+            }
+        };
+        reader.readAsDataURL(file);
+    });
   };
 
   const formatMCQResponse = (mcqData: MedicoMCQGeneratorOutput): ReactNode => (
@@ -140,18 +164,32 @@ export function ChatInterface() {
 
   const handleSendMessage = async (messageContent?: string) => {
     const currentMessage = (typeof messageContent === 'string' ? messageContent : inputValue).trim();
-    if (currentMessage === '') return;
+    if (currentMessage === '' && attachedFiles.length === 0) return;
 
-    const userMessage: Message = { id: Date.now().toString(), content: currentMessage, sender: 'user', timestamp: new Date() };
+    let displayMessage = currentMessage;
+    if (attachedFiles.length > 0) {
+        displayMessage = `[Attached \${attachedFiles.length} file(s)] ` + currentMessage;
+    }
+
+    const userMessage: Message = { id: Date.now().toString(), content: displayMessage, sender: 'user', timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
+    
     if (typeof messageContent !== 'string') setInputValue('');
+    
+    // Save attachments to local scope before clearing
+    const currentAttachments = [...attachedFiles];
+    setAttachedFiles([]); 
     setIsLoading(true);
 
     let botResponseContent: ReactNode | string = "Sorry, I couldn't process that.";
     let isCommandResp = false, isErrorRespFlag = false;
 
+    // Process specific nextStep commands seamlessly via Genkit
+    const isActionChip = messageContent.toString().includes("⚡ ") || (typeof messageContent === 'string' && messageContent.startsWith("Take MCQ") || messageContent.startsWith("Give me a Mnemonic") || messageContent.startsWith("Generate Flowchart"));
+    const finalPromptText = isActionChip ? `Action Chip Triggered: ${messageContent}` : currentMessage;
+
     try {
-      if (userRole === 'medico' && currentMessage.startsWith('/')) {
+      if (!isActionChip && userRole === 'medico' && currentMessage.startsWith('/')) {
         isCommandResp = true;
         const [command, ...args] = currentMessage.split(' ');
         const fullArgs = args.join(' ').trim();
@@ -165,7 +203,6 @@ export function ChatInterface() {
           const topic = match?.[1]?.trim();
           const count = match?.[2] ? parseInt(match[2], 10) : 5;
           if (!topic) throw new Error("Please provide a topic. Usage: /mcq <topic> [count]");
-          if (isNaN(count) || count < 1 || count > 10) throw new Error("Invalid question count (1-10).");
           const result = await generateMCQs({ topic, count, difficulty: 'medium', examType: 'university' });
           botResponseContent = formatMCQResponse(result);
           if (isVoiceOutputEnabled) speakText(`Generated ${result.mcqs.length} MCQs for ${topic}.`);
@@ -173,9 +210,65 @@ export function ChatInterface() {
           throw new Error(`Unknown command: ${command}. Try /notes or /mcq.`);
         }
       } else {
-        const result = await processChatMessage({ message: userMessage.content as string });
-        botResponseContent = result.response;
-        if (isVoiceOutputEnabled) speakText(botResponseContent);
+        if (userRole === 'medico' && currentAttachments.length === 0) {
+            // OPTIMIZATION: Genkit Backend Stream for Medico Mode!
+            const currentUserId = user?.uid || "anonymous"; 
+            const response = await fetch('/api/medico-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    prompt: finalPromptText, 
+                    history: messages.map(m => ({ role: m.sender === 'user' ? 'user' : 'model', content: [{ text: typeof m.content === 'string' ? m.content : ''}] })),
+                    userId: currentUserId 
+                })
+            });
+
+            if (!response.body) throw new Error("Stream body missing");
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let accumulatedText = "";
+            let streamNextSteps: string[] = [];
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                const chunkStr = decoder.decode(value, { stream: true });
+                // We try to parse the stream payload if it's formatted as standard text lines
+                const lines = chunkStr.split('\n').filter(l => l.trim() !== '');
+                for (const line of lines) {
+                    try {
+                        const parsed = JSON.parse(line);
+                        if (parsed.message?.reply) {
+                            accumulatedText = parsed.message.reply;
+                        } else if (parsed.text) {
+                            accumulatedText += parsed.text;
+                        }
+                        if (parsed.message?.nextSteps) {
+                            streamNextSteps = parsed.message.nextSteps;
+                        }
+                    } catch (e) {
+                         // Fallback for raw text streams
+                         accumulatedText += chunkStr;
+                    }
+                }
+            }
+
+            botResponseContent = accumulatedText || "Simulation complete.";
+            setNextSteps(streamNextSteps);
+            if (isVoiceOutputEnabled) speakText(botResponseContent as string);
+
+        } else {
+            // Advanced Multi-turn Gemini Chat Call!
+            const resultText = await executeGeminiAction(finalPromptText, { 
+                modelType: currentAttachments.length > 0 ? 'vision' : activeModel, 
+                useSearch: useSearchGrounding 
+            }, currentAttachments);
+            botResponseContent = resultText;
+            setNextSteps([]); // Reset next steps
+            if (isVoiceOutputEnabled) speakText(botResponseContent);
+        }
       }
     } catch (error) {
       isErrorRespFlag = true;
@@ -205,17 +298,43 @@ export function ChatInterface() {
         <ScrollArea className="flex-grow p-4" viewportRef={viewportRef} onScroll={handleScroll}>
           <div className="space-y-4">{messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
             {isLoading && <ChatThinkingIndicator />}
+            
+            {/* The Next Step Action Chips */}
+            {nextSteps && nextSteps.length > 0 && !isLoading && (
+              <div className="flex flex-wrap gap-2 mt-4 fade-in">
+                {nextSteps.map(step => (
+                  <button 
+                    key={step} 
+                    onClick={() => handleSendMessage(step)}
+                    className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-colors px-3 py-1.5 rounded-full text-xs font-medium flex items-center shadow-sm"
+                  >
+                    ⚡ {step}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </ScrollArea>
         {showScrollToBottom && <Button variant="outline" size="icon" className="absolute bottom-20 right-4 h-10 w-10 rounded-full bg-background/70 backdrop-blur-sm shadow-lg hover:bg-primary/20 z-10" onClick={() => scrollToBottom()} aria-label="Scroll to bottom"><ArrowDownCircle className="h-5 w-5 text-primary" /></Button>}
       </CardContent>
-      <div className="border-t p-4 bg-background/80 backdrop-blur-sm">
+      <div className="border-t bg-background/80 backdrop-blur-sm rounded-b-xl">
         <ChatCommands onSendMessage={handleSendMessage} />
-        <div className="flex items-center gap-2 mt-2">
-          <Button variant="ghost" size="icon" onClick={toggleListening} disabled={hasMicPermission === false || !(typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window))} aria-label={isListening ? "Stop voice input" : "Start voice input"} className="hover:bg-primary/10">{isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5 text-primary" />}</Button>
+        <div className="flex bg-muted/20 px-3 py-1.5 items-center gap-1 overflow-x-auto whitespace-nowrap text-xs text-muted-foreground border-b border-border/40 transition-colors">
+           <Button variant="ghost" size="sm" onClick={() => setActiveModel('general')} className={`h-7 px-2 ${activeModel === 'general' ? 'bg-primary/10 text-primary' : ''}`}><Network className="w-3.5 h-3.5 mr-1.5"/> General</Button>
+           <Button variant="ghost" size="sm" onClick={() => setActiveModel('fast')} className={`h-7 px-2 ${activeModel === 'fast' ? 'bg-primary/10 text-primary' : ''}`}><Zap className="w-3.5 h-3.5 mr-1.5"/> Flash Lite</Button>
+           <Button variant="ghost" size="sm" onClick={() => setActiveModel('complex')} className={`h-7 px-2 ${activeModel === 'complex' ? 'bg-primary/10 text-primary' : ''}`}><BrainCircuit className="w-3.5 h-3.5 mr-1.5"/> High Thinking</Button>
+           <div className="h-3.5 w-px bg-border/60 mx-1"></div>
+           <Button variant="ghost" size="sm" onClick={() => setUseSearchGrounding(!useSearchGrounding)} className={`h-7 px-2 ${useSearchGrounding ? 'bg-primary/10 text-primary' : ''}`}><Search className="w-3.5 h-3.5 mr-1.5"/> Web Grounding</Button>
+           <div className="h-3.5 w-px bg-border/60 mx-1"></div>
+           <input type="file" multiple accept="image/*,video/*" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+           <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()} className="h-7 px-2"><ImageIcon className="w-3.5 h-3.5 mr-1.5"/> Attach Image/Video</Button>
+           {attachedFiles.length > 0 && <span className="text-primary font-semibold ml-2 text-[11px]">{attachedFiles.length} item(s)</span>}
+        </div>
+        <div className="flex items-center gap-2 p-3">
+          <Button variant="ghost" size="icon" onClick={toggleListening} disabled={hasMicPermission === false || !(typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window))} aria-label={isListening ? "Stop voice input" : "Start voice input"} className="hover:bg-primary/10 shrink-0">{isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5 text-primary" />}</Button>
           <Textarea value={inputValue} onChange={(e) => setInputValue(e.target.value)} className="w-full resize-none pr-3 rounded-xl border-border/70 focus:border-primary input-focus-glow" rows={1} placeholder={isListening ? "Listening..." : "Type your message or /command..."} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }}} disabled={isLoading || isListening} aria-label="Message input" />
-          <Button onClick={() => handleSendMessage()} size="icon" aria-label="Send message" disabled={isLoading || inputValue.trim() === ''} className="rounded-full">{isLoading ? <HeartPulse className="h-5 w-5 animate-ecg-beat text-primary-foreground" /> : <HeartPulse className="h-5 w-5" />}</Button>
-          <Button variant="ghost" size="icon" onClick={() => setIsVoiceOutputEnabled(p => !p)} aria-label={isVoiceOutputEnabled ? "Disable voice output" : "Enable voice output"} disabled={!(typeof window !== 'undefined' && 'speechSynthesis' in window)} className="hover:bg-primary/10">{isVoiceOutputEnabled ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}</Button>
+          <Button onClick={() => handleSendMessage()} size="icon" aria-label="Send message" disabled={isLoading || (inputValue.trim() === '' && attachedFiles.length === 0)} className="rounded-full shrink-0">{isLoading ? <HeartPulse className="h-5 w-5 animate-ecg-beat text-primary-foreground" /> : <HeartPulse className="h-5 w-5" />}</Button>
+          <Button variant="ghost" size="icon" onClick={() => setIsVoiceOutputEnabled(p => !p)} aria-label={isVoiceOutputEnabled ? "Disable voice output" : "Enable voice output"} className="hover:bg-primary/10 shrink-0">{isVoiceOutputEnabled ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}</Button>
         </div>
       </div>
     </Card>

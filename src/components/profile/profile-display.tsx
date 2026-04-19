@@ -37,7 +37,6 @@ export function ProfileDisplay({ initialUser }: ProfileDisplayProps) {
   const getRoleDisplay = () => {
     if (userRole === 'pro') return { name: 'Professional', icon: BriefcaseMedical, color: 'text-purple-600' };
     if (userRole === 'medico') return { name: 'Medical Student', icon: School, color: 'text-sky-600' };
-    if (userRole === 'diagnosis') return { name: 'Patient/User', icon: Stethoscope, color: 'text-green-600' };
     return { name: 'User', icon: UserCircle, color: 'text-muted-foreground' };
   };
 

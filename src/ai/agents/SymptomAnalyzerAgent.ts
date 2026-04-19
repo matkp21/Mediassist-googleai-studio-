@@ -55,7 +55,10 @@ const prompt = ai.definePrompt({
 1.  A list of potential differential diagnoses. For each diagnosis, include 'name', 'confidence', and 'rationale'.
 2.  A prioritized list of suggested investigations for the top likely diagnoses.
 3.  A list of suggested initial management steps.
-4.  A list of suggested next steps. These should be actionable suggestions for the user, like using a specific study tool. For example, if a likely diagnosis is "Myocardial Infarction", a next step could be to generate study notes for it.
+4.  A list of suggested next steps ('nextSteps'). These MUST be contextually relevant to the HIGHEST confidence diagnosis you generate. They should act as educational follow-ups for a medical student to learn more about the specific condition.
+    - If the diagnosis is complex, suggest practicing it in the Differential Diagnosis Trainer.
+    - If they need to learn the core theory, suggest generating study notes for it.
+    - If they need to test their knowledge, suggest generating MCQs.
 
 Symptoms: {{{symptoms}}}
 {{#if patientContext}}
@@ -67,22 +70,30 @@ Patient Context:
 
 Output Format:
 Ensure your output strictly adheres to the SymptomAnalyzerOutputSchema JSON structure.
-The 'nextSteps' field is mandatory. Generate at least one relevant suggestion.
-Example for 'nextSteps' on a diagnosis of Pneumonia:
+The 'nextSteps' field is mandatory. You MUST generate 2-3 highly relevant educational actions based entirely on the top diagnosis you found.
+
+Example for 'nextSteps' if the top diagnosis is "Community-Acquired Pneumonia":
 [
   {
-    "title": "Review Pneumonia",
-    "description": "Generate comprehensive study notes on Community-Acquired Pneumonia to understand its pathophysiology and management.",
-    "toolId": "theorycoach-generator",
-    "prefilledTopic": "Community-Acquired Pneumonia",
-    "cta": "Generate Study Notes"
+    "title": "Practice DDx for Pneumonia",
+    "description": "Simulate a clinical case to practice ruling in Community-Acquired Pneumonia against other respiratory conditions.",
+    "toolId": "ddx-trainer",
+    "prefilledTopic": "Patient presenting with cough, fever, and dyspnea suggestive of CAP",
+    "cta": "Practice Diagnosis"
   },
   {
-    "title": "Practice Questions",
-    "description": "Test your knowledge with MCQs on respiratory infections.",
+    "title": "Review CAP Theory",
+    "description": "Generate comprehensive, high-yield study notes detailing the pathophysiology, etiology, and management of Community-Acquired Pneumonia.",
+    "toolId": "theorycoach-generator",
+    "prefilledTopic": "Community-Acquired Pneumonia",
+    "cta": "Generate Notes"
+  },
+  {
+    "title": "Test Knowledge",
+    "description": "Challenge yourself with exam-style multiple-choice questions on respiratory infections.",
     "toolId": "mcq",
-    "prefilledTopic": "Respiratory Infections",
-    "cta": "Generate MCQs"
+    "prefilledTopic": "Pneumonia and Respiratory Infections",
+    "cta": "Start MCQs"
   }
 ]
 

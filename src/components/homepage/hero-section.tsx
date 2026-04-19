@@ -182,15 +182,16 @@ export function HeroSection() {
             </Button>
           )}
         </motion.div>
-        
-        {userRole === 'pro' && (
+
+        {/* Calendar and Clock Widget Ribbon */}
+        {(userRole === 'pro' || userRole === 'medico') && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 0.5 }}
             className="flex justify-center"
           >
-            <HeroWidgets tasks={genericTasks} />
+             <HeroWidgets tasks={genericTasks} className="gemini-cta-button" />
           </motion.div>
         )}
       </div>

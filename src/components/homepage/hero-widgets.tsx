@@ -22,6 +22,7 @@ export interface HeroTask {
 
 interface HeroWidgetsProps {
   tasks: HeroTask[];
+  className?: string;
 }
 
 const CurrentDateDisplay: React.FC = () => {
@@ -42,7 +43,7 @@ const CurrentTimeDisplay: React.FC = () => {
     return <span className="font-semibold text-foreground">{format(currentTime, "p")}</span>;
 };
 
-export const HeroWidgets: React.FC<HeroWidgetsProps> = ({ tasks }) => {
+export const HeroWidgets: React.FC<HeroWidgetsProps> = ({ tasks, className }) => {
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date | undefined>(new Date());
   const [isCalendarPopoverOpen, setIsCalendarPopoverOpen] = useState(false);
   const [isClockWidgetPopoverOpen, setIsClockWidgetPopoverOpen] = useState(false);
@@ -53,7 +54,8 @@ export const HeroWidgets: React.FC<HeroWidgetsProps> = ({ tasks }) => {
     <div
       className={cn(
         "relative mt-4 flex w-full max-w-md mx-auto items-center justify-between gap-2 md:gap-4 py-2 px-3 rounded-xl shadow-lg",
-        "bg-card border border-border/60"
+        "bg-card border border-border/60",
+        className
       )}
       aria-label="Date and Time Information Panel"
     >

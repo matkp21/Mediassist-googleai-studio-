@@ -29,6 +29,7 @@ export type ActiveToolId =
   | 'mock-pyqs' // Added new tool id
   | 'cbme' // Added new tool id
   | 'solved-papers' // Added new tool id
+  | 'rag-tutor' // Added rag-tutor
   | null;
 
 export interface MedicoTool {

@@ -357,7 +357,7 @@ export type DiagnoBotOutput = z.infer<typeof DiagnoBotOutputSchema>;
 
 // Schema for Progress Tracker Agent - THIS IS THE FIX
 export const MedicoProgressTrackerInputSchema = z.object({
-  activityType: z.enum(['notes_review', 'mcq_session', 'case_sim_completed']).describe("The type of study activity completed."),
+  activityType: z.enum(['notes_review', 'mcq_session', 'case_sim_completed', 'task_completed']).describe("The type of study activity completed."),
   topic: z.string().describe("The topic of the completed activity."),
   score: z.number().optional().describe("The user's score, if applicable (e.g., for quizzes)."),
 });

@@ -10,12 +10,20 @@ import { Loader2 } from 'lucide-react';
 import { MedicoHubAnimation } from '@/components/medico/medico-hub-animation'; 
 
 export default function MedicoPage() {
-  const { userRole } = useProMode();
+  const { userRole, selectUserRole } = useProMode();
   const router = useRouter();
   const [isLoadingRole, setIsLoadingRole] = useState(true);
   const [showMedicoAnimation, setShowMedicoAnimation] = useState(false);
 
   useEffect(() => {
+    // If the user's role is null, explicitly assume they want the medico experience since they navigated here
+    if (userRole === null) {
+      const timeout = setTimeout(() => {
+         selectUserRole('medico');
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+
     if (userRole !== null) {
       if (userRole === 'medico') {
         const welcomeShown = sessionStorage.getItem('medicoHubAnimationShown');
@@ -28,7 +36,7 @@ export default function MedicoPage() {
       }
       setIsLoadingRole(false);
     }
-  }, [userRole, router]);
+  }, [userRole, router, selectUserRole]);
 
   if (isLoadingRole) {
     return (

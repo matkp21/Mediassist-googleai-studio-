@@ -3,6 +3,7 @@ import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
+import { getAnalytics, type Analytics, isSupported } from "firebase/analytics";
 import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
 // import { getFunctions, type Functions } from "firebase/functions";
 
@@ -32,6 +33,14 @@ if (!getApps().length) {
 const auth: Auth = getAuth(app);
 const firestore: Firestore = getFirestore(app);
 const storage: FirebaseStorage = getStorage(app);
+let analytics: Analytics | null = null;
+if (typeof window !== "undefined") {
+  isSupported().then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(app);
+    }
+  });
+}
 // const functions: Functions = getFunctions(app); // Optional: specify region
 
 // Initialize Vertex AI
@@ -41,4 +50,4 @@ const vertexAI = getVertexAI(app);
 const getFlashModel = () => getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
 const getProModel = () => getGenerativeModel(vertexAI, { model: "gemini-1.5-pro" });
 
-export { app, auth, firestore, storage, vertexAI, getFlashModel, getProModel /*, functions */ };
+export { app, auth, firestore, storage, analytics, vertexAI, getFlashModel, getProModel /*, functions */ };

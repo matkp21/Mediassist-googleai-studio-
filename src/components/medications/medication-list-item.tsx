@@ -98,7 +98,7 @@ const MedicationListItemComponent: React.FC<MedicationListItemProps> = ({ medica
         )}
 
         {medication.reason && <p><span className="font-semibold">Reason:</span> {medication.reason}</p>}
-        <p><span className="font-semibold">Prescribed:</span> {format(new Date(medication.prescriptionDate), "PPP")} {medication.prescribingDoctor && `by ${medication.prescribingDoctor}`}</p>}
+        <p><span className="font-semibold">Prescribed:</span> {format(new Date(medication.prescriptionDate), "PPP")} {medication.prescribingDoctor && `by ${medication.prescribingDoctor}`}</p>
         {medication.duration && <p><span className="font-semibold">Duration:</span> {medication.duration}</p>}
 
         <div className="mt-2 pt-2 border-t border-dashed">

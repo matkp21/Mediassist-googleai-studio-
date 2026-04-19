@@ -9,7 +9,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase';
 import type { FirebaseError } from 'firebase/app';
 
-export type UserRole = 'pro' | 'medico' | 'diagnosis' | null;
+export type UserRole = 'pro' | 'medico' | null;
 
 interface ProModeContextType {
   isProMode: boolean;

@@ -165,10 +165,6 @@ export function NotificationAndAccountPanel({ notifications, setNotifications, o
                     <School className="h-4 w-4 text-sky-500" />
                     <span className={cn(userRole === 'medico' && "firebase-gradient-text-active-role font-semibold")}>Medical Student</span>
                   </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="diagnosis" className="flex items-center gap-2 cursor-pointer">
-                    <Stethoscope className="h-4 w-4 text-green-500" />
-                    <span className={cn(userRole === 'diagnosis' && "firebase-gradient-text-active-role font-semibold")}>Patient/User</span>
-                  </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="" className="flex items-center gap-2 cursor-pointer">
                     <UserCircle className="h-4 w-4 text-muted-foreground" />
                     <span className={cn(userRole === null && "firebase-gradient-text-active-role font-semibold")}>Guest</span>

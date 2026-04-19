@@ -54,15 +54,15 @@ Example for 'nextSteps':
 Topic/Question: {{{topic}}}
 Desired Answer Length: {{{answerLength}}}
 
-1.  **'notes' field**: Generate comprehensive notes on the topic. Use Markdown headings (e.g., '## Definition'). Structure the notes under standard headings like:
-    - Definition
-    - Etiology/Risk Factors
-    - Pathophysiology
-    - Clinical Features
-    - Investigations (use subheadings like Blood tests, Imaging, etc.)
-    - Management (use subheadings like Medical, Surgical, etc.)
-    - Complications
-    - Prognosis
+The core medical content MUST be organized sequentially into these exact sections:
+1. Definition
+2. Etiology
+3. Clinical Features
+4. Investigations
+5. Management
+
+- Use clear, hierarchical Headings.
+- Emphasize High-yield points (use bolding, bullet points, or callout blocks).
 
 2.  **'summaryPoints' field**: Separately, create an array of 3-5 key, high-yield summary points for quick revision. Each point must be a string.
 

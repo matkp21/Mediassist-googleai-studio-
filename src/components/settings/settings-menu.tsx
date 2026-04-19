@@ -63,7 +63,6 @@ export function SettingsMenu() {
   const userRolesForSelection: { value: Exclude<UserRole, null>; label: string; icon: React.ElementType }[] = [
     { value: 'pro', label: 'Professional', icon: BriefcaseMedical },
     { value: 'medico', label: 'Medical Student', icon: School },
-    { value: 'diagnosis', label: 'Patient/User', icon: Stethoscope },
   ];
 
   return (
@@ -167,12 +166,6 @@ export function SettingsMenu() {
               <SettingsItem label="Clinical Profile" description="Set your primary specialty for tailored tools." icon={BriefcaseMedical} actionElement={<Button variant="outline" size="sm" disabled>Edit Profile</Button>} />
               <SettingsItem label="Dictation Settings" description="Manage voice input language and custom vocabulary." icon={Mic} actionElement={<Button variant="outline" size="sm" disabled>Dictation Settings</Button>} />
               <SettingsItem label="Drug Database Region" description="Set region for pharmacopeia." icon={Pill} actionElement={<Button variant="outline" size="sm" disabled>Set Region</Button>} />
-            </>
-          )}
-           {userRole === 'diagnosis' && (
-            <>
-              <SettingsItem label="Wellness Goals" description="Set or adjust health targets." icon={Stethoscope} actionElement={<Button variant="outline" size="sm" disabled>Manage Goals</Button>} />
-              <SettingsItem label="Emergency Contacts" description="Add or edit emergency contacts." icon={Phone} actionElement={<Button variant="outline" size="sm" disabled>Contacts</Button>} />
             </>
           )}
         </SettingsSection>

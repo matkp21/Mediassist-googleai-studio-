@@ -2,33 +2,36 @@
 import type { MedicoTool } from '@/types/medico-tools';
 import {
   NotebookText, FileQuestion, CalendarClock, Layers, CaseUpper, Lightbulb, BookCopy,
-  Users, Eye, Brain, TrendingUp, Calculator, Workflow, Award, Star, Settings, CheckSquare, GripVertical, FileText, Youtube, Mic, FlaskConical, Microscope, TestTubeDiagonal, Swords, Library, Trophy, BookMarked, FileCheck
+  Users, Eye, Brain, TrendingUp, Calculator, Workflow, Award, Star, Settings, CheckSquare, GripVertical, FileText, Youtube, Mic, FlaskConical, Microscope, TestTubeDiagonal, Swords, Library, Trophy, BookMarked, FileCheck, DatabaseZap
 } from 'lucide-react';
 import React from 'react';
+import dynamic from 'next/dynamic';
 
-// Regular imports instead of lazy loading
-import { StudyNotesGenerator } from '@/components/medico/study-notes-generator';
-import { McqGenerator } from '@/components/medico/mcq-generator';
-import { StudyTimetableCreator } from '@/components/medico/study-timetable-creator';
-import { FlashcardGenerator } from '@/components/medico/flashcard-generator';
-import { MnemonicsGenerator } from '@/components/medico/mnemonics-generator';
-import { FlowchartCreator } from '@/components/medico/flowchart-creator';
-import ClinicalCaseSimulator from '@/components/medico/clinical-case-simulator';
-import DifferentialDiagnosisTrainer from '@/components/medico/differential-diagnosis-trainer';
-import { PathoMindExplainer } from '@/components/medico/pathomind-explainer';
-import { PharmaGenie } from '@/components/medico/pharma-genie';
-import MicroMate from '@/components/medico/micro-mate';
-import { DiagnoBot } from '@/components/medico/diagno-bot';
-import { HighYieldTopicPredictor } from '@/components/medico/high-yield-topic-predictor';
-import AnatomyVisualizer from '@/components/medico/anatomy-visualizer';
-import DrugDosageCalculator from '@/components/medico/drug-dosage-calculator';
-import NoteSummarizer from '@/components/medico/note-summarizer';
-import VirtualPatientRounds from '@/components/medico/virtual-patient-rounds';
-import ProgressTracker from '@/components/medico/progress-tracker';
-import SmartDictation from '@/components/medico/smart-dictation';
-import GamifiedCaseChallenges from '@/components/medico/gamified-case-challenges';
-import MockExamSuite from '@/components/medico/mock-exam-suite';
-import { SolvedPapersViewer } from '@/components/medico/solved-papers-viewer';
+// Dynamic imports instead of synchronous loading to prevent Webpack/SWC Out-Of-Memory
+const StudyNotesGenerator = dynamic(() => import('@/components/medico/study-notes-generator').then(m => m.StudyNotesGenerator), { ssr: false });
+const McqGenerator = dynamic(() => import('@/components/medico/mcq-generator').then(m => m.McqGenerator), { ssr: false });
+const StudyTimetableCreator = dynamic(() => import('@/components/medico/study-timetable-creator').then(m => m.StudyTimetableCreator), { ssr: false });
+const FlashcardGenerator = dynamic(() => import('@/components/medico/flashcard-generator').then(m => m.FlashcardGenerator), { ssr: false });
+const MnemonicsGenerator = dynamic(() => import('@/components/medico/mnemonics-generator').then(m => m.MnemonicsGenerator), { ssr: false });
+const FlowchartCreator = dynamic(() => import('@/components/medico/flowchart-creator').then(m => m.FlowchartCreator), { ssr: false });
+const ClinicalCaseSimulator = dynamic(() => import('@/components/medico/clinical-case-simulator'), { ssr: false });
+const DifferentialDiagnosisTrainer = dynamic(() => import('@/components/medico/differential-diagnosis-trainer'), { ssr: false });
+const PathoMindExplainer = dynamic(() => import('@/components/medico/pathomind-explainer').then(m => m.PathoMindExplainer), { ssr: false });
+const PharmaGenie = dynamic(() => import('@/components/medico/pharma-genie').then(m => m.PharmaGenie), { ssr: false });
+const MicroMate = dynamic(() => import('@/components/medico/micro-mate'), { ssr: false });
+const DiagnoBot = dynamic(() => import('@/components/medico/diagno-bot').then(m => m.DiagnoBot), { ssr: false });
+const HighYieldTopicPredictor = dynamic(() => import('@/components/medico/high-yield-topic-predictor').then(m => m.HighYieldTopicPredictor), { ssr: false });
+const AnatomyVisualizer = dynamic(() => import('@/components/medico/anatomy-visualizer'), { ssr: false });
+const DrugDosageCalculator = dynamic(() => import('@/components/medico/drug-dosage-calculator'), { ssr: false });
+const NoteSummarizer = dynamic(() => import('@/components/medico/note-summarizer'), { ssr: false });
+const VirtualPatientRounds = dynamic(() => import('@/components/medico/virtual-patient-rounds'), { ssr: false });
+const ProgressTracker = dynamic(() => import('@/components/medico/progress-tracker'), { ssr: false });
+const SmartDictation = dynamic(() => import('@/components/medico/smart-dictation'), { ssr: false });
+const GamifiedCaseChallenges = dynamic(() => import('@/components/medico/gamified-case-challenges'), { ssr: false });
+const MockExamSuite = dynamic(() => import('@/components/medico/mock-exam-suite'), { ssr: false });
+const SolvedPapersViewer = dynamic(() => import('@/components/medico/solved-papers-viewer').then(m => m.SolvedPapersViewer), { ssr: false });
+const RagTutor = dynamic(() => import('@/components/medico/rag-tutor'), { ssr: false });
+
 
 // Define the full list of tools
 export const allMedicoToolsList: MedicoTool[] = [
@@ -58,6 +61,7 @@ export const allMedicoToolsList: MedicoTool[] = [
   { id: 'progress', title: 'Progress Tracker', description: 'Track study progress with rewards (gamification).', icon: Award, component: ProgressTracker },
   { id: 'videos', title: 'Video Lecture Library', description: 'Search and find relevant medical video lectures.', icon: Youtube, href: '/medico/videos' },
   { id: 'library', title: 'Knowledge Hub', description: 'Your personal library of notes, MCQs, and community content.', icon: Library, href: '/medico/library' },
+  { id: 'rag-tutor', title: 'Grounded RAG Tutor', description: 'Ask questions grounded against real medical documents in your Vertex AI Search datastore.', icon: DatabaseZap, component: RagTutor, isFrequentlyUsed: true },
 ];
 
-export const frequentlyUsedMedicoToolIds: ActiveToolId[] = ['mcq', 'theorycoach-generator', 'flashcards', 'mnemonics', 'pathomind', 'mock-pyqs'];
+export const frequentlyUsedMedicoToolIds: ActiveToolId[] = ['rag-tutor', 'mcq', 'theorycoach-generator', 'flashcards', 'mnemonics', 'pathomind', 'mock-pyqs'];

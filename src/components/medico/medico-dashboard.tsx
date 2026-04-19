@@ -11,9 +11,11 @@ import { motion, Reorder } from 'framer-motion';
 import { allMedicoToolsList } from '@/config/medico-tools-config';
 import type { MedicoTool, ActiveToolId } from '@/types/medico-tools';
 import { HeroWidgets, type HeroTask } from '@/components/homepage/hero-widgets';
+import { StudyTasksManager } from '@/components/medico/study-tasks-manager';
 import { MedicoToolCard } from '@/components/medico/medico-tool-card'; // Changed to MedicoToolCard
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { StudyAnalyticsDashboard } from '@/components/medico/study-analytics-dashboard';
 
 // Wrapper component to handle suspense boundary for useSearchParams
 export function MedicoDashboard() {
@@ -52,8 +54,9 @@ export function MedicoDashboard() {
                 </Button>
             </div>
             
-             <Card className="shadow-lg rounded-xl mb-10">
-                <CardHeader>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10 items-stretch">
+              <Card className="shadow-lg rounded-xl h-full flex flex-col bg-gradient-to-br from-card via-card to-accent/5">
+                <CardHeader className="pb-4">
                   <CardTitle className="text-xl flex items-center gap-2">
                     <CalendarDays className="h-6 w-6 text-primary"/>
                     Schedule Overview
@@ -62,12 +65,19 @@ export function MedicoDashboard() {
                     Your upcoming tasks, events, and a quick-access clock.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex justify-center">
+                <CardContent className="flex-1 flex flex-col items-center justify-center pt-0 min-h-[300px]">
                   <HeroWidgets tasks={medicoTasks} />
                 </CardContent>
               </Card>
 
-            
+              <div className="h-full">
+                <StudyTasksManager />
+              </div>
+            </div>
+
+            {/* Study Analytics Dashboard Integration */}
+            <StudyAnalyticsDashboard />
+
                 {isEditMode ? (
                 <>
                     <div className="p-4 mb-6 border border-dashed border-primary/50 rounded-lg bg-primary/5 text-center">

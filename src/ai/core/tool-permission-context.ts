@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export type UserRole = 'patient' | 'medico' | 'pro';
+export type UserRole = 'medico' | 'pro';
 
 export interface ToolPermission {
   toolName: string;
@@ -31,7 +31,7 @@ export const TOOL_PERMISSIONS: ToolPermission[] = [
   },
   {
     toolName: 'analyzeSymptoms',
-    allowedRoles: ['patient', 'medico', 'pro'],
+    allowedRoles: ['medico', 'pro'],
     description: 'Provides general information about symptoms (non-diagnostic).',
   }
 ];
