@@ -82,9 +82,9 @@ export function ChatInterface() {
 
   useEffect(() => {
     if (messages.length === 0 && !isLoading) {
-      let welcomeText = "Welcome to MediAssistant Chat! I'm here to assist with your queries.";
+      let welcomeText = "Welcome to Medi! I'm your Resident Genius Mentor, ready to assist with your clinical cases or general queries.";
       if (userRole === 'medico') {
-        welcomeText += "\nAs a medico user, you can try commands like `/notes <topic>` or `/mcq <topic> <number_of_questions>`."
+        welcomeText = "I'm Medi, your resident on call. Powered by advanced AI and semantic search, I can synthesize topics, act as a clinical tutor, or process your files.\nTry commands like `/notes <topic>` or `/mcq <topic> 5`.";
       }
       const welcomeMessage: Message = {
         id: `welcome-bot-${Date.now()}`,
@@ -95,7 +95,7 @@ export function ChatInterface() {
       setMessages([welcomeMessage]);
       if (isVoiceOutputEnabled) speakText(welcomeText);
     }
-  }, [userRole]); 
+  }, [userRole, messages.length, isLoading, isVoiceOutputEnabled, speakText]); 
 
   const toggleListening = async () => {
     if (isListening) {
@@ -332,7 +332,7 @@ export function ChatInterface() {
         </div>
         <div className="flex items-center gap-2 p-3">
           <Button variant="ghost" size="icon" onClick={toggleListening} disabled={hasMicPermission === false || !(typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window))} aria-label={isListening ? "Stop voice input" : "Start voice input"} className="hover:bg-primary/10 shrink-0">{isListening ? <MicOff className="h-5 w-5 text-destructive" /> : <Mic className="h-5 w-5 text-primary" />}</Button>
-          <Textarea value={inputValue} onChange={(e) => setInputValue(e.target.value)} className="w-full resize-none pr-3 rounded-xl border-border/70 focus:border-primary input-focus-glow" rows={1} placeholder={isListening ? "Listening..." : "Type your message or /command..."} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }}} disabled={isLoading || isListening} aria-label="Message input" />
+          <Textarea value={inputValue} onChange={(e) => setInputValue(e.target.value)} className="w-full resize-none pr-3 rounded-xl border-border/70 focus:border-primary input-focus-glow" rows={1} placeholder={isListening ? "Listening..." : userRole === 'medico' ? "Ask Medi (Resident Genius) or type /command..." : "Type your message..."} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }}} disabled={isLoading || isListening} aria-label="Message input" />
           <Button onClick={() => handleSendMessage()} size="icon" aria-label="Send message" disabled={isLoading || (inputValue.trim() === '' && attachedFiles.length === 0)} className="rounded-full shrink-0">{isLoading ? <HeartPulse className="h-5 w-5 animate-ecg-beat text-primary-foreground" /> : <HeartPulse className="h-5 w-5" />}</Button>
           <Button variant="ghost" size="icon" onClick={() => setIsVoiceOutputEnabled(p => !p)} aria-label={isVoiceOutputEnabled ? "Disable voice output" : "Enable voice output"} className="hover:bg-primary/10 shrink-0">{isVoiceOutputEnabled ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}</Button>
         </div>

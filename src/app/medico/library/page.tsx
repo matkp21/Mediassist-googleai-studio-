@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useProMode } from '@/contexts/pro-mode-context';
 import { firestore } from '@/lib/firebase';
 import { collection, query, where, getDocs, orderBy, Timestamp, addDoc, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
-import { Loader2, Library, BookOpen, FileQuestion, Users, UploadCloud, Bookmark, BookmarkCheck, Lightbulb, Workflow, Layers, UserCircle, ArrowRight, ChevronDown } from 'lucide-react';
+import { Loader2, Library, BookOpen, FileQuestion, Users, UploadCloud, Bookmark, BookmarkCheck, Lightbulb, Workflow, Layers, UserCircle, ArrowRight, ChevronDown, DatabaseZap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
@@ -357,6 +357,25 @@ export default function StudyLibraryPage() {
 
   return (
     <div className="max-w-7xl mx-auto py-6">
+      <Card className="shadow-lg rounded-xl border-border/50 mb-6 bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+        <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-xl font-bold flex items-center gap-2 text-primary mb-2">
+              <DatabaseZap className="h-6 w-6" /> Ask Medi: Resident Genius
+            </h2>
+            <p className="text-muted-foreground text-sm max-w-xl">
+              Don&apos;t feel like browsing? Ask your resident on-call AI mentor to pull semantic flashcards, 
+              synthesize recent notes, or instantly generate PYQs (Previous Year Questions) from your datastore.
+            </p>
+          </div>
+          <Button asChild size="lg" className="rounded-full shadow-md font-semibold shrink-0">
+            <Link href="/medico?tool=rag-tutor">
+              Start RAG Session <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+
       <Card className="shadow-lg rounded-xl border-border/50">
         <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>

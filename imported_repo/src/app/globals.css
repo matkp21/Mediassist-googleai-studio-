@@ -1,0 +1,957 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base Theme (Light - Apple Inspired Cool Metallic) */
+    --background: 210 33% 98%; /* Very Light Cool Gray (Almost White) */
+    --foreground: 220 25% 25%; /* Dark Cool Gray */
+
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 220 25% 25%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 25%;
+
+    /* Primary color HSL components */
+    --primary-h: 210;
+    --primary-s: 100%;
+    --primary-l: 50%;
+    --primary: var(--primary-h) var(--primary-s) var(--primary-l); /* Vibrant Blue */
+    --primary-foreground: 0 0% 100%; /* White */
+
+    --secondary: 210 25% 96%; /* Light Gray */
+    --secondary-foreground: 220 25% 35%;
+
+    --muted: 210 20% 90%; /* Lighter Cool Gray */
+    --muted-foreground: 220 20% 50%;
+
+    /* Accent color HSL components */
+    --accent-h: 170; /* Teal */
+    --accent-s: 98%;
+    --accent-l: 52%;
+    --accent: var(--accent-h) var(--accent-s) var(--accent-l); /* Vibrant Teal/Cyan */
+    --accent-foreground: 210 100% 10%;
+
+    --destructive: 0 70% 60%; /* Standard Red */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 88%;
+    --input: 210 20% 92%;
+    --ring: 210 100% 55%; /* Primary Blue for focus rings */
+
+    --radius: 0.75rem; /* Apple-like rounded corners */
+
+    /* Sidebar specific colors - Light Mode (Gemini Inspired) */
+    --sidebar-background: 220 20% 97%;
+    --sidebar-foreground: 220 25% 28%;
+    --sidebar-primary: hsl(var(--primary-h) var(--primary-s) var(--primary-l));
+    --sidebar-primary-foreground: hsl(var(--primary-foreground));
+    --sidebar-accent: 220 80% 92%; /* Light blue, good for hover */
+    --sidebar-accent-foreground: 220 80% 40%; /* Darker blue for text on hover */
+    --sidebar-active-background: hsl(var(--primary-h) var(--primary-s) var(--primary-l)); /* Primary for active */
+    --sidebar-active-foreground: hsl(var(--primary-foreground)); /* Primary foreground for active text */
+    --sidebar-border: 220 15% 88%;
+    --sidebar-ring: hsl(var(--ring));
+    --sidebar-active-indicator-start: hsl(var(--sidebar-primary), 0.8);
+    --sidebar-active-indicator-end: hsl(var(--sidebar-accent), 0.8);
+
+
+    /* Chart Colors - Light Mode */
+    --chart-1: hsl(var(--primary));
+    --chart-2: hsl(var(--accent));
+    --chart-3: 260 65% 60%;
+    --chart-4: 30 80% 55%;
+    --chart-5: 130 50% 50%;
+
+     /* Firebase Inspired Gradient Colors (Light Mode) - For General Use */
+    --firebase-color-1-light-h: 45; --firebase-color-1-light-s: 100%; --firebase-color-1-light-l: 58%; /* Bright Yellow (#FFCA28) */
+    --firebase-color-2-light-h: 36; --firebase-color-2-light-s: 100%; --firebase-color-2-light-l: 50%; /* Bright Orange (#FFA000) */
+    --firebase-color-3-light-h: 25; --firebase-color-3-light-s: 100%; --firebase-color-3-light-l: 55%; /* Orange-Red (#FF8A65) */
+    --firebase-color-4-light-h: 15; --firebase-color-4-light-s: 100%; --firebase-color-4-light-l: 60%; /* Reddish-Orange (#FF7043) */
+
+
+    /* --- "Elegant Reveal" Welcome Screen Colors & Sizing (Light Mode) --- */
+    /* Background for the "Elegant Reveal" screen is the main app background */
+    /* Icon & Text colors for "Elegant Reveal" */
+    --heart-stroke-width: 2px; /* Maintained for heart icon in Logo */
+    --heart-icon-splash-size-min: 70px;
+    --heart-icon-splash-size-vw: 17vw;
+    --heart-icon-splash-size-max: 140px;
+    --logo-text-splash-size-min: 2.0rem;
+    --logo-text-splash-size-vw: 5.5vw;
+    --logo-text-splash-size-max: 3.3rem;
+
+
+    /* --- "MediAssistant Spark" Welcome Screen Colors (Light Mode) - REVISED --- */
+    /* Adjusted for a Pro Clinical Suite like background for "Spark" if used, otherwise "Elegant Reveal" uses simple background */
+    --spark-bg-start-light-h: 220; --spark-bg-start-light-s: 25%; --spark-bg-start-light-l: 95%; /* Very light, cool gray */
+    --spark-bg-mid-light-h: 270;   --spark-bg-mid-light-s: 40%; --spark-bg-mid-light-l: 90%;   /* Very light, desaturated lavender */
+    --spark-bg-end-light-h: 220;   --spark-bg-end-light-s: 20%; --spark-bg-end-light-l: 97%;   /* Off-white with cool tint */
+
+    /* Particle Colors (Pastel Firebase-Inspired) for "Spark" screen */
+    --spark-particle-color-1-h: 45; --spark-particle-color-1-s: 100%; --spark-particle-color-1-l: 80%; /* Pastel Yellow */
+    --spark-particle-color-2-h: 30; --spark-particle-color-2-s: 100%; --spark-particle-color-2-l: 75%; /* Pastel Orange */
+    --spark-particle-color-3-h: 0;  --spark-particle-color-3-s: 100%; --spark-particle-color-3-l: 80%; /* Pastel Pink/Red */
+    --spark-particle-color-4-h: 280;--spark-particle-color-4-s: 100%; --spark-particle-color-4-l: 82%; /* Pastel Purple */
+
+    /* Notification Panel (Compact, solid) - Light Mode */
+    --notification-panel-compact-bg: 0 0% 100%; /* White */
+    --notification-panel-compact-border: 210 20% 88%;
+    --notification-item-compact-bg: 0 0% 100%;
+    --notification-item-compact-hover-bg: 210 25% 96%;
+    --notification-unread-dot-color: hsl(var(--primary));
+
+  }
+
+  .dark {
+    /* Dark Theme - Apple Inspired (Deep Navy/Cool Metallic) */
+    --background: 216 65% 11%;
+    --foreground: 215 100% 95%;
+
+    --card: 216 54% 20%;
+    --card-foreground: 215 100% 95%;
+
+    --popover: 216 65% 9%;
+    --popover-foreground: 215 100% 95%;
+
+    --primary-h: 210;
+    --primary-s: 100%;
+    --primary-l: 60%;
+    --primary: var(--primary-h) var(--primary-s) var(--primary-l);
+    --primary-foreground: 216 65% 10%;
+
+    --secondary: 216 50% 25%;
+    --secondary-foreground: 215 20% 85%;
+
+    --muted: 216 45% 18%;
+    --muted-foreground: 215 15% 70%;
+
+    --accent-h: 170; /* Teal */
+    --accent-s: 98%;
+    --accent-l: 52%;
+    --accent: var(--accent-h) var(--accent-s) var(--accent-l);
+    --accent-foreground: 170 90% 10%;
+
+    --destructive: 0 60% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 216 40% 30%;
+    --input: 216 50% 28%;
+    --ring: 210 100% 65%;
+
+    /* Sidebar specific colors - Dark Mode (Gemini Inspired) */
+    --sidebar-background: 220 30% 12%;
+    --sidebar-foreground: 220 15% 88%;
+    --sidebar-primary: hsl(var(--primary-h) var(--primary-s) var(--primary-l));
+    --sidebar-primary-foreground: hsl(var(--primary-foreground));
+    --sidebar-accent: 220 40% 22%;
+    --sidebar-accent-foreground: 220 80% 80%;
+    --sidebar-active-background: hsl(var(--primary-h) var(--primary-s) var(--primary-l));
+    --sidebar-active-foreground: hsl(var(--primary-foreground));
+    --sidebar-border: 220 25% 20%;
+    --sidebar-ring: hsl(var(--ring));
+    --sidebar-active-indicator-start: hsl(var(--sidebar-primary), 0.9);
+    --sidebar-active-indicator-end: hsl(var(--sidebar-accent), 0.9);
+
+    /* Chart Colors - Dark Mode */
+    --chart-1: hsl(var(--primary));
+    --chart-2: hsl(var(--accent));
+    --chart-3: 270 70% 70%;
+    --chart-4: 40 90% 65%;
+    --chart-5: 140 60% 60%;
+
+    /* Firebase Inspired Gradient Colors (Dark Mode) - For General Use */
+    --firebase-color-1-dark-h: 45; --firebase-color-1-dark-s: 100%; --firebase-color-1-dark-l: 65%;
+    --firebase-color-2-dark-h: 36; --firebase-color-2-dark-s: 100%; --firebase-color-2-dark-l: 60%;
+    --firebase-color-3-dark-h: 25; --firebase-color-3-dark-s: 100%; --firebase-color-3-dark-l: 65%;
+    --firebase-color-4-dark-h: 15; --firebase-color-4-dark-s: 100%; --firebase-color-4-dark-l: 70%;
+
+    /* --- "Elegant Reveal" Welcome Screen Sizing (Dark Mode) --- */
+    --heart-icon-splash-size-min: 70px;
+    --heart-icon-splash-size-vw: 17vw;
+    --heart-icon-splash-size-max: 140px;
+    --logo-text-splash-size-min: 2.0rem;
+    --logo-text-splash-size-vw: 5.5vw;
+    --logo-text-splash-size-max: 3.3rem;
+
+    /* --- "MediAssistant Spark" Welcome Screen Colors (Dark Mode) - REVISED --- */
+    --spark-bg-start-dark-h: 222; --spark-bg-start-dark-s: 47%; --spark-bg-start-dark-l: 11%; /* Slate-900 like */
+    --spark-bg-mid-dark-h: 275;   --spark-bg-mid-dark-s: 60%; --spark-bg-mid-dark-l: 15%;   /* Deep Purple */
+    --spark-bg-end-dark-h: 222;   --spark-bg-end-dark-s: 47%; --spark-bg-end-dark-l: 11%;   /* Slate-900 like */
+
+    /* Particle Colors (Still vibrant but against dark BG) for "Spark" screen */
+    --spark-particle-color-1-h: 45; --spark-particle-color-1-s: 100%; --spark-particle-color-1-l: 65%; /* Yellow */
+    --spark-particle-color-2-h: 30; --spark-particle-color-2-s: 100%; --spark-particle-color-2-l: 60%; /* Orange */
+    --spark-particle-color-3-h: 0;  --spark-particle-color-3-s: 90%; --spark-particle-color-3-l: 65%; /* Pink/Red */
+    --spark-particle-color-4-h: 280;--spark-particle-color-4-s: 90%; --spark-particle-color-4-l: 70%; /* Purple */
+
+    /* Notification Panel (Compact, solid) - Dark Mode */
+    --notification-panel-compact-bg: 216 54% 18%;
+    --notification-panel-compact-border: 216 40% 25%;
+    --notification-item-compact-bg: 216 54% 18%;
+    --notification-item-compact-hover-bg: 216 50% 22%;
+    /* --notification-unread-dot-color is same as light mode (primary) */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body, html {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Default to hidden to manage splash screens */
+  }
+}
+
+/* Allow scroll only if specific welcome/animation screens are NOT present */
+body:not(:has(.simple-welcome-screen)):not(:has(.spark-welcome-screen)):not(:has(.event-poster-splash-screen)):not(:has(.pro-suite-animation)):not(:has(.medico-hub-animation)):not(:has(.chat-interface-animation)):not(:has(.explorer-model-loading-animation)):not(:has(.ar-viewer-loading-animation)) {
+  overflow: auto;
+}
+
+/* --- "Elegant Reveal" Welcome Screen --- */
+.simple-welcome-screen {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top:0; left:0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: hsl(var(--background)); /* Clean, static background from theme */
+  color: hsl(var(--foreground));
+  cursor: pointer; /* Indicate it's clickable to dismiss */
+}
+
+.simple-welcome-tagline { /* Styles for the AnimatedTagline component's container */
+  text-align: center;
+  font-weight: 300; /* Poppins Light */
+  letter-spacing: 0.025em;
+  font-size: clamp(1.1rem, 3vw, 1.5rem); /* Adjusted for prominence */
+  color: hsl(var(--foreground), 0.9);
+}
+.dark .simple-welcome-tagline {
+  color: hsl(var(--foreground), 0.85);
+}
+
+/* Styles applied to the logo elements specifically within the simple-welcome-screen */
+.simple-welcome-screen .welcome-logo-container .logo-icon-container {
+  width: clamp(var(--heart-icon-splash-size-min), var(--heart-icon-splash-size-vw), var(--heart-icon-splash-size-max));
+  height: clamp(var(--heart-icon-splash-size-min), var(--heart-icon-splash-size-vw), var(--heart-icon-splash-size-max));
+}
+
+.simple-welcome-screen .welcome-logo-container .logo-icon-container svg {
+    width: 60%;
+    height: 60%;
+}
+
+.simple-welcome-screen .welcome-logo-container .logo-text {
+  font-size: clamp(var(--logo-text-splash-size-min), var(--logo-text-splash-size-vw), var(--logo-text-splash-size-max));
+  /* Any other text specific styles for the welcome screen logo text if needed */
+}
+/* --- End of "Elegant Reveal" Welcome Screen Styles --- */
+
+
+/* --- "MediAssistant Spark" Welcome Screen Styles --- */
+@keyframes spark-background-animation-light {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes spark-background-animation-dark {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.spark-welcome-screen {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0; left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: hsl(var(--foreground)); /* Default text color */
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    hsl(var(--spark-bg-start-light-h), var(--spark-bg-start-light-s), var(--spark-bg-start-light-l)),
+    hsl(var(--spark-bg-mid-light-h), var(--spark-bg-mid-light-s), var(--spark-bg-mid-light-l)),
+    hsl(var(--spark-bg-end-light-h), var(--spark-bg-end-light-s), var(--spark-bg-end-light-l))
+  );
+  background-size: 400% 400%;
+  animation: spark-background-animation-light 20s ease infinite;
+}
+
+.dark .spark-welcome-screen {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--spark-bg-start-dark-h), var(--spark-bg-start-dark-s), var(--spark-bg-start-dark-l)),
+    hsl(var(--spark-bg-mid-dark-h), var(--spark-bg-mid-dark-s), var(--spark-bg-mid-dark-l)),
+    hsl(var(--spark-bg-end-dark-h), var(--spark-bg-end-dark-s), var(--spark-bg-end-dark-l))
+  );
+  background-size: 400% 400%;
+  animation-name: spark-background-animation-dark; /* Use dark mode animation */
+}
+
+/* Styles for individual spark particles (used by WelcomeDisplay.tsx) */
+.spark-particle {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  position: absolute; /* Positioned by framer-motion */
+  box-shadow: 0 0 8px 2px currentColor; /* Creates a glow effect using the particle's color */
+  opacity: 0; /* Initial state for framer-motion */
+}
+/* Assigning specific colors to particles via classes set in WelcomeDisplay.tsx */
+.bg-\[hsl\(var\(--spark-particle-color-1\)\)\] { background-color: hsl(var(--spark-particle-color-1-h), var(--spark-particle-color-1-s), var(--spark-particle-color-1-l)); color: hsl(var(--spark-particle-color-1-h), var(--spark-particle-color-1-s), var(--spark-particle-color-1-l));}
+.bg-\[hsl\(var\(--spark-particle-color-2\)\)\] { background-color: hsl(var(--spark-particle-color-2-h), var(--spark-particle-color-2-s), var(--spark-particle-color-2-l)); color: hsl(var(--spark-particle-color-2-h), var(--spark-particle-color-2-s), var(--spark-particle-color-2-l));}
+.bg-\[hsl\(var\(--spark-particle-color-3\)\)\] { background-color: hsl(var(--spark-particle-color-3-h), var(--spark-particle-color-3-s), var(--spark-particle-color-3-l)); color: hsl(var(--spark-particle-color-3-h), var(--spark-particle-color-3-s), var(--spark-particle-color-3-l));}
+.bg-\[hsl\(var\(--spark-particle-color-4\)\)\] { background-color: hsl(var(--spark-particle-color-4-h), var(--spark-particle-color-4-s), var(--spark-particle-color-4-l)); color: hsl(var(--spark-particle-color-4-h), var(--spark-particle-color-4-s), var(--spark-particle-color-4-l));}
+/* --- End of Spark Welcome Screen Styles --- */
+
+
+/* Animation Utilities */
+@keyframes fadeInAnimation {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInAnimation 0.5s ease-out forwards;
+}
+
+@keyframes slideInBottomAnimation {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.slide-in-bottom {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideInBottomAnimation 0.6s ease-out forwards;
+}
+
+/* Content Crossfade */
+.content-area > .active-mode {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+.content-area > .inactive-mode {
+  opacity: 0;
+  transform: scale(0.95);
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out, height 0s 0.4s;
+}
+
+/* Input focus glow */
+.input-focus-glow:focus-within {
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.4);
+}
+
+/* Animated Gradient Text for Logo and other elements */
+@keyframes gradient-flow {
+  0% { background-position: 0% center; }
+  50% { background-position: 200% center; }
+  100% { background-position: 0% center; }
+}
+.animated-gradient-text {
+  background-size: 200% auto;
+  background-image: linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--primary)) 100%);
+  animation: gradient-flow 3s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+
+/* Pulse animation for medical icon (e.g., heart in tagline) */
+@keyframes pulseMedical {
+  0%, 100% {
+    opacity: var(--medical-pulse-opacity-base, 0.8);
+    transform: scale(1);
+  }
+  50% {
+    opacity: var(--medical-pulse-opacity-peak, 0.5);
+    transform: scale(var(--medical-pulse-scale-peak, 1.2));
+  }
+}
+.animate-pulse-medical {
+  animation: pulseMedical 1.8s infinite ease-in-out;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* For the tagline heart specifically for AnimatedTagline */
+@keyframes heart-pulse-subtle {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+.animate-heart-pulse-subtle {
+  animation: heart-pulse-subtle 2.0s infinite ease-in-out;
+}
+
+
+/* --- Firebase Color Cycle for Text (Light & Dark) --- */
+@keyframes welcome-text-color-cycle-light {
+  0%   { color: hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)); }
+  25%  { color: hsl(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l)); }
+  50%  { color: hsl(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l)); }
+  75%  { color: hsl(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l)); }
+  100% { color: hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)); }
+}
+.welcome-text-fg-animated {
+  animation-duration: 10s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-name: welcome-text-color-cycle-light;
+}
+
+@keyframes welcome-text-color-cycle-dark {
+  0%   { color: hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)); }
+  25%  { color: hsl(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l)); }
+  50%  { color: hsl(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l)); }
+  75%  { color: hsl(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l)); }
+  100% { color: hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)); }
+}
+.dark .welcome-text-fg-animated {
+  animation-name: welcome-text-color-cycle-dark;
+}
+
+
+@keyframes animated-gradient-background {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* New Firebase Ribbon Background */
+@keyframes animated-firebase-ribbon-background {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.firebase-ribbon-background {
+  background: linear-gradient(
+    135deg,
+    hsla(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l), 0.95),
+    hsla(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l), 0.95),
+    hsla(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l), 0.95),
+    hsla(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l), 0.95),
+    hsla(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l), 0.95)
+  );
+  background-size: 250% 250%;
+  animation: animated-firebase-ribbon-background 10s ease infinite;
+  color: hsl(var(--primary-foreground));
+}
+.dark .firebase-ribbon-background {
+   background: linear-gradient(
+    135deg,
+    hsla(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l), 0.95),
+    hsla(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l), 0.95),
+    hsla(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l), 0.95),
+    hsla(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l), 0.95),
+    hsla(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l), 0.95)
+  );
+  background-size: 250% 250%;
+  animation: animated-firebase-ribbon-background 10s ease infinite;
+  color: hsl(var(--primary-foreground));
+}
+
+
+/* Bot thinking animation */
+@keyframes ecg-beat {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  10%, 30% { transform: scale(0.9); opacity: 0.7; }
+  20% { transform: scale(1.2); opacity: 1; }
+  40% { transform: scale(1); opacity: 0.8; }
+}
+
+.animate-ecg-beat {
+  animation: ecg-beat 1.5s infinite cubic-bezier(0.215, 0.610, 0.355, 1.000);
+}
+
+/* Firebase Gradient Glowing Ring for AvatarFallback */
+@keyframes firebase-glow-ring-light {
+  0%, 100% { box-shadow: 0 0 3px hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)), 0 0 6px hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)), 0 0 10px hsla(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l), 0.6); }
+  25% { box-shadow: 0 0 3px hsl(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l)), 0 0 6px hsl(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l)), 0 0 10px hsla(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l), 0.6); }
+  50% { box-shadow: 0 0 3px hsl(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l)), 0 0 6px hsl(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l)), 0 0 10px hsla(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l), 0.6); }
+  75% { box-shadow: 0 0 3px hsl(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l)), 0 0 6px hsl(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l)), 0 0 10px hsla(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l), 0.6); }
+}
+@keyframes firebase-glow-ring-dark {
+  0%, 100% { box-shadow: 0 0 3px hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)), 0 0 6px hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)), 0 0 10px hsla(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l), 0.6); }
+  25% { box-shadow: 0 0 3px hsl(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l)), 0 0 6px hsl(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l)), 0 0 10px hsla(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l), 0.6); }
+  50% { box-shadow: 0 0 3px hsl(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l)), 0 0 6px hsl(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l)), 0 0 10px hsla(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l), 0.6); }
+  75% { box-shadow: 0 0 3px hsl(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l)), 0 0 6px hsl(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l)), 0 0 10px hsla(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l), 0.6); }
+}
+
+.glowing-ring-firebase {
+  animation-duration: 5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-name: firebase-glow-ring-light;
+}
+.dark .glowing-ring-firebase {
+  animation-name: firebase-glow-ring-dark;
+}
+
+
+/* Firebase Gradient Text (used for "Hello" in Hero, and "MediAssistant" in simple welcome) */
+@keyframes firebase-gradient-flow {
+  to {
+    background-position: 200% center;
+  }
+}
+.firebase-gradient-text {
+  background-size: 200% auto;
+  background-image: linear-gradient(to right,
+    hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)) 0%,
+    hsl(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l)) 25%,
+    hsl(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l)) 50%,
+    hsl(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l)) 75%,
+    hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: firebase-gradient-flow 4s linear infinite;
+}
+
+.dark .firebase-gradient-text {
+   background-image: linear-gradient(to right,
+    hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)) 0%,
+    hsl(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l)) 25%,
+    hsl(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l)) 50%,
+    hsl(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l)) 75%,
+    hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)) 100%);
+}
+
+
+/* Firebase Gradient Text for Active Role - Static gradient with subtle glow */
+.firebase-gradient-text-active-role {
+  background-image: linear-gradient(to right,
+    hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)) 0%,
+    hsl(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l)) 25%,
+    hsl(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l)) 50%,
+    hsl(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l)) 75%,
+    hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)) 100%);
+  background-size: 100% auto; /* Static gradient, not animated by default */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 2px hsla(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), calc(var(--firebase-color-2-light-l) + 10%),0.6); /* Subtle glow, slightly lighter */
+}
+.dark .firebase-gradient-text-active-role {
+   background-image: linear-gradient(to right,
+    hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)) 0%,
+    hsl(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l)) 25%,
+    hsl(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l)) 50%,
+    hsl(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l)) 75%,
+    hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)) 100%);
+   text-shadow: 0 0 2px hsla(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), calc(var(--firebase-color-2-dark-l) + 10%),0.6);
+}
+
+
+/* Error Message Highlight Animation */
+@keyframes error-highlight-animation {
+  0%, 100% {
+    box-shadow: 0 0 4px hsl(var(--destructive) / 0.3);
+    border-color: hsl(var(--destructive) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 8px hsl(var(--destructive) / 0.6), 0 0 12px hsl(var(--destructive) / 0.4);
+    border-color: hsl(var(--destructive) / 0.7);
+  }
+}
+
+.animate-error-highlight {
+  animation: error-highlight-animation 2s infinite ease-in-out;
+}
+
+/* Pro Mode Dashboard Tool Card Animations */
+.tool-card-frequent.firebase-gradient-border-hover:hover {
+  position: relative;
+  border-color: transparent !important;
+}
+
+.tool-card-frequent.firebase-gradient-border-hover:hover::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--radius) + 2px);
+  padding: 2px;
+  background: linear-gradient(135deg,
+    hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)),
+    hsl(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l)),
+    hsl(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l)),
+    hsl(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l)),
+    hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l))
+  );
+  background-size: 400% 400%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 0;
+  animation: animated-gradient-background 5s ease infinite;
+}
+.dark .tool-card-frequent.firebase-gradient-border-hover:hover::before {
+   background: linear-gradient(135deg,
+    hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)),
+    hsl(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l)),
+    hsl(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l)),
+    hsl(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l)),
+    hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l))
+  );
+  background-size: 400% 400%;
+  animation: animated-gradient-background 5s ease infinite;
+}
+
+
+/* Subtle pulse/glow for tool cards (can be applied conditionally) */
+@keyframes subtle-pulse-glow-light {
+  0%, 100% { box-shadow: 0 0 5px hsl(var(--primary) / 0.1), 0 0 10px hsl(var(--primary) / 0.05), 0 0 2px hsla(var(--firebase-color-1-light-h),var(--firebase-color-1-light-s),var(--firebase-color-1-light-l),0.3); }
+  50% { box-shadow: 0 0 10px hsl(var(--primary) / 0.2), 0 0 15px hsl(var(--primary) / 0.1), 0 0 5px hsla(var(--firebase-color-2-light-h),var(--firebase-color-2-light-s),var(--firebase-color-2-light-l),0.5); }
+}
+.animate-subtle-pulse-glow {
+  animation-duration: 2.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-name: subtle-pulse-glow-light;
+}
+
+@keyframes subtle-pulse-glow-dark {
+  0%, 100% { box-shadow: 0 0 5px hsl(var(--primary) / 0.1), 0 0 10px hsl(var(--primary) / 0.05), 0 0 2px hsla(var(--firebase-color-1-dark-h),var(--firebase-color-1-dark-s),var(--firebase-color-1-dark-l),0.3); }
+  50% { box-shadow: 0 0 10px hsl(var(--primary) / 0.2), 0 0 15px hsl(var(--primary) / 0.1), 0 0 5px hsla(var(--firebase-color-2-dark-h),var(--firebase-color-2-dark-s),var(--firebase-color-2-dark-l),0.5); }
+}
+.dark .animate-subtle-pulse-glow {
+  animation-name: subtle-pulse-glow-dark;
+}
+
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, transparent 20%, hsl(var(--primary)/0.1) 50%, transparent 80%);
+  background-size: 1000px 100%;
+}
+
+/* Additional Firebase-inspired button focus/hover */
+.firebase-button-interactive {
+  transition: all 0.3s ease;
+}
+.firebase-button-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsla(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l), 0.3);
+}
+.dark .firebase-button-interactive:hover {
+  box-shadow: 0 4px 12px hsla(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l), 0.3);
+}
+.firebase-button-interactive:focus-visible {
+  outline: 2px solid hsl(var(--firebase-color-1-light-h),var(--firebase-color-1-light-s),var(--firebase-color-1-light-l));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsla(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l), 0.2);
+}
+.dark .firebase-button-interactive:focus-visible {
+  outline: 2px solid hsl(var(--firebase-color-1-dark-h),var(--firebase-color-1-dark-s),var(--firebase-color-1-dark-l));
+  box-shadow: 0 0 0 4px hsla(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l), 0.2);
+}
+
+/* Gemini Inspired CTA Button Glow - Now Firebase Inspired */
+@keyframes gemini-cta-glow-light {
+  0%, 100% {
+    box-shadow: 0 0 5px hsla(var(--firebase-color-1-light-h),var(--firebase-color-1-light-s),var(--firebase-color-1-light-l),0.3), 0 0 10px hsla(var(--firebase-color-2-light-h),var(--firebase-color-2-light-s),var(--firebase-color-2-light-l),0.2), 0 0 15px hsla(var(--firebase-color-3-light-h),var(--firebase-color-3-light-s),var(--firebase-color-3-light-l),0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px hsla(var(--firebase-color-2-light-h),var(--firebase-color-2-light-s),var(--firebase-color-2-light-l),0.5), 0 0 20px hsla(var(--firebase-color-3-light-h),var(--firebase-color-3-light-s),var(--firebase-color-3-light-l),0.3), 0 0 30px hsla(var(--firebase-color-4-light-h),var(--firebase-color-4-light-s),var(--firebase-color-4-light-l),0.3);
+  }
+}
+.gemini-cta-button {
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-name: gemini-cta-glow-light;
+}
+
+@keyframes gemini-cta-glow-dark {
+    0%, 100% {
+    box-shadow: 0 0 5px hsla(var(--firebase-color-1-dark-h),var(--firebase-color-1-dark-s),var(--firebase-color-1-dark-l),0.3), 0 0 10px hsla(var(--firebase-color-2-dark-h),var(--firebase-color-2-dark-s),var(--firebase-color-2-dark-l),0.2), 0 0 15px hsla(var(--firebase-color-3-dark-h),var(--firebase-color-3-dark-s),var(--firebase-color-3-dark-l),0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px hsla(var(--firebase-color-2-dark-h),var(--firebase-color-2-dark-s),var(--firebase-color-2-dark-l),0.5), 0 0 20px hsla(var(--firebase-color-3-dark-h),var(--firebase-color-3-dark-s),var(--firebase-color-3-dark-l),0.3), 0 0 30px hsla(var(--firebase-color-4-dark-h),var(--firebase-color-4-dark-s),var(--firebase-color-4-dark-l),0.3);
+  }
+}
+.dark .gemini-cta-button {
+  animation-name: gemini-cta-glow-dark;
+}
+
+
+/* Sidebar Active Item Glow & Indicator Bar (Gemini Inspired) */
+@keyframes sidebar-active-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px hsl(var(--sidebar-primary)/0.3), 0 0 12px hsl(var(--sidebar-primary)/0.2), inset 0 0 5px hsl(var(--sidebar-primary)/0.1);
+  }
+  50% {
+    box-shadow: 0 0 12px hsl(var(--sidebar-primary)/0.5), 0 0 18px hsl(var(--sidebar-primary)/0.3), inset 0 0 8px hsl(var(--sidebar-primary)/0.2);
+  }
+}
+
+.sidebar-active-item-glow {
+  position: relative;
+}
+
+.sidebar-active-item-glow::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 4px;
+  background-image: linear-gradient(to bottom, hsl(var(--sidebar-active-indicator-start)), hsl(var(--sidebar-active-indicator-end)));
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 0 8px hsl(var(--sidebar-primary)/0.5);
+  animation: sidebar-indicator-pulse 2s infinite ease-in-out;
+}
+
+/* Collapsed sidebar active item indicator */
+.group[data-collapsible="icon"] .sidebar-active-item-glow::before {
+  top: 10%;
+  bottom: 10%;
+  left: -2px; /* Adjust position for collapsed icon state */
+  width: 3px;
+}
+
+
+@keyframes sidebar-indicator-pulse {
+  0%, 100% { opacity: 0.7; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.1); }
+}
+
+/* Sidebar Item Hover Shine Effect (Gemini Inspired) */
+.sidebar-item-shine {
+  position: relative;
+  overflow: hidden;
+}
+.sidebar-item-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: linear-gradient(
+    to right,
+    transparent 0%,
+    hsla(var(--sidebar-accent-foreground)/0.05) 30%,
+    hsla(var(--sidebar-accent-foreground)/0.15) 50%,
+    hsla(var(--sidebar-accent-foreground)/0.05) 70%,
+    transparent 100%
+  );
+  transform: translateX(-150%) translateY(-25%) rotate(25deg);
+  transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+.sidebar-item-shine:hover::after {
+  transform: translateX(50%) translateY(-25%) rotate(25deg);
+}
+
+/* --- Styles for Compact Notification Panel --- */
+.notification-panel-compact {
+  background-color: hsl(var(--notification-panel-compact-bg));
+  border: 1px solid hsl(var(--notification-panel-compact-border));
+  @apply rounded-xl shadow-2xl overflow-hidden fixed top-16 right-4 z-50 w-[320px] max-h-[400px] flex flex-col;
+}
+
+/* Animated Gradient Border for Notification Panel (Firebase Inspired) */
+.notification-panel-compact.notification-panel-animated-border {
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.notification-panel-compact.notification-panel-animated-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l)),
+    hsl(var(--firebase-color-2-light-h), var(--firebase-color-2-light-s), var(--firebase-color-2-light-l)),
+    hsl(var(--firebase-color-3-light-h), var(--firebase-color-3-light-s), var(--firebase-color-3-light-l)),
+    hsl(var(--firebase-color-4-light-h), var(--firebase-color-4-light-s), var(--firebase-color-4-light-l)),
+    hsl(var(--firebase-color-1-light-h), var(--firebase-color-1-light-s), var(--firebase-color-1-light-l))
+  );
+  background-size: 300% 300%;
+  animation: animated-gradient-background 4s ease infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+.dark .notification-panel-compact.notification-panel-animated-border::before {
+   background: linear-gradient(
+    135deg,
+    hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l)),
+    hsl(var(--firebase-color-2-dark-h), var(--firebase-color-2-dark-s), var(--firebase-color-2-dark-l)),
+    hsl(var(--firebase-color-3-dark-h), var(--firebase-color-3-dark-s), var(--firebase-color-3-dark-l)),
+    hsl(var(--firebase-color-4-dark-h), var(--firebase-color-4-dark-s), var(--firebase-color-4-dark-l)),
+    hsl(var(--firebase-color-1-dark-h), var(--firebase-color-1-dark-s), var(--firebase-color-1-dark-l))
+  );
+   background-size: 300% 300%;
+   animation: animated-gradient-background 4s ease infinite;
+}
+
+
+.notification-item-card-compact {
+  @apply p-1.5 rounded-md cursor-pointer transition-colors duration-150 flex items-start gap-2;
+}
+.notification-unread-dot {
+  height: 0.375rem; /* 6px */
+  width: 0.375rem; /* 6px */
+  border-radius: 9999px; /* full */
+  margin-top: 0.25rem; /* mt-1 */
+  flex-shrink: 0;
+  align-self: center;
+  background-color: var(--notification-unread-dot-color);
+}
+
+
+/* Chat Interface Animation Support Styles */
+@keyframes pulseDotLight {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+.animate-pulse-dot-light {
+  animation: pulseDotLight 1.2s infinite ease-in-out;
+}
+.delay-0 { animation-delay: 0s; }
+.delay-150 { animation-delay: 0.15s; }
+.delay-300 { animation-delay: 0.3s; }
+
+
+/* --- Chat Interface Loading Animation Background --- */
+@keyframes chatLoadingBgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.chat-loading-bg-animated {
+  background-size: 180% 180%; /* Larger size for smoother gradient animation */
+  animation: chatLoadingBgShift 25s ease infinite;
+}
+
+/* --- Ribbon Slide Animation for Chat --- */
+@keyframes ribbon-slide {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+/* Sidebar Notification Badge Styles */
+.sidebar-notification-badge {
+  @apply bg-primary text-primary-foreground text-xs font-medium;
+  padding: 0.1rem 0.4rem;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 1px 3px hsla(var(--primary-h), var(--primary-s), calc(var(--primary-l) - 10%), 0.3);
+}
+
+
+/* Custom scrollbar for onboarding modal */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--muted)/0.3);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary)/0.7);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+
+/* Medico Layout Background */
+.medico-layout-background {
+  background-image: linear-gradient(to bottom right, hsl(var(--background)), hsla(204.7, 90.1%, 53.5%, 0.03));
+}
+.dark .medico-layout-background {
+  background-image: linear-gradient(to bottom right, hsl(var(--background)), hsla(204.7, 90.1%, 53.5%, 0.07));
+}
+
+/* Onboarding progress dots */
+.onboarding-progress-dot {
+    @apply h-2 w-2 rounded-full mx-1 transition-all duration-300;
+}
+.onboarding-progress-dot-active {
+    @apply bg-primary scale-125;
+}
+.onboarding-progress-dot-inactive {
+    @apply bg-muted-foreground/30;
+}
+
+/* Ensure all keyframes are correctly placed at the root or within appropriate @layer */
+@keyframes drawCircle {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

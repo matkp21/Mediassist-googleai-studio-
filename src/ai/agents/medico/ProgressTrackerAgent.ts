@@ -10,18 +10,56 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { MedicoProgressTrackerInputSchema, MedicoProgressTrackerOutputSchema } from '@/ai/schemas/medico-tools-schemas';
+import { MedicoProgressTrackerInputSchema, MedicoProgressTrackerOutputSchema, NeuralProfileInputSchema, NeuralProfileOutputSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
 
 export type MedicoProgressTrackerInput = z.infer<typeof MedicoProgressTrackerInputSchema>;
 export type MedicoProgressTrackerOutput = z.infer<typeof MedicoProgressTrackerOutputSchema>;
+export type NeuralProfileOutput = z.infer<typeof NeuralProfileOutputSchema>;
 
 export async function trackProgress(input: MedicoProgressTrackerInput): Promise<MedicoProgressTrackerOutput> {
-  // In a real application, this function would read from and write to a Firestore database
-  // to get the user's current progress and update it.
-  // For this conceptual agent, we'll simulate this interaction within the prompt.
   return progressTrackerFlow(input);
 }
+
+export async function fetchNeuralProfile(userId: string): Promise<NeuralProfileOutput> {
+  return neuralProfileFlow({ userId });
+}
+
+const neuralProfileFlow = ai.defineFlow(
+  {
+    name: 'neuralProfileFlow',
+    inputSchema: NeuralProfileInputSchema,
+    outputSchema: NeuralProfileOutputSchema,
+  },
+  async (input) => {
+    try {
+       // In a real application, you would query the conversation database here, grouping by the userId.
+       // Because we are simulating a memory system, we will use a dedicated Genkit prompt call to 
+       // extract these metrics from simulated logs or base generation.
+       const response = await ai.generate({
+         model: 'vertexai/gemini-2.5-pro',
+         prompt: `You are Medi, analyzing the recent learning patterns of user ${input.userId}. 
+Based on typical medical student performance and simulated interaction logs, generate a highly personalized strictly structured Neural Progress Profile.
+
+Focus on:
+1. Cognitive Strengths (e.g. pattern recognition, memorization)
+2. Knowledge Gaps
+3. Clinical Reasoning Style (elaborate if they use deductive vs inductive reasoning)
+
+Output MUST match the JSON schema natively.`,
+         output: { schema: NeuralProfileOutputSchema },
+         config: { temperature: 0.5 }
+       });
+       
+       const output = response.output();
+       if (!output) throw new Error("Failed to generate Neural Profile.");
+       return output;
+    } catch(err) {
+       console.error("Error generating neural profile:", err);
+       throw err;
+    }
+  }
+);
 
 const progressTrackerPrompt = ai.definePrompt({
   name: 'medicoProgressTrackerPrompt',

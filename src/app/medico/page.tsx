@@ -18,23 +18,20 @@ export default function MedicoPage() {
   useEffect(() => {
     // If the user's role is null, explicitly assume they want the medico experience since they navigated here
     if (userRole === null) {
-      const timeout = setTimeout(() => {
-         selectUserRole('medico');
-      }, 100);
-      return () => clearTimeout(timeout);
+      // Async so we don't trigger cascading updates
+      Promise.resolve().then(() => selectUserRole('medico'));
+      return;
     }
 
-    if (userRole !== null) {
-      if (userRole === 'medico') {
+    if (userRole !== 'medico') {
+        router.replace('/');
+    } else {
         const welcomeShown = sessionStorage.getItem('medicoHubAnimationShown');
         if (!welcomeShown) {
-          setTimeout(() => setShowMedicoAnimation(true), 0);
-          sessionStorage.setItem('medicoHubAnimationShown', 'true');
+           setShowMedicoAnimation(true);
+           sessionStorage.setItem('medicoHubAnimationShown', 'true');
         }
-      } else {
-        router.push('/');
-      }
-      setIsLoadingRole(false);
+        setIsLoadingRole(false);
     }
   }, [userRole, router, selectUserRole]);
 

@@ -21,18 +21,18 @@ export function RagTutor() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [searchStatus, setSearchStatus] = useState<string>('');
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Scroll to bottom whenever messages change
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
       if (scrollContainer) {
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
       }
     }
-  }, [messages]);
+  }, [messages, searchStatus]);
 
   const handleSendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -47,6 +47,13 @@ export function RagTutor() {
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setIsLoading(true);
+    
+    // Ask Medi: Show semantic search steps
+    setSearchStatus('Searching semantic vector DB for PYQs and Flashcards...');
+    
+    setTimeout(() => {
+      setSearchStatus('Running RAG pipeline against medical literature...');
+    }, 1500);
 
     try {
       const response = await askMedicalTutor(userMessage.content);
@@ -61,18 +68,19 @@ export function RagTutor() {
         const assistantMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: response.answer || "I don't have enough information in my study materials to answer that."
+          content: response.answer || "I don't have enough grounded information to answer that."
         };
         setMessages(prev => [...prev, assistantMessage]);
       }
     } catch (error) {
       toast({
         title: "Connection Error",
-        description: "Failed to connect to the medical tutor.",
+        description: "Failed to connect to Medi.",
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
+      setSearchStatus('');
     }
   };
 
@@ -81,10 +89,10 @@ export function RagTutor() {
       <CardHeader className="border-b bg-card pb-4">
         <CardTitle className="text-xl flex items-center gap-2">
           <DatabaseZap className="h-6 w-6 text-primary" />
-          RAG Medical Tutor
+          Ask Medi: Your Resident Genius Mentor
         </CardTitle>
         <CardDescription>
-          Ask questions grounded specifically in your uploaded Vertex AI Search documents.
+          Ask natural questions to instantly pull semantic flashcards, PYQs, and grounded medical literature via RAG.
         </CardDescription>
       </CardHeader>
       
@@ -94,17 +102,20 @@ export function RagTutor() {
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center text-center py-20 text-muted-foreground">
                 <DatabaseZap className="h-16 w-16 mb-4 opacity-20 text-primary" />
-                <h3 className="text-lg font-medium text-foreground mb-2">Welcome to Grounded AI</h3>
+                <h3 className="text-lg font-medium text-foreground mb-2">I'm Medi, your resident on call.</h3>
                 <p className="max-w-sm text-sm">
-                  This tutor uses Retrieval-Augmented Generation (RAG) to search your Vertex AI datastore before answering.
+                  Powered by advanced semantic vector search and RAG. I can pull up flashcards, past questions, and synthesize complex topics instantly.
                 </p>
                 <div className="mt-8 flex flex-col gap-2 w-full max-w-sm">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground/60 tracking-wider">Example queries</p>
-                  <Button variant="outline" className="justify-start h-auto py-2 px-3 text-left font-normal" onClick={() => setInputValue("What are the first line treatments for hypertension?")}>
-                    "What are the first line treatments for hypertension?"
+                  <p className="text-xs font-semibold uppercase text-muted-foreground/60 tracking-wider">Try asking me...</p>
+                  <Button variant="outline" className="justify-start h-auto py-2 px-3 text-left font-normal border-primary/20 hover:border-primary/50" onClick={() => setInputValue("Give me 5 questions on the skeletal system")}>
+                    "Give me 5 questions on the skeletal system"
                   </Button>
-                  <Button variant="outline" className="justify-start h-auto py-2 px-3 text-left font-normal" onClick={() => setInputValue("What is the mechanism of action for Aspirin?")}>
-                    "What is the mechanism of action for Aspirin?"
+                  <Button variant="outline" className="justify-start h-auto py-2 px-3 text-left font-normal border-primary/20 hover:border-primary/50" onClick={() => setInputValue("Generate some quick flashcards for acute coronary syndrome")}>
+                    "Generate some quick flashcards for ACS"
+                  </Button>
+                  <Button variant="outline" className="justify-start h-auto py-2 px-3 text-left font-normal border-primary/20 hover:border-primary/50" onClick={() => setInputValue("Search previous year questions on pharmacology")}>
+                    "Search previous year questions on pharmacology"
                   </Button>
                 </div>
               </div>
@@ -127,12 +138,15 @@ export function RagTutor() {
                     "rounded-2xl px-4 py-3 text-sm",
                     message.role === 'user' 
                       ? "bg-primary text-primary-foreground rounded-tr-sm" 
-                      : "bg-muted text-foreground rounded-tl-sm border"
+                      : "bg-muted text-foreground rounded-tl-sm border shadow-sm"
                   )}>
                     {message.role === 'user' ? (
                       <p className="whitespace-pre-wrap">{message.content}</p>
                     ) : (
-                      <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <div className="prose prose-sm dark:prose-invert max-w-none 
+                                      prose-p:leading-relaxed prose-pre:bg-primary/5 
+                                      prose-pre:border prose-pre:border-primary/10
+                                      prose-strong:text-primary">
                         <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
                     )}
@@ -145,13 +159,13 @@ export function RagTutor() {
                 <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-1">
                   <Bot className="h-5 w-5" />
                 </div>
-                <div className="bg-muted border rounded-2xl rounded-tl-sm px-4 py-4 flex items-center gap-2">
-                  <div className="flex space-x-1">
+                <div className="bg-muted border rounded-2xl rounded-tl-sm px-4 py-4 flex flex-col gap-2">
+                  <div className="flex space-x-1 items-center">
                     <div className="h-2 w-2 bg-primary/50 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                     <div className="h-2 w-2 bg-primary/50 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
                     <div className="h-2 w-2 bg-primary/50 rounded-full animate-bounce"></div>
                   </div>
-                  <span className="text-xs text-muted-foreground ml-2">Searching datastore...</span>
+                  <span className="text-xs text-muted-foreground animate-pulse">{searchStatus || 'Processing...'}</span>
                 </div>
               </div>
             )}
@@ -163,7 +177,7 @@ export function RagTutor() {
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask a question targeting your uploaded documents..."
+              placeholder="Ask Medi about topics, flashcards, or past questions..."
               disabled={isLoading}
               className="flex-1 rounded-full pl-5 pr-12 focus-visible:ring-primary shadow-sm"
             />
@@ -177,7 +191,7 @@ export function RagTutor() {
             </Button>
           </form>
           <p className="text-center text-[10px] text-muted-foreground mt-2">
-            AI can make mistakes. Uses Vertex AI Search grounded retrieval.
+            Ask Medi | Uses semantic vector search & RAG pipeline
           </p>
         </div>
       </CardContent>

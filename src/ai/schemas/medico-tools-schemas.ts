@@ -374,6 +374,17 @@ export const MedicoProgressTrackerOutputSchema = z.object({
 });
 export type MedicoProgressTrackerOutput = z.infer<typeof MedicoProgressTrackerOutputSchema>;
 
+export const NeuralProfileInputSchema = z.object({
+  userId: z.string().describe("The user ID to fetch the neural profile for.")
+});
+
+export const NeuralProfileOutputSchema = z.object({
+  cognitiveStrengths: z.array(z.string()).describe("Cognitive strengths identified by Medi."),
+  knowledgeGaps: z.array(z.string()).describe("Weak areas where the user struggles."),
+  reasoningStyleText: z.string().describe("Explanatory text summarizing their clinical reasoning approach (e.g. Top-Down vs Bottom-Up) and Medi's recommendations.")
+});
+export type NeuralProfileOutput = z.infer<typeof NeuralProfileOutputSchema>;
+
 // Schema for Case Challenge Generator
 export const MedicoCaseChallengeGeneratorInputSchema = z.object({
   difficulty: z.enum(['Easy', 'Medium', 'Hard']).describe("The difficulty level for the case."),

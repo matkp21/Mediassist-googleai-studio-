@@ -6,7 +6,7 @@
     "dev": "next dev",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
-    "build": "next build",
+    "build": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
@@ -81,6 +81,7 @@
     "@types/react-dom": "18.3.0",
     "@types/three": "^0.165.0",
     "autoprefixer": "10.4.19",
+    "cross-env": "^10.1.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.2",
     "genkit-cli": "1.8.0",
