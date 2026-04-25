@@ -18,48 +18,20 @@ export async function getDrugInfo(input: PharmaGenieInput): Promise<PharmaGenieO
   return pharmaGenieFlow(input);
 }
 
+import { fdaInteractTool, fdaAdverseEventsTool } from '@/ai/tools/mcpTools';
+
 const pharmaGeniePrompt = ai.definePrompt({
   name: 'medicoPharmaGeniePrompt',
   input: { schema: PharmaGenieInputSchema },
   output: { schema: PharmaGenieOutputSchema },
-  prompt: `You are PharmaGenie, an AI expert in pharmacology for medical students.
-Your primary task is to generate a JSON object containing a detailed summary of the drug {{{drugName}}} AND a list of relevant next study steps.
-
-The JSON object you generate MUST have fields for 'drugClass', 'mechanismOfAction', 'indications', 'sideEffects', and 'nextSteps'.
-
-**CRITICAL: The 'nextSteps' field is mandatory and must not be omitted.** Generate at least two relevant suggestions.
-
-Example for 'nextSteps':
-[
-  {
-    "title": "Create Flashcards",
-    "description": "Generate flashcards for the mechanism of action and key side effects of {{{drugName}}}.",
-    "toolId": "flashcards",
-    "prefilledTopic": "{{{drugName}}} pharmacology",
-    "cta": "Create Flashcards"
-  },
-  {
-    "title": "Practice Dosage",
-    "description": "Use the dosage calculator to practice calculating a common dose for {{{drugName}}}.",
-    "toolId": "dosage",
-    "prefilledTopic": "{{{drugName}}}",
-    "cta": "Practice Dosage Calculation"
-  }
-]
----
-
-**Instructions for drug info generation:**
-Provide a detailed summary covering:
-1.  **Drug Class**: The pharmacological class of the drug.
-2.  **Mechanism of Action**: How the drug works at a physiological and molecular level.
-3.  **Key Indications**: The primary medical uses for the drug (as an array of strings).
-4.  **Common Side Effects**: Important and common adverse effects (as an array of strings).
-
-Format the entire output as a valid JSON object.
-`,
-  config: {
-    temperature: 0.3, // Factual and structured
-  }
+  tools: [fdaInteractTool, fdaAdverseEventsTool],
+  prompt: `You are PharmaGenie, an AI expert in pharmacology utilizing MCP-standardized OpenFDA servers.
+  Task: Provide detailed drug information for "{{{drugName}}}".
+  
+  Instructions:
+  1. Use 'fda_search_drug_interactions' to check for conflicts if user mentions multiple drugs.
+  2. Use 'fda_get_adverse_events' to retrieve real-world reporter data.
+  3. Synthesize the JSON-RPC tool responses into a structured pharmacological review.`
 });
 
 const pharmaGenieFlow = ai.defineFlow(

@@ -8,17 +8,50 @@ const { PredictionServiceClient } = require('@google-cloud/aiplatform').v1;
 const { GoogleAuth } = require('google-auth-library');
 
 
-// Helper to throw a consistent HttpsError from external API errors
+// Helper for automatic retries with exponential backoff
+const fetchWithRetry = async (url, options = {}, retries = 3, backoff = 300) => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await axios.get(url, options);
+    } catch (error) {
+      const isTransient = error.response && [408, 429, 500, 502, 503, 504].includes(error.response.status);
+      const isNetworkError = !error.response && error.request;
+      
+      if ((isTransient || isNetworkError) && attempt < retries) {
+        console.warn(`[API Warning] ${url} failed on attempt ${attempt}. Retrying in ${backoff}ms...`);
+        await new Promise(resolve => setTimeout(resolve, backoff));
+        backoff *= 2; // Exponential backoff
+      } else {
+        throw error;
+      }
+    }
+  }
+};
+
+// Helper to throw a consistent, user-friendly HttpsError from external API errors
 const throwHttpsErrorFromApi = (error, apiName) => {
   console.error(`Error calling ${apiName} API:`, error.response ? error.response.data : error.message);
-  let message = `An error occurred with the ${apiName} API.`;
+  
+  // User-friendly error messaging based on the error type
+  let message = `We're currently having trouble connecting to ${apiName}. Please try again in a moment.`;
+  
   if (error.response) {
-    message = `API Error from ${apiName}: ${error.response.status} - ${JSON.stringify(error.response.data).substring(0, 100)}`;
+    const status = error.response.status;
+    if (status === 404) {
+      message = `We couldn't find the requested medical information in the ${apiName} database. Please verify the name and try again.`;
+    } else if (status === 429) {
+      message = `${apiName} is currently experiencing unusually high traffic. Please wait a few moments and try your request again.`;
+    } else if (status >= 500) {
+      message = `The ${apiName} systems are currently unavailable. Their engineers are likely working on it.`;
+    } else if (status === 400) {
+      message = `The search query provided to ${apiName} was invalid. Please refine your medical query.`;
+    }
   } else if (error.request) {
-    message = `No response from ${apiName} API.`;
+    message = `No response received from ${apiName}. It seems their network might be temporarily offline.`;
   } else {
-    message = `Error setting up ${apiName} API request: ${error.message}`;
+    message = `An unexpected error occurred while preparing your request to ${apiName}.`;
   }
+  
   throw new functions.https.HttpsError('internal', message);
 };
 
@@ -30,7 +63,7 @@ exports.searchDrug = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('invalid-argument', 'Drug name is required.');
   }
   try {
-    const response = await axios.get(`https://api.fda.gov/drug/label.json?search=${encodeURIComponent(drugName)}&limit=1`);
+    const response = await fetchWithRetry(`https://api.fda.gov/drug/label.json?search=${encodeURIComponent(drugName)}&limit=1`);
     if (response.data && response.data.results && response.data.results.length > 0) {
       return response.data.results[0];
     } else {
@@ -48,7 +81,7 @@ exports.searchGene = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('invalid-argument', 'Gene name is required.');
   }
   try {
-    const response = await axios.get(
+    const response = await fetchWithRetry(
       `https://connect.medlineplus.gov/service?mainSearchCriteria.v.cs=2.16.840.1.113883.6.1&mainSearchCriteria.v.c=${encodeURIComponent(geneName)}&knowledgeResponseType=application/json`
     );
     if (response.data && response.data.feed && response.data.feed.entry && response.data.feed.entry.length > 0) {
@@ -81,7 +114,7 @@ exports.searchICD10 = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('invalid-argument', 'Disease name is required.');
   }
   try {
-    const response = await axios.get(
+    const response = await fetchWithRetry(
       `https://www.hipaaspace.com/api/icd10/search?q=${encodeURIComponent(diseaseName)}&token=${apiToken}`
     );
     if (response.data && Array.isArray(response.data) && response.data.length > 0) {
@@ -306,7 +339,7 @@ exports.searchYouTubeVideos = functions.https.onCall(async (data, context) => {
   }
 
   try {
-    const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+    const response = await fetchWithRetry('https://www.googleapis.com/youtube/v3/search', {
       params: {
         part: 'snippet',
         q: `${query} medical lecture`,

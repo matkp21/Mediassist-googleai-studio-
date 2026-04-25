@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "ClinicalGuideline": {
+      "title": "Clinical Guideline",
+      "description": "Evidence-based clinical protocol or guideline document.",
+      "type": "object",
+      "properties": {
+        "documentText": { "type": "string" },
+        "specialtyField": { "type": "string" },
+        "embedding": { "type": "array", "description": "Vector embedding for semantic search" },
+        "source": { "type": "string" }
+      },
+      "required": ["documentText", "specialtyField"]
+    },
+    "PatientFact": {
+      "title": "Patient Fact",
+      "description": "A discrete, medically relevant fact about a patient's health or history.",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "enum": ["symptom", "medication_adherence", "lifestyle", "preference", "allergy"] },
+        "fact": { "type": "string" },
+        "clinicalRelevance": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["category", "fact", "clinicalRelevance", "timestamp"]
+    },
+    "PatientLabs": {
+      "title": "Patient Laboratory Result",
+      "description": "Structured lab results for a patient.",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "description": "Lab abbreviation (CMP, CBC, etc.)" },
+        "values": { "type": "object", "description": "Map of lab component to result" },
+        "date": { "type": "string", "format": "date-time" },
+        "status": { "type": "string" }
+      },
+      "required": ["type", "values", "date", "status"]
+    }
+  },
+  "firestore": {
+    "/clinical_guidelines/{guidelineId}": {
+      "schema": "ClinicalGuideline",
+      "description": "Knowledge hub for RAG guidelines."
+    },
+    "/patients/{patientId}": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "clinicalSummary": { "type": "string" },
+          "lastInteraction": { "type": "string", "format": "date-time" }
+        }
+      },
+      "description": "Core patient profile with summary digest."
+    },
+    "/patients/{patientId}/memory_facts/{factId}": {
+      "schema": "PatientFact",
+      "description": "Continuous persistent memory for a patient."
+    },
+    "/patients/{patientId}/labs/{labId}": {
+      "schema": "PatientLabs",
+      "description": "Structured laboratory history."
+    }
+  }
+}

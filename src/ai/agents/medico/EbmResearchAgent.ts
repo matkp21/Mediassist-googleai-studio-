@@ -2,7 +2,9 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import { GoogleGenAI } from '@google/genai';
 import { pubmedSearchSkill } from '../skills/pubmed-search';
+import { injectKarpathyGuidelines } from './skills/karpathy-guidelines';
 
 export const EbmResearchInputSchema = z.object({
   query: z.string().describe("The clinical question (e.g. 'PICO formatted query') to search."),
@@ -24,6 +26,24 @@ export async function generateEbmResearch(input: EbmResearchInput): Promise<EbmR
   return ebmResearchFlow(input);
 }
 
+const googleGenAi = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY });
+
+import { clinicalLiteratureScraper, interactiveMedicalScraper } from '@/ai/tools/webScraper';
+
+const medicoClinicalResearchPrompt = ai.definePrompt({
+  name: 'medicoClinicalResearchPrompt',
+  input: { schema: EbmResearchInputSchema },
+  output: { schema: EbmResearchOutputSchema },
+  tools: [clinicalLiteratureScraper, interactiveMedicalScraper],
+  prompt: `You are an EBM Clinical Assistant utilizing Firecrawl web extraction technology.
+  Task: Take clinical query "{{{query}}}", use tools to scrape medical journals (NIH, PubMed, WHO) and synthesize a clinical summary. 
+  
+  Instructions:
+  1. Use 'clinicalLiteratureScraper' for static journal pages.
+  2. Use 'interactiveMedicalScraper' for gated databases or search forms.
+  3. Synthesize clean markdown results into a clinical answer.`
+});
+
 const ebmResearchFlow = ai.defineFlow(
   {
     name: 'medicoEbmResearchFlow',
@@ -32,26 +52,11 @@ const ebmResearchFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      const response = await ai.generate({
-        model: 'vertexai/gemini-2.5-pro',
-        tools: [pubmedSearchSkill],
-        config: { temperature: 0.2 },
-        output: { schema: EbmResearchOutputSchema },
-        prompt: `You are an Evidence-Based Medicine (EBM) clinical assistant.
-Your task is to take a clinical query: "${input.query}", use the 'pubmedSearchSkill' to find recent literature, and then synthesize the findings into a direct, clinical answer.
-Always extract the paper titles and PMC/PMID link (e.g. https://pubmed.ncbi.nlm.nih.gov/[PMID]) and provide a 1-sentence summary of each paper's conclusion in the 'papers' array if found.
-
-IMPORTANT: You must attempt a PubMed search first via the tool before answering.`,
-      });
-      
-      const output = response.output();
-      if (!output || !output.synthesizedAnswer) {
-        throw new Error('Failed to generate EBM synthesis.');
-      }
+      const { output } = await medicoClinicalResearchPrompt(input);
       return output;
-    } catch(err) {
+    } catch (err: any) {
       console.error(err);
-      throw new Error("Error generating EBM research summary.");
+      throw new Error(`Research Fault: ${err.message}`);
     }
   }
 );

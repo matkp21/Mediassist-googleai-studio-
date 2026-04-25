@@ -11,6 +11,8 @@ import { ai } from '@/ai/genkit';
 import { MedicoClinicalCaseInputSchema, MedicoClinicalCaseOutputSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
 
+import { loadSkillTool } from '@/ai/tools/agenticTools';
+
 export type MedicoClinicalCaseInput = z.infer<typeof MedicoClinicalCaseInputSchema>;
 export type MedicoClinicalCaseOutput = z.infer<typeof MedicoClinicalCaseOutputSchema>;
 
@@ -23,7 +25,12 @@ const clinicalCasePrompt = ai.definePrompt({
   name: 'medicoClinicalCasePrompt',
   input: { schema: MedicoClinicalCaseInputSchema },
   output: { schema: MedicoClinicalCaseOutputSchema },
-  prompt: `You are an AI tutor managing a clinical case simulation for a medical student. Your primary task is to generate a JSON object representing the next step in the simulation.
+  tools: [loadSkillTool],
+  prompt: `You are an AI tutor managing a clinical case simulation for a medical student. 
+Pattern: MedGemma Determinism. You have access to specialized skills. 
+If you need a clinical score or calculation (e.g. HEART score, Wells criteria), you MUST use the 'loadSkill' tool.
+
+Your primary task is to generate a JSON object representing the next step in the simulation.
 
 {{#if caseId}}
 You are continuing an existing case.

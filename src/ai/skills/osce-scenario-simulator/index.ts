@@ -2,7 +2,7 @@ import { genkit, z } from 'genkit';
 import { vertexAI } from '@genkit-ai/vertexai';
 import fs from 'fs/promises';
 import path from 'path';
-import { tokenRoiTrackerMiddleware } from '../core/middleware';
+import { tokenRoiTrackerMiddleware } from '../../core/middleware';
 
 const ai = genkit({ plugins: [vertexAI({ location: 'us-central1' })] });
 

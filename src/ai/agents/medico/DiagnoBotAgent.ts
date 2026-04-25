@@ -10,6 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { DiagnoBotInputSchema, DiagnoBotOutputSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
+import { injectKarpathyGuidelines } from './skills/karpathy-guidelines';
 
 export type DiagnoBotInput = z.infer<typeof DiagnoBotInputSchema>;
 export type DiagnoBotOutput = z.infer<typeof DiagnoBotOutputSchema>;
@@ -18,12 +19,8 @@ export async function interpretLabs(input: DiagnoBotInput): Promise<DiagnoBotOut
   return diagnoBotFlow(input);
 }
 
-const diagnoBotPrompt = ai.definePrompt({
-  name: 'medicoDiagnoBotPrompt',
-  input: { schema: DiagnoBotInputSchema },
-  output: { schema: DiagnoBotOutputSchema },
-  prompt: `You are DiagnoBot, an AI expert in interpreting clinical laboratory data for medical students.
-Your primary task is to generate a JSON object containing a structured interpretation of the given lab results AND a list of relevant next study steps.
+const promptTemplate = `You are DiagnoBot, an AI expert in interpreting clinical laboratory data for medical students.
+Your primary task is to generate a JSON object containing a structured interpretation of the given lab results, ECGs, X-rays, or ABGs AND a list of relevant next study steps.
 
 The JSON object you generate MUST have an 'interpretation' field, a 'likelyDifferentials' field, and a 'nextSteps' field.
 
@@ -48,17 +45,29 @@ Example for 'nextSteps':
 ]
 ---
 
-**Instructions for lab interpretation:**
-Lab Results to interpret:
+**Instructions for interpretation:**
+{{#if labResults}}
+Text Results to interpret:
 "{{{labResults}}}"
+{{/if}}
+{{#if imageDataUri}}
+Image to interpret (e.g., ECG, X-Ray, ABG printout, or lab results chart):
+{{media url=imageDataUri}}
+{{/if}}
 
 Provide a structured interpretation covering:
-1.  **Abnormal Values**: Clearly list which values are high, low, or abnormal.
-2.  **Potential Implications**: Explain what these abnormalities could suggest (e.g., "Elevated WBC may indicate infection or inflammation").
-3.  **Likely Differentials**: List a few possible differential diagnoses suggested by the lab results in the 'likelyDifferentials' field (an array of strings).
+1.  **Key Findings/Abnormal Values**: Clearly list which values are high, low, or abnormal, or describe the key imaging findings.
+2.  **Potential Implications**: Explain what these abnormalities could suggest (e.g., "Elevated WBC may indicate infection", "ST elevation in V1-V4 suggests anteroseptal MI").
+3.  **Likely Differentials**: List a few possible differential diagnoses suggested by the results in the 'likelyDifferentials' field (an array of strings).
 
 Format the entire output as a valid JSON object.
-`,
+`;
+
+const diagnoBotPrompt = ai.definePrompt({
+  name: 'medicoDiagnoBotPrompt',
+  input: { schema: DiagnoBotInputSchema },
+  output: { schema: DiagnoBotOutputSchema },
+  prompt: injectKarpathyGuidelines(promptTemplate),
   config: {
     temperature: 0.3, // Factual for data interpretation
   }

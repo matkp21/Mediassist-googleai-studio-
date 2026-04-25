@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SymptomAnalysisMode } from '@/components/homepage/symptom-analysis-mode';
 import { DifferentialDiagnosisAssistant } from '@/components/pro/differential-diagnosis-assistant';
+import { DischargeSummaryGenerator } from '@/components/pro/discharge-summary-generator';
 import { motion } from 'framer-motion';
 
 export function ProDiagnosticMode() {
@@ -20,6 +21,7 @@ export function ProDiagnosticMode() {
           <SelectContent>
             <SelectItem value="ddx" className="cursor-pointer">Differential Diagnosis Assistant</SelectItem>
             <SelectItem value="symptom" className="cursor-pointer">Symptom Analysis</SelectItem>
+            <SelectItem value="discharge" className="cursor-pointer">Discharge Summary Generator</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -32,6 +34,7 @@ export function ProDiagnosticMode() {
       >
         {selectedTool === 'ddx' && <DifferentialDiagnosisAssistant />}
         {selectedTool === 'symptom' && <SymptomAnalysisMode />}
+        {selectedTool === 'discharge' && <DischargeSummaryGenerator />}
       </motion.div>
     </div>
   );

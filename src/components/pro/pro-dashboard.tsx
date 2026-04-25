@@ -26,7 +26,7 @@ const ClinicalCalculatorSuite = React.lazy(() => import('./clinical-calculator-s
 const PatientCommunicationDrafter = React.lazy(() => import('./patient-communication-drafter').then(m => ({ default: m.PatientCommunicationDrafter })));
 const OnCallHandoverAssistant = React.lazy(() => import('./on-call-handover-assistant').then(m => ({ default: m.OnCallHandoverAssistant })));
 const ResearchSummarizer = React.lazy(() => import('./research-summarizer').then(m => ({ default: m.ResearchSummarizer })));
-
+const ProWorkflowChatbot = React.lazy(() => import('./pro-workflow-chatbot'));
 
 type ActiveToolId =
   | 'diffDx'
@@ -39,6 +39,7 @@ type ActiveToolId =
   | 'research'
   | 'discharge'
   | 'smartTriage' // New tool ID for the coordinator
+  | 'chatbot'
   | null;
 
 interface ProTool {
@@ -52,6 +53,7 @@ interface ProTool {
 const allProToolsList: ProTool[] = [
   { id: 'smartTriage', title: 'Smart Triage & Referral', description: 'AI coordinator analyzes symptoms and drafts a referral if needed.', icon: ShieldCheck, component: TriageAndReferral },
   { id: 'diffDx', title: 'Differential Diagnosis Assistant', description: 'AI-powered suggestions, investigations, and initial management steps.', icon: Brain, component: DifferentialDiagnosisAssistant },
+  { id: 'chatbot', title: 'Pro Workflow Chatbot', description: 'Context-aware administrative assistant.', icon: MessageSquareHeart, component: ProWorkflowChatbot },
   { id: 'discharge', title: 'Discharge Summary Generator', description: 'Ultra-streamlined, predictive discharge summary creation.', icon: FilePlus, component: DischargeSummaryGenerator },
   { id: 'protocols', title: 'Treatment Protocol Navigator', description: 'Access latest evidence-based treatment guidelines.', icon: ClipboardCheck, component: TreatmentProtocolNavigator },
   { id: 'pharmacopeia', title: 'Pharmacopeia & Interaction Checker', description: 'Comprehensive drug database and interaction analysis.', icon: Pill, component: PharmacopeiaChecker },

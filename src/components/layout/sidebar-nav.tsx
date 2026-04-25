@@ -53,11 +53,11 @@ const allNavItems = [
   { href: '/medications', label: 'Medications', icon: PillIcon, ariaLabel: 'Manage Medications', roles: ['pro', 'medico', 'diagnosis', null] },
   { href: '/ar-viewer', label: 'AR Viewer', icon: ScanEye, ariaLabel: 'Open AR Viewer', roles: ['pro', 'medico', 'diagnosis', null] },
   { href: '/explorer', label: '3D Explorer', icon: Orbit, ariaLabel: 'Open 3D Interactive Explorer', roles: ['pro', 'medico', 'diagnosis', null] },
-  { href: '/pro', label: 'Clinical Suite', icon: BriefcaseMedical, ariaLabel: 'Open Professional Clinical Suite', roles: ['pro', 'medico'] },
+  { href: '/pro', label: 'Clinical Suite', icon: BriefcaseMedical, ariaLabel: 'Open Professional Clinical Suite', roles: ['pro', 'medico', null] },
   { href: '/patient-management', label: 'Patient Management', icon: ClipboardList, ariaLabel: 'Open Patient Management', roles: ['pro'] },
-  { href: '/medico', label: 'Medico Hub', icon: GraduationCap, ariaLabel: 'Open Medico Study Hub', roles: ['medico', 'pro'] },
-  { href: '/medico/library', label: 'Study Library', icon: Library, ariaLabel: 'Open Study Library', roles: ['medico', 'pro'] },
-  { href: '/notifications', label: 'Notifications', icon: BellRing, ariaLabel: 'View Notifications', roles: ['pro', 'medico', 'diagnosis'] },
+  { href: '/medico', label: 'Medico Hub', icon: GraduationCap, ariaLabel: 'Open Medico Study Hub', roles: ['medico', 'pro', null] },
+  { href: '/medico/library', label: 'Study Library', icon: Library, ariaLabel: 'Open Study Library', roles: ['medico', 'pro', null] },
+  { href: '/notifications', label: 'Notifications', icon: BellRing, ariaLabel: 'View Notifications', roles: ['pro', 'medico', 'diagnosis', null] },
   { href: '/feedback', label: 'Feedback', icon: Info, ariaLabel: 'Submit Feedback', roles: ['pro', 'medico', 'diagnosis'] },
 ];
 

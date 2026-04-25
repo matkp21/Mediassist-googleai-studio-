@@ -66,7 +66,9 @@ export function NotificationItemCardCompact({ item, onMarkAsRead, onClosePanel }
       {item.isRead && (
           <span className="mt-1 flex-shrink-0 h-1.5 w-1.5" />
       )}
-      <IconComponent className={cn("h-4 w-4 mt-px flex-shrink-0", item.isRead ? "text-muted-foreground" : "text-primary")} />
+      <div className={cn("mt-px flex-shrink-0", item.isRead ? "text-muted-foreground" : "text-primary")}>
+        {IconComponent && <IconComponent className="h-4 w-4" />}
+      </div>
       <div className="flex-grow overflow-hidden">
         <div className="flex justify-between items-center">
             <h3 className={cn("text-xs font-medium text-foreground truncate", !item.isRead && "font-semibold")}>{item.title}</h3>

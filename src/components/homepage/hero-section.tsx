@@ -47,16 +47,13 @@ export function HeroSection() {
     ctaAriaLabel = "Go to Medico Study Hub";
     ctaBaseClasses = `
       bg-gradient-to-r
-      from-[hsl(var(--firebase-color-1-light-h),var(--firebase-color-1-light-s),var(--firebase-color-1-light-l))]
-      via-[hsl(var(--firebase-color-2-light-h),var(--firebase-color-2-light-s),var(--firebase-color-2-light-l))]
-      to-[hsl(var(--firebase-color-3-light-h),var(--firebase-color-3-light-s),var(--firebase-color-3-light-l))]
-      dark:from-[hsl(var(--firebase-color-1-dark-h),var(--firebase-color-1-dark-s),var(--firebase-color-1-dark-l))]
-      dark:via-[hsl(var(--firebase-color-2-dark-h),var(--firebase-color-2-dark-s),var(--firebase-color-2-dark-l))]
-      dark:to-[hsl(var(--firebase-color-3-dark-h),var(--firebase-color-3-dark-s),var(--firebase-color-3-dark-l))]
+      from-amber-400
+      to-orange-500
       text-white
-      firebase-button-interactive
+      shadow-[0_0_40px_rgba(245,158,11,0.6)]
+      hover:shadow-[0_0_60px_rgba(245,158,11,0.8)]
     `;
-    ctaSpecificAnimation = "gemini-cta-button";
+    ctaSpecificAnimation = "";
   } else if (userRole === 'pro') {
     ctaLink = "/pro";
     ctaText = "Pro Clinical Suite";
@@ -107,7 +104,7 @@ export function HeroSection() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.8, ease: "easeInOut" }}
               lang={greetings[currentGreetingIndex].lang}
-              className="inline-block firebase-gradient-text" // Changed to firebase-gradient-text
+              className="inline-block bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent drop-shadow-sm" 
             >
               {greetings[currentGreetingIndex].text}
             </motion.span>
@@ -116,7 +113,7 @@ export function HeroSection() {
         )}
         {!isClient && ( // Fallback for SSR/initial render before client-side hydration
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-center mb-6">
-                <span className="inline-block firebase-gradient-text">{greetings[0].text}</span>
+                <span className="inline-block bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent drop-shadow-sm">{greetings[0].text}</span>
             </h1>
          )}
 

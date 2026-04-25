@@ -17,7 +17,13 @@ To allow agents to discover and use tools dynamically without hardcoding API log
 - **Implementation:** External integrations (OpenFDA, MedlinePlus Genetics, WHO ICD-10 databases) are structured as isolated MCP servers.
 - **Benefit:** The central AI queries these medical databases securely and predictably.
 
-## 4. Decoupled Orchestration and Execution
+## 4. Hierarchical Supervisor & Self-Healing Orchestration (Brain-3+)
+Transitioning from monolithic models to a distributed, resilient agent architecture.
+- **Supervisor Orchestrator:** Implements a top-level manager that autonomous routes queries to specialized sub-agents (Triage, simulator, Research, etc.). This isolates failures and prevents "silent amnesia."
+- **Self-Healing Wrapper:** All sub-agent calls are wrapped in an autonomous feedback loop. If an AI generates invalid JSON or fails a Zod schema validation, the system automatically captures the error and re-prompts the model for self-correction.
+- **Persistent State Memory:** Every state transition in the orchestrator is logged to a persistent Firestore layer, allowing the system to recover the session state after a hard crash or browser refresh.
+
+## 5. Decoupled Orchestration and Execution
 Separating high-level UI orchestration from secure execution.
 - **Implementation:** The Next.js frontend is strictly for UI orchestration. All high-stakes AI tool executions, database writes, and external API calls are handled in isolated backend enclaves (e.g., Next.js Server Actions / API Routes / Firebase Cloud Functions).
 - **Security:** Malicious actors cannot manipulate the agent's logic or tool execution from the client side.

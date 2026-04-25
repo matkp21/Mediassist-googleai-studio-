@@ -31,6 +31,12 @@ export type ActiveToolId =
   | 'solved-papers' // Added new tool id
   | 'ebm-assistant'
   | 'rag-tutor'
+  | 'geospatial-routing'
+  | 'ingestion'
+  | 'high-thinking'
+  | 'clinical-recipes'
+  | 'omnichannel-sessions'
+  | 'interactive-prompts'
   | null;
 
 export interface MedicoTool {

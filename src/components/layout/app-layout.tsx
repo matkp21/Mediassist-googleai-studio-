@@ -28,6 +28,7 @@ import WelcomeDisplay from '@/components/welcome/welcome-display';
 import type { NotificationItem } from '@/types/notifications';
 import { useToast } from '@/hooks/use-toast';
 import { NotificationAndAccountPanel } from './notification-and-account-panel'; // Restored import
+import { AskAiPill } from '@/components/medico/AskAiPill';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -229,6 +230,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </header>
         <main className="flex-1 flex flex-col overflow-auto relative">
           {children}
+          <AskAiPill />
         </main>
         <Footer />
       </SidebarInset>

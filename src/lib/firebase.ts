@@ -1,10 +1,7 @@
-// src/lib/firebase.ts
-import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
-import { getStorage, type FirebaseStorage } from "firebase/storage";
-import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
-// import { getFunctions, type Functions } from "firebase/functions";
+import { initializeApp, getApps } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,32 +10,11 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID, // Optional
 };
 
-let app: FirebaseApp;
-if (!getApps().length) {
-  // Check if we have a valid config before initializing to prevent build errors
-  if (firebaseConfig.apiKey) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    // Provide a dummy app for build time if config is missing
-    app = initializeApp({ apiKey: "dummy-key-for-build", projectId: "dummy-project" }, "build-dummy");
-  }
-} else {
-  app = getApps()[0];
-}
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const firestore = getFirestore(app);
+const storage = getStorage(app);
+const auth = getAuth(app);
 
-const auth: Auth = getAuth(app);
-const firestore: Firestore = getFirestore(app);
-const storage: FirebaseStorage = getStorage(app);
-// const functions: Functions = getFunctions(app); // Optional: specify region
-
-// Initialize Vertex AI
-const vertexAI = getVertexAI(app);
-
-// Helper to quickly get the fast Gemini 1.5 Flash model
-const getFlashModel = () => getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
-const getProModel = () => getGenerativeModel(vertexAI, { model: "gemini-1.5-pro" });
-
-export { app, auth, firestore, storage, vertexAI, getFlashModel, getProModel /*, functions */ };
+export { app, firestore, storage, auth };

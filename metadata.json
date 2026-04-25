@@ -1,5 +1,5 @@
 {
-  "name": "mediassist google studio",
-  "description": "Imported from matkp21/studio",
-  "requestFramePermissions": []
+  "name": "MediAssistant Pro",
+  "description": "Enterprise-grade Medical AI with VibeVoice, Genkit, and multi-agent synthesis.",
+  "requestFramePermissions": ["microphone"]
 }

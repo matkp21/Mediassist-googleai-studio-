@@ -3,11 +3,11 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Award, BarChart2, CheckCircle, Target, Lightbulb, Bot } from 'lucide-react';
+import { Award, BarChart2, CheckCircle, Target, Lightbulb, Bot, ArrowRight, ChevronDown, History, Activity } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from "recharts"
 import { useTheme } from '@/contexts/theme-provider';
 import type { MedicoProgressTrackerOutput } from '@/ai/agents/medico/ProgressTrackerAgent';
 import { fetchNeuralProfile } from '@/ai/agents/medico/ProgressTrackerAgent';
@@ -15,6 +15,8 @@ import type { NeuralProfileOutput } from '@/ai/schemas/medico-tools-schemas';
 import { Button } from '@/components/ui/button';
 import { useProMode } from '@/contexts/pro-mode-context';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 // More detailed placeholder data for demonstration
 const sampleProgressData: MedicoProgressTrackerOutput & { subjects: any[], achievements: any[] } = {
@@ -44,25 +46,15 @@ const sampleProgressData: MedicoProgressTrackerOutput & { subjects: any[], achie
   ]
 };
 
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { useNeuralProfile } from '@/hooks/use-neural-profile';
+
 export default function ProgressTracker() {
+  const { user } = useProMode();
+  const { profile: neuralProfile, isLoading: isLoadingProfile, refetch: handleFetchNeuralProfile } = useNeuralProfile(user?.uid || 'anonymous');
   const [progressData] = useState(sampleProgressData);
   const { resolvedTheme } = useTheme();
-  const { user } = useProMode();
-  
-  const [neuralProfile, setNeuralProfile] = useState<NeuralProfileOutput | null>(null);
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
-
-  const handleFetchNeuralProfile = async () => {
-    setIsLoadingProfile(true);
-    try {
-      const profile = await fetchNeuralProfile(user?.uid || 'anonymous');
-      setNeuralProfile(profile);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoadingProfile(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -231,7 +223,60 @@ export default function ProgressTracker() {
                         {neuralProfile.reasoningStyleText}
                       </p>
                     </div>
-                 </div>
+
+                    {/* Item 13: Granular Weakness View */}
+                    <div className="bg-background p-4 rounded-xl border border-border/50 shadow-sm col-span-1 md:col-span-3">
+                      <h4 className="font-semibold text-amber-600 mb-2 flex items-center gap-2"><Target className="h-4 w-4" /> Granular Weaknesses (Subtopics)</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {neuralProfile.subtopicWeaknesses?.map((sw: any, i: number) => (
+                          <div key={i} className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
+                            <p className="font-bold text-[10px] uppercase text-amber-700 tracking-wider font-mono">{sw.subtopic}</p>
+                            <p className="text-[11px] text-muted-foreground mt-1 italic">&quot;{sw.errorPattern}&quot;</p>
+                            <div className="mt-2 flex flex-col gap-1">
+                              <div className="flex justify-between items-center text-[9px] font-bold uppercase text-muted-foreground">
+                                <span>Remediation Priority</span>
+                                <span>{sw.remediationPriority}/10</span>
+                              </div>
+                              <Progress value={sw.remediationPriority * 10} className="h-1 flex-1" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Item 13: diagnosticTimeline View */}
+                    <div className="bg-background p-4 rounded-xl border border-border/50 shadow-sm col-span-1 md:col-span-3">
+                      <h4 className="font-semibold text-sky-600 mb-4 flex items-center gap-2"><History className="h-4 w-4" /> Diagnostic Timeline & Milestones</h4>
+                      <div className="relative pl-8 space-y-6 before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-px before:bg-border">
+                        {neuralProfile.diagnosticTimeline?.map((dt: any, i: number) => (
+                          <div key={i} className="relative">
+                            <div className={cn(
+                              "absolute -left-8 top-1 w-7 h-7 rounded-full border-4 border-background flex items-center justify-center",
+                              dt.gravity === 'High' ? "bg-destructive text-white" : dt.gravity === 'Medium' ? "bg-amber-500 text-white" : "bg-sky-500 text-white"
+                            )}>
+                               <Activity className="h-3 w-3" />
+                            </div>
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{new Date(dt.timestamp).toLocaleDateString()}</span>
+                              <Badge variant="outline" className={cn(
+                                "text-[9px] px-1.5 h-4",
+                                dt.gravity === 'High' ? "border-destructive/30 text-destructive" : dt.gravity === 'Medium' ? "border-amber-500/30 text-amber-600" : "border-sky-500/30 text-sky-600"
+                              )}>
+                                {dt.gravity} Priority
+                              </Badge>
+                            </div>
+                            <p className="text-sm font-medium mt-1">{dt.event}</p>
+                            {dt.topicLink && (
+                              <p className="text-[10px] text-muted-foreground mt-1">Linked Topic: <span className="text-primary font-bold">{dt.topicLink}</span></p>
+                            )}
+                          </div>
+                        ))}
+                        {(!neuralProfile.diagnosticTimeline || neuralProfile.diagnosticTimeline.length === 0) && (
+                          <p className="text-xs text-muted-foreground italic">No milestones recorded yet. Start a case or take a quiz to begin tracking.</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
              ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-60 grayscale transition-all hover:grayscale-0">
                   <div className="bg-background p-4 rounded-xl border border-border/50 shadow-sm">

@@ -44,7 +44,8 @@ Based on typical medical student performance and simulated interaction logs, gen
 Focus on:
 1. Cognitive Strengths (e.g. pattern recognition, memorization)
 2. Knowledge Gaps
-3. Clinical Reasoning Style (elaborate if they use deductive vs inductive reasoning)
+3. Clinical Reasoning Style
+4. Diagnostic Timeline (chronological sequence of study milestones or simulated patient encounters)
 
 Output MUST match the JSON schema natively.`,
          output: { schema: NeuralProfileOutputSchema },

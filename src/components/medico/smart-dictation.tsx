@@ -137,6 +137,37 @@ export default function SmartDictation() {
     toast({ title: "Recording Stopped" });
   };
   
+  const handleStructure = async (file?: File) => {
+    setIsLoading(true);
+    try {
+       let imageDataUri: string | undefined = undefined;
+       if (file) {
+         const reader = new FileReader();
+         const dataUriPromise = new Promise<string>((res, rej) => {
+            reader.onerror = rej;
+            reader.onload = () => res(reader.result as string);
+            reader.readAsDataURL(file);
+         });
+         imageDataUri = await dataUriPromise;
+       }
+
+       const result = await structureNote({
+           rawText: transcript.trim() || undefined,
+           imageDataUri,
+           template: selectedTemplate
+       });
+
+       if (result.structuredText) {
+          setTranscript(result.structuredText);
+          toast({ title: "Note Structured" });
+       }
+    } catch (error) {
+       toast({ title: "Structuring Failed", description: String(error), variant: "destructive" });
+    } finally {
+       setIsLoading(false);
+    }
+  };
+
   const handleSaveNote = async () => {
     if (!transcript.trim() && audioChunksRef.current.length === 0) {
       toast({ title: "No Content", description: "There is nothing to save.", variant: "destructive" });
@@ -227,7 +258,7 @@ export default function SmartDictation() {
           )}
 
           <div>
-            <Label htmlFor="dictation-output" className="font-semibold">Live Transcript</Label>
+            <Label htmlFor="dictation-output" className="font-semibold">Live Transcript / Rough Notes</Label>
             <Textarea
               id="dictation-output"
               value={transcript}
@@ -235,6 +266,40 @@ export default function SmartDictation() {
               placeholder={isRecording ? "Listening..." : "Your live transcript will appear here. You can also type or edit."}
               className="min-h-[150px] mt-1 rounded-lg bg-background"
             />
+          </div>
+
+          <div className="pt-4 border-t space-y-4">
+             <div className="flex flex-col gap-2">
+               <Label className="font-semibold">AI Structuring & Handwriting OCR</Label>
+               <p className="text-sm text-muted-foreground">Apply a clinical template or upload handwritten notes to automatically structure your text.</p>
+             </div>
+             <div className="flex flex-wrap gap-2 items-center">
+                <Select value={selectedTemplate} onValueChange={(v: 'general' | 'soap') => setSelectedTemplate(v)}>
+                    <SelectTrigger className="w-[150px] rounded-lg bg-background">
+                        <SelectValue placeholder="Template" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="general">General</SelectItem>
+                        <SelectItem value="soap">SOAP Note</SelectItem>
+                    </SelectContent>
+                </Select>
+                <div className="relative">
+                  <Input 
+                    type="file" 
+                    accept="image/*" 
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    onChange={(e) => {
+                       const f = e.target.files?.[0];
+                       if (f) handleStructure(f);
+                    }}
+                  />
+                  <Button variant="outline" className="w-[200px]" disabled={isLoading}>Upload Handwriting</Button>
+                </div>
+                <Button onClick={() => handleStructure()} disabled={isLoading || (!transcript.trim() && !isRecording)}>
+                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Wand2 className="w-4 h-4 mr-2" />}
+                    Format Transcript
+                </Button>
+             </div>
           </div>
         </CardContent>
         <CardFooter className="flex justify-end pt-4 border-t">

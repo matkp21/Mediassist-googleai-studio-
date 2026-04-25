@@ -16,41 +16,35 @@ export default function MedicoPage() {
   const [showMedicoAnimation, setShowMedicoAnimation] = useState(false);
 
   useEffect(() => {
-    // If the user's role is null, explicitly assume they want the medico experience since they navigated here
-    if (userRole === null) {
-      // Async so we don't trigger cascading updates
-      Promise.resolve().then(() => selectUserRole('medico'));
-      return;
-    }
-
+    // If the user's role is null or 'pro', gracefully switch to 'medico' context when accessing this hub
     if (userRole !== 'medico') {
-        router.replace('/');
-    } else {
-        const welcomeShown = sessionStorage.getItem('medicoHubAnimationShown');
-        if (!welcomeShown) {
-           setShowMedicoAnimation(true);
-           sessionStorage.setItem('medicoHubAnimationShown', 'true');
-        }
-        setIsLoadingRole(false);
+      // Small delay to allow context to stabilize if needed, or immediate switch
+      const timer = setTimeout(() => {
+        selectUserRole('medico');
+      }, 500);
+      return () => clearTimeout(timer);
     }
-  }, [userRole, router, selectUserRole]);
 
-  if (isLoadingRole) {
+    const welcomeShown = sessionStorage.getItem('medicoHubAnimationShown');
+    if (!welcomeShown) {
+       setShowMedicoAnimation(true);
+       sessionStorage.setItem('medicoHubAnimationShown', 'true');
+    }
+    setIsLoadingRole(false);
+  }, [userRole, selectUserRole]);
+
+  if (isLoadingRole || userRole !== 'medico') {
     return (
-      <PageWrapper title="Loading Medico Study Hub...">
-        <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-      </PageWrapper>
-    );
-  }
-  
-  if (userRole !== 'medico') {
-    return (
-      <PageWrapper title="Access Denied">
-        <div className="text-center">
-          <p className="text-lg">You must be in Medico mode to access this page.</p>
-          <p className="text-sm text-muted-foreground">Redirecting to homepage...</p>
+      <PageWrapper title="Waking up the Medico Agent...">
+        <div className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] space-y-4">
+          <div className="relative">
+            <Loader2 className="h-12 w-12 animate-spin text-teal-500" />
+            <div className="absolute inset-0 blur-xl bg-teal-500/20 rounded-full animate-pulse" />
+          </div>
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-teal-400">Agentic Orchestrator</h2>
+            <p className="text-muted-foreground text-sm">Aligning medical sub-agents for your session...</p>
+          </div>
         </div>
       </PageWrapper>
     );

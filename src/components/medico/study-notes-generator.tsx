@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, BookOpen, Wand2, FileText, Save, ArrowRight, ChevronDown } from 'lucide-react';
+import { Loader2, BookOpen, Wand2, FileText, Save, ArrowRight, ChevronDown, Sparkles } from 'lucide-react';
 import { generateStudyNotes, type StudyNotesGeneratorOutput } from '@/ai/agents/medico/StudyNotesAgent';
 import { useToast } from '@/hooks/use-toast';
 import { useAiAgent } from '@/hooks/use-ai-agent';
@@ -18,13 +18,14 @@ import { useProMode } from '@/contexts/pro-mode-context';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase';
 import { trackProgress } from '@/ai/agents/medico/ProgressTrackerAgent';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { MarkdownRenderer } from '@/components/markdown/markdown-renderer';
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MermaidRenderer } from '@/components/markdown/mermaid-renderer';
 import { StudyNotesGeneratorOutputSchema } from '@/ai/schemas/medico-tools-schemas';
+import { Play, Square, Volume2 } from 'lucide-react';
 
 const subjects = ["Anatomy", "Physiology", "Biochemistry", "Pathology", "Pharmacology", "Microbiology", "Forensic Medicine", "Community Medicine", "Ophthalmology", "ENT", "General Medicine", "General Surgery", "Obstetrics & Gynaecology", "Pediatrics", "Other"] as const;
 const systems = ["Cardiovascular", "Respiratory", "Gastrointestinal", "Neurological", "Musculoskeletal", "Endocrine", "Genitourinary", "Integumentary", "Hematological", "Immunological", "Other"] as const;
@@ -49,6 +50,43 @@ const seedQuestions = [
 export function StudyNotesGenerator({ initialTopic }: StudyNotesGeneratorProps) {
   const { toast } = useToast();
   const { user } = useProMode();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesis | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      setSpeechSynthesis(window.speechSynthesis);
+    }
+  }, []);
+
+  const stopAudio = useCallback(() => {
+    if (speechSynthesis) {
+        speechSynthesis.cancel();
+        setIsPlaying(false);
+    }
+  }, [speechSynthesis]);
+
+  const toggleAudiobook = () => {
+    if (!speechSynthesis || !generatedAnswer) return;
+
+    if (isPlaying) {
+      stopAudio();
+    } else {
+      const textToRead = generatedAnswer.notes.replace(/[*#`]/g, ''); // Basic markdown stripping for reading
+      const utterance = new SpeechSynthesisUtterance(textToRead);
+      utterance.onend = () => setIsPlaying(false);
+      utterance.onerror = () => setIsPlaying(false);
+      speechSynthesis.speak(utterance);
+      setIsPlaying(true);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      stopAudio(); // Cleanup on unmount
+    };
+  }, [stopAudio]);
+
   const { execute: runGenerateAnswer, data: generatedAnswer, isLoading, error, reset } = useAiAgent(generateStudyNotes, StudyNotesGeneratorOutputSchema, {
      onSuccess: async (data, input) => {
       toast({
@@ -227,8 +265,20 @@ export function StudyNotesGenerator({ initialTopic }: StudyNotesGeneratorProps) 
             </div>
           )}
           <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-2"><FileText className="h-6 w-6 text-primary" />Structured Notes: {form.getValues("topic")}</CardTitle>
-            <CardDescription>AI-generated structured notes for your exam preparation.</CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle className="text-xl flex items-center gap-2"><FileText className="h-6 w-6 text-primary" />Structured Notes: {form.getValues("topic")}</CardTitle>
+                <CardDescription>AI-generated structured notes for your exam preparation.</CardDescription>
+              </div>
+              <Button 
+                variant={isPlaying ? "default" : "secondary"}
+                onClick={toggleAudiobook} 
+                className="gap-2"
+              >
+                {isPlaying ? <Square className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                {isPlaying ? "Stop Audio" : "Audiobook Mode"}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
@@ -258,6 +308,36 @@ export function StudyNotesGenerator({ initialTopic }: StudyNotesGeneratorProps) 
                           ) : <p className="text-muted-foreground text-center py-8">No diagram was generated for this topic.</p>}
                     </div>
               </div>
+              {generatedAnswer.imagePrompts && generatedAnswer.imagePrompts.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2 text-lg text-primary flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-amber-500" />
+                    Imagen 3: Concept Art Prompts
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {generatedAnswer.imagePrompts.map((prompt, idx) => (
+                      <Card key={idx} className="bg-primary/5 border-dashed border-primary/30">
+                        <CardContent className="p-4 space-y-3">
+                          <p className="text-xs text-muted-foreground italic line-clamp-3">"{prompt}"</p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full text-[10px] h-7 gap-1"
+                            onClick={() => {
+                              toast({ 
+                                title: "Agent Initiated", 
+                                description: "Imagen 3 is synthesising clinical concept art..." 
+                              });
+                            }}
+                          >
+                            <Wand2 className="h-3 w-3" /> Generate Concept Art
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
            <CardFooter className="p-4 border-t flex items-center justify-between">

@@ -10,11 +10,14 @@ import { auth } from '@/lib/firebase';
 import type { FirebaseError } from 'firebase/app';
 
 export type UserRole = 'pro' | 'medico' | null;
+export type ExamTarget = 'USMLE' | 'NEET-PG' | 'INI-CET' | 'University' | 'Other';
 
 interface ProModeContextType {
   isProMode: boolean;
   userRole: UserRole;
+  examTarget: ExamTarget;
   selectUserRole: (role: UserRole) => void;
+  setExamTarget: (target: ExamTarget) => void;
   user: FirebaseUser | null | undefined;
   loading: boolean;
   error: FirebaseError | undefined;
@@ -36,6 +39,7 @@ interface ProModeProviderProps {
 
 export const ProModeProvider = ({ children }: ProModeProviderProps) => {
   const [userRole, setUserRole] = useState<UserRole>(null);
+  const [examTarget, setExamTargetState] = useState<ExamTarget>('University');
   const [user, loading, error] = useAuthState(auth);
   const [isClient, setIsClient] = useState(false);
 
@@ -48,8 +52,12 @@ export const ProModeProvider = ({ children }: ProModeProviderProps) => {
       if (storedRole) {
         setUserRole(storedRole);
       }
+      const storedExam = localStorage.getItem('examTarget') as ExamTarget | null;
+      if (storedExam) {
+        setExamTargetState(storedExam);
+      }
     } catch (e) {
-      console.warn("Could not access localStorage to get user role:", e);
+      console.warn("Could not access localStorage:", e);
     }
   }, []);
 
@@ -68,6 +76,17 @@ export const ProModeProvider = ({ children }: ProModeProviderProps) => {
     }
   }, [isClient]);
 
+  const setExamTarget = useCallback((target: ExamTarget) => {
+    setExamTargetState(target);
+    if (isClient) {
+      try {
+        localStorage.setItem('examTarget', target);
+      } catch (e) {
+        console.warn("Could not write to localStorage for exam target:", e);
+      }
+    }
+  }, [isClient]);
+
   const isProMode = useMemo(() => userRole === 'pro', [userRole]);
 
   const value = useMemo(() => ({
@@ -76,8 +95,10 @@ export const ProModeProvider = ({ children }: ProModeProviderProps) => {
     error,
     isProMode,
     userRole,
+    examTarget,
     selectUserRole,
-  }), [user, loading, error, isProMode, userRole, selectUserRole]);
+    setExamTarget,
+  }), [user, loading, error, isProMode, userRole, examTarget, selectUserRole, setExamTarget]);
 
   return (
     <ProModeContext.Provider value={value}>

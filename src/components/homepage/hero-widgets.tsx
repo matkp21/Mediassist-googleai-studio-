@@ -51,15 +51,14 @@ export const HeroWidgets: React.FC<HeroWidgetsProps> = ({ tasks, className }) =>
   const tasksForSelectedDate = tasks.filter(task => selectedCalendarDate && isSameDay(task.date, selectedCalendarDate));
 
   return (
-    <div
-      className={cn(
-        "relative mt-4 flex w-full max-w-md mx-auto items-center justify-between gap-2 md:gap-4 py-2 px-3 rounded-xl shadow-lg",
-        "bg-card border border-border/60",
-        className
-      )}
-      aria-label="Date and Time Information Panel"
-    >
-      <Popover open={isCalendarPopoverOpen} onOpenChange={setIsCalendarPopoverOpen}>
+    <div className={cn("relative group w-full max-w-md mx-auto mt-4", className)}>
+      <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 rounded-xl blur-lg opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-in fade-in duration-1000"
+           style={{ animation: 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
+      <div
+        className="relative flex w-full items-center justify-between gap-2 md:gap-4 py-2 px-3 rounded-xl shadow-xl bg-background/80 backdrop-blur-md border border-border/50"
+        aria-label="Date and Time Information Panel"
+      >
+        <Popover open={isCalendarPopoverOpen} onOpenChange={setIsCalendarPopoverOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
@@ -133,6 +132,7 @@ export const HeroWidgets: React.FC<HeroWidgetsProps> = ({ tasks, className }) =>
           <ClockWidget onClose={() => setIsClockWidgetPopoverOpen(false)} />
         </PopoverContent>
       </Popover>
+      </div>
     </div>
   );
 };

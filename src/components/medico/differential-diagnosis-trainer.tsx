@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Brain, Send, FilePlus, RotateCcw, Save, ArrowRight } from 'lucide-react';
+import { Loader2, Brain, Send, FilePlus, RotateCcw, Save, ArrowRight, Zap, Sparkles } from 'lucide-react';
 import { trainDifferentialDiagnosis, type MedicoDDTrainerInput, type MedicoDDTrainerOutput } from '@/ai/agents/medico/DifferentialDiagnosisTrainerAgent';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -19,6 +19,8 @@ import { trackProgress } from '@/ai/agents/medico/ProgressTrackerAgent';
 import { useProMode } from '@/contexts/pro-mode-context';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 
 const newCaseFormSchema = z.object({
@@ -38,6 +40,7 @@ interface DifferentialDiagnosisTrainerProps {
 export default function DifferentialDiagnosisTrainer({ initialTopic }: DifferentialDiagnosisTrainerProps) {
   const [caseData, setCaseData] = useState<MedicoDDTrainerOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [thinkingMode, setThinkingMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useProMode();
@@ -58,7 +61,7 @@ export default function DifferentialDiagnosisTrainer({ initialTopic }: Different
     setError(null);
     setCaseData(null);
     try {
-      const input: MedicoDDTrainerInput = { isNewCase: true, symptoms: data.symptoms };
+      const input: MedicoDDTrainerInput = { isNewCase: true, symptoms: data.symptoms, thinkingMode };
       const result = await trainDifferentialDiagnosis(input);
       setCaseData(result);
       toast({ title: "New DDx Session Started", description: `Training session for "${data.symptoms.substring(0,30)}..." has begun.` });
@@ -79,7 +82,8 @@ export default function DifferentialDiagnosisTrainer({ initialTopic }: Different
       const input: MedicoDDTrainerInput = { 
         isNewCase: false, 
         userResponse: data.userResponse, 
-        currentCaseSummary: caseData.updatedCaseSummary 
+        currentCaseSummary: caseData.updatedCaseSummary,
+        thinkingMode
       };
       const result = await trainDifferentialDiagnosis(input);
       setCaseData(result);
@@ -186,6 +190,19 @@ ${caseData.feedback || 'N/A'}
                     </FormItem>
                   )}
                 />
+                
+                <div className="flex items-center space-x-2 py-2 p-3 bg-indigo-500/5 rounded-lg border border-indigo-500/10">
+                  <Switch 
+                    id="thinking-mode" 
+                    checked={thinkingMode}
+                    onCheckedChange={setThinkingMode}
+                  />
+                  <Label htmlFor="thinking-mode" className="flex items-center gap-2 cursor-pointer">
+                    <Sparkles className="h-4 w-4 text-indigo-500" />
+                    <span className="font-bold text-sm">High-Thinking Mode</span>
+                    <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">Gemini 3.1</Badge>
+                  </Label>
+                </div>
                 <Button type="submit" className="w-full sm:w-auto rounded-lg py-3 text-base group" disabled={isLoading}>
                   {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
                   Start Training

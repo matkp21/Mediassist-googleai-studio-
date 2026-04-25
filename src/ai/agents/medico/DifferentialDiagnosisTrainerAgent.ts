@@ -10,6 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { MedicoDDTrainerInputSchema, MedicoDDTrainerOutputSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
+import { injectKarpathyGuidelines } from './skills/karpathy-guidelines';
 
 export type MedicoDDTrainerInput = z.infer<typeof MedicoDDTrainerInputSchema>;
 export type MedicoDDTrainerOutput = z.infer<typeof MedicoDDTrainerOutputSchema>;
@@ -18,11 +19,7 @@ export async function trainDifferentialDiagnosis(input: MedicoDDTrainerInput): P
   return differentialDiagnosisTrainerFlow(input);
 }
 
-const differentialDiagnosisTrainerPrompt = ai.definePrompt({
-  name: 'medicoDDTrainerPrompt',
-  input: { schema: MedicoDDTrainerInputSchema },
-  output: { schema: MedicoDDTrainerOutputSchema },
-  prompt: `You are an AI medical education tool. Your primary task is to generate a JSON object representing the next step in a differential diagnosis training session.
+const promptTemplate = `You are an AI medical education tool. Your primary task is to generate a JSON object representing the next step in a differential diagnosis training session.
 
 {{#if isNewCase}}
 You are starting a new session.
@@ -79,11 +76,21 @@ Example for 'nextSteps' on completion:
 {{/if}}
 
 Format your entire output as JSON conforming to the MedicoDDTrainerOutputSchema.
-`,
+`;
+
+const differentialDiagnosisTrainerPrompt = ai.definePrompt({
+  name: 'medicoDDTrainerPrompt',
+  input: { schema: MedicoDDTrainerInputSchema },
+  output: { schema: MedicoDDTrainerOutputSchema },
+  prompt: injectKarpathyGuidelines(promptTemplate),
   config: {
     temperature: 0.5, // Balanced for accuracy and educational breadth
   }
 });
+
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+
+const googleGenAi = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY });
 
 const differentialDiagnosisTrainerFlow = ai.defineFlow(
   {
@@ -93,7 +100,18 @@ const differentialDiagnosisTrainerFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      const { output } = await differentialDiagnosisTrainerPrompt(input);
+      const renderedPrompt = await differentialDiagnosisTrainerPrompt.render({ ...input });
+      const promptString = renderedPrompt.messages[0].content[0].text || '';
+      
+      const response = await googleGenAi.models.generateContent({
+        model: 'gemini-3.1-pro-preview',
+        contents: promptString,
+        config: {
+          thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH },
+          responseMimeType: "application/json"
+        }
+      });
+      const output = JSON.parse(response.text || '{}');
 
       if (!output || !output.prompt || !output.updatedCaseSummary) {
         console.error('MedicoDDTrainerPrompt did not return valid output for:', input);

@@ -40,8 +40,16 @@ interface Exam {
 const formSchema = z.object({
   examType: z.string().min(3, { message: "Exam type must be at least 3 characters." }).max(100),
   count: z.coerce.number().int().min(5, "Minimum 5 MCQs.").max(20, "Maximum 20 MCQs.").default(10),
+  difficulty: z.enum(['easy', 'medium', 'hard']).default('medium'),
+  subject: z.string().optional(),
+  system: z.string().optional(),
 });
 type ExamFormValues = z.infer<typeof formSchema>;
+
+const subjects = ["Anatomy", "Physiology", "Biochemistry", "Pathology", "Pharmacology", "Microbiology", "Medicine", "Surgery", "Pediatrics", "OB-GYN", "Psychiatry", "Ophthalmology", "ENT", "Forensic Medicine", "Community Medicine", "Other"];
+const systems = ["Cardiovascular", "Respiratory", "Gastrointestinal (GI)", "Neurology", "Renal", "Endocrine", "Hematological/Oncological", "Musculoskeletal (MSK)", "Dermatology", "Infectious Diseases (ID)", "Genitourinary", "Immunological", "Other"];
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 export default function MockExamSuite() {
@@ -128,7 +136,13 @@ export default function MockExamSuite() {
 
 
   const handleGenerateAndStart: SubmitHandler<ExamFormValues> = async (data) => {
-    const input: MedicoExamPaperInput = { examType: data.examType, count: data.count };
+    const input: MedicoExamPaperInput = { 
+      examType: data.examType, 
+      count: data.count,
+      difficulty: data.difficulty,
+      subject: data.subject as any,
+      system: data.system as any
+    };
     await runGenerateExam(input);
   };
   
@@ -251,17 +265,84 @@ This mock exam contained ${activeExam.questions.length} questions.
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="count"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Number of MCQs</FormLabel>
-                    <Input type="number" {...field} />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="difficulty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Difficulty</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="easy">Easy</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="hard">Hard</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="count"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of MCQs</FormLabel>
+                      <Input type="number" {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="subject"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject (Optional)</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="All Subjects" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {subjects.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="system"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>System (Optional)</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="All Systems" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {systems.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <Button type="submit" className="w-full rounded-lg" disabled={isLoading}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
                 Generate & Start Exam

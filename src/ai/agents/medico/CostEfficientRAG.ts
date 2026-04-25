@@ -1,3 +1,5 @@
+'use server';
+
 import { genkit, z } from 'genkit';
 import { vertexAI } from '@genkit-ai/google-genai';
 import { vertexAiRetrieverRef } from '@genkit-ai/vertexai';

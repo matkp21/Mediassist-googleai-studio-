@@ -7,6 +7,6 @@
 - **Problem**: Need DeepTutor's adaptive memory mechanics.
 - **Fix**: Injected `Adaptive Learning Goal` constraints inside semantic RAG tutor (`medical-rag.ts`) & chat orchestrator (`api/medico-chat/route.ts`). Mapped visual interface into `NeuralProgressTracker` to log and display Cognitive Strengths, Knowledge Gaps, and Clinical Reasoning profiles derived from the Socratic feedback loop.
 
-## 3. Evidence-Based Medicine (EBM) MCP Integration
-- **Problem**: The overarching prompt mandated "Model Context Protocol (MCP) e.g., for EBM/PubMed searches". 
-- **Fix**: Extended the core Genkit plugins by introducing `pubmedSearchSkill`. We then attached this skill *directly* into `StudyNotesAgent.ts` by decoupling `ai.definePrompt` into an `ai.generate` flow where `pubmedSearchSkill` is passed as a subset tool. Additionally, we carved out a dedicated `ebm-research-assistant.tsx` UI tool integrated internally into the Medico dashboard tools suite.
+## 4. Transition to Hierarchical Orchestration (Self-Healing AI)
+- **Problem**: Monolithic "Brain" modules (Brain-1 & Brain-2) were prone to silent failures, structural hallucinations, and context overflows without recovery mechanisms.
+- **Root Cause & Fix**: Transitioned to a multi-agent hierarchical architecture inspired by OpenHands and crewAI. Introduced a **Supervisor Orchestrator** in `MedicalOrchestrator.ts` that delegates tasks to 5 specialized subagents. Implemented a `executeSelfHealingAgent` wrapper that uses an autonomous feedback loop to correct AI validation errors (Zod failures) in real-time. Added persistent state logging to Firestore (`orchestratorLog`) to ensure system resilience and state recovery after hard crashes.

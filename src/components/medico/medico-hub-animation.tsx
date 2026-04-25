@@ -14,7 +14,7 @@ export function MedicoHubAnimation({ onAnimationComplete }: MedicoHubAnimationPr
   useEffect(() => {
     const timer = setTimeout(() => {
       onAnimationComplete();
-    }, 3500); // Animation duration + a small buffer
+    }, 2500); // Animation duration + a small buffer
 
     return () => clearTimeout(timer);
   }, [onAnimationComplete]);
@@ -65,12 +65,20 @@ export function MedicoHubAnimation({ onAnimationComplete }: MedicoHubAnimationPr
 
   return (
     <motion.div
-      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-gradient-to-br from-sky-800 via-teal-800 to-sky-900 text-white overflow-hidden"
+      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#07090F] text-white overflow-hidden"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
       exit="exit" 
     >
+      <div 
+        className="absolute inset-0 opacity-[0.1]" 
+        style={{ 
+          backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', 
+          backgroundSize: '48px 48px',
+          maskImage: 'radial-gradient(circle at center, black, transparent 80%)'
+        }} 
+      />
       <motion.div variants={itemVariants} className="relative">
         <BookHeart 
             className="h-20 w-20 sm:h-24 sm:w-24 text-sky-300 mb-6 opacity-90 animate-pulse-medical" 
@@ -86,15 +94,14 @@ export function MedicoHubAnimation({ onAnimationComplete }: MedicoHubAnimationPr
       </motion.div>
       
       <motion.h1 
-        className="text-4xl sm:text-5xl md:text-6xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-teal-300 to-cyan-200"
+        className="text-4xl sm:text-5xl md:text-7xl font-display italic mb-3 text-white"
         variants={textVariants}
-        style={{ animation: "gradient-flow 8s ease infinite alternate", backgroundSize: "200% 200%" }}
       >
-        Medico Study Hub
+        Medico <span className="text-teal-400">Study Hub</span>
       </motion.h1>
       
       <motion.p 
-        className="text-md sm:text-lg md:text-xl text-sky-100/90"
+        className="text-sm sm:text-base md:text-lg text-zinc-400 font-light tracking-widest uppercase"
         variants={textVariants}
         initial={{ opacity: 0, y:15 }}
         animate={{ opacity: 1, y:0, transition: {delay: 0.9, duration: 0.7}}}
@@ -102,25 +109,22 @@ export function MedicoHubAnimation({ onAnimationComplete }: MedicoHubAnimationPr
         Loading Your Learning Tools...
       </motion.p>
 
-      <svg 
-        width="80%" 
-        style={{ maxWidth: '350px' }} 
-        height="80" 
-        viewBox="0 0 300 80" 
-        className="absolute bottom-12 opacity-30"
-      >
-        {/* Simulating stacked books or notes */}
-        <motion.rect x="0" y="40" width="300" height="15" rx="3" fill="url(#medicoLineGradient)" variants={lineVariants} custom={0} />
-        <motion.rect x="20" y="20" width="260" height="15" rx="3" fill="url(#medicoLineGradient)" variants={lineVariants} custom={1} />
-        <motion.rect x="40" y="0" width="220" height="15" rx="3" fill="url(#medicoLineGradient)" variants={lineVariants} custom={2} />
-        <defs>
-            <linearGradient id="medicoLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{stopColor: "hsl(var(--sidebar-accent)/0.8)", stopOpacity:1}} />
-            <stop offset="50%" style={{stopColor: "hsl(var(--sidebar-primary)/0.8)", stopOpacity:1}} />
-            <stop offset="100%" style={{stopColor: "hsl(var(--sidebar-accent)/0.8)", stopOpacity:1}} />
-            </linearGradient>
-        </defs>
-      </svg>
+      {/* Agentic Pulse Network */}
+      <div className="absolute bottom-12 w-full max-w-sm px-8">
+        <div className="relative h-1 bg-white/5 rounded-full overflow-hidden">
+          <motion.div 
+            initial={{ left: "-100%" }}
+            animate={{ left: "100%" }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-r from-transparent via-teal-500 to-transparent"
+          />
+        </div>
+        <div className="mt-2 flex justify-between">
+          <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-[8px] font-bold tracking-[0.2em] text-teal-400">CONNECTING SUB-AGENTS</motion.div>
+          <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }} className="text-[8px] font-bold tracking-[0.2em] text-teal-400">SYNCHRONIZING LIBRARY</motion.div>
+          <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 1 }} className="text-[8px] font-bold tracking-[0.2em] text-teal-400">VERIFYING CLINICAL DATA</motion.div>
+        </div>
+      </div>
 
     </motion.div>
   );

@@ -12,6 +12,7 @@
 import { ai } from '@/ai/genkit';
 import { MedicoExamPaperInputSchema, MedicoExamPaperOutputSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
+import { injectKarpathyGuidelines } from './skills/karpathy-guidelines';
 
 export type MedicoExamPaperInput = z.infer<typeof MedicoExamPaperInputSchema>;
 export type MedicoExamPaperOutput = z.infer<typeof MedicoExamPaperOutputSchema>;
@@ -20,14 +21,13 @@ export async function generateExamPaper(input: MedicoExamPaperInput): Promise<Me
   return examPaperFlow(input);
 }
 
-const examPaperPrompt = ai.definePrompt({
-  name: 'medicoExamPaperPrompt',
-  input: { schema: MedicoExamPaperInputSchema },
-  output: { schema: MedicoExamPaperOutputSchema },
-  prompt: `You are an expert medical examiner creating a mock exam paper based on the following criteria.
+const promptTemplate = `You are an expert medical examiner creating a mock exam paper based on the following criteria.
 
 Exam Type: {{{examType}}}
 {{#if year}}Focus Year (for pattern analysis): {{{year}}}{{/if}}
+{{#if subject}}Subject: {{{subject}}}{{/if}}
+{{#if system}}Physiological System: {{{system}}}{{/if}}
+Difficulty level: {{{difficulty}}}
 Number of MCQs to generate: {{{count}}}
 
 Your primary task is to generate a comprehensive JSON object containing a realistic mock paper with MCQs and structured essay questions, plus relevant next study steps.
@@ -51,7 +51,13 @@ Generate a clear and unambiguous set of Multiple Choice Questions (MCQs) based o
 - The 'nextSteps' field is mandatory. Generate at least two relevant follow-up actions a student could take. Example: suggest generating detailed notes for one of the essay topics or creating a study plan.
 
 Format your entire output as a single, valid JSON object conforming to the MedicoExamPaperOutputSchema.
-`,
+`;
+
+const examPaperPrompt = ai.definePrompt({
+  name: 'medicoExamPaperPrompt',
+  input: { schema: MedicoExamPaperInputSchema },
+  output: { schema: MedicoExamPaperOutputSchema },
+  prompt: injectKarpathyGuidelines(promptTemplate),
   config: {
     temperature: 0.6, // More creative for varied questions
   }

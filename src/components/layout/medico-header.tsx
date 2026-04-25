@@ -8,6 +8,7 @@ import { ArrowLeft, BookHeart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useProMode } from '@/contexts/pro-mode-context';
 import { Badge } from '@/components/ui/badge';
+import { SmartSearchInput } from '@/components/layout/smart-search-input';
 
 export function MedicoHeader() {
   const { userRole } = useProMode();
@@ -30,6 +31,10 @@ export function MedicoHeader() {
         </Link>
       </div>
       
+      <div className="flex-1 flex justify-center max-w-xl mx-4 hidden md:flex">
+        <SmartSearchInput />
+      </div>
+
       <div className="flex items-center gap-3">
         {userRole === 'medico' && (
           <Badge variant="outline" className="border-sky-500/70 text-sky-600 bg-sky-500/10 flex items-center gap-1.5 py-1 px-2.5">

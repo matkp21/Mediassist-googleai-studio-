@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send, Bot, User, DatabaseZap } from 'lucide-react';
-import { askMedicalTutor } from '@/app/actions/rag-actions';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
@@ -15,13 +14,24 @@ interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  suggestedNextSteps?: string[];
 }
 
-export function RagTutor() {
+interface RagTutorProps {
+  initialQuery?: string;
+}
+
+export function RagTutor({ initialQuery }: RagTutorProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(initialQuery || '');
   const [isLoading, setIsLoading] = useState(false);
-  const [searchStatus, setSearchStatus] = useState<string>('');
+  
+  // Auto-submit if initialQuery is provided on mount
+  useEffect(() => {
+    if (initialQuery && messages.length === 0) {
+      handleSendMessage();
+    }
+  }, []);
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -32,56 +42,61 @@ export function RagTutor() {
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
       }
     }
-  }, [messages, searchStatus]);
+  }, [messages]);
 
-  const handleSendMessage = async (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent, overrideQuery?: string) => {
     e?.preventDefault();
-    if (!inputValue.trim() || isLoading) return;
+    const query = overrideQuery || inputValue.trim();
+    if (!query || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputValue.trim(),
+      content: query,
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setIsLoading(true);
     
-    // Ask Medi: Show semantic search steps
-    setSearchStatus('Searching semantic vector DB for PYQs and Flashcards...');
-    
-    setTimeout(() => {
-      setSearchStatus('Running RAG pipeline against medical literature...');
-    }, 1500);
-
     try {
-      const response = await askMedicalTutor(userMessage.content);
-      
-      if (response.error) {
-        toast({
-          title: "Error",
-          description: response.error,
-          variant: "destructive"
-        });
-      } else {
-        const assistantMessage: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: response.answer || "I don't have enough grounded information to answer that."
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-      }
-    } catch (error) {
-      toast({
-        title: "Connection Error",
-        description: "Failed to connect to Medi.",
-        variant: "destructive"
+      const response = await fetch('/api/medico/orchestrator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          query, 
+          userId: 'current-user', 
+          activeTopicContext: messages[messages.length - 1]?.content 
+        }),
       });
+
+      const data = await response.json();
+      
+      const assistantMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: data.answer,
+        suggestedNextSteps: data.suggestedNextSteps
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      toast({ title: "Orchestration Fault", description: "Medi encountered a fault while determining the next step." });
     } finally {
       setIsLoading(false);
-      setSearchStatus('');
     }
+  };
+
+  const handleNextStep = (action: string) => {
+    const actionMap: Record<string, string> = {
+      'generate_mcq': "Generate 5 MCQs based on our current conversation.",
+      'create_soap_note': "Draft a SOAP note for the patient case we just discussed.",
+      'generate_flashcards': "Create high-yield flashcards for this topic.",
+      'clinical_simulation': "Start a clinical simulation case regarding this topic.",
+      'generate_study_notes': "Synthesize detailed study notes for this concept.",
+      'view_algorithm': "Show me a clinical algorithm or flowchart for this management."
+    };
+    handleSendMessage(undefined, actionMap[action] || action);
   };
 
   return (
@@ -150,6 +165,22 @@ export function RagTutor() {
                         <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
                     )}
+                    
+                    {message.suggestedNextSteps && message.suggestedNextSteps.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-2 animate-in fade-in slide-in-from-bottom-2 duration-700">
+                        {message.suggestedNextSteps.map((action) => (
+                           <Button 
+                             key={action} 
+                             variant="secondary" 
+                             size="sm" 
+                             onClick={() => handleNextStep(action)}
+                             className="text-[10px] h-7 bg-primary/5 hover:bg-primary/10 border border-primary/10 rounded-full font-bold uppercase tracking-wider"
+                           >
+                              ⚡ {action.replace(/_/g, ' ')}
+                           </Button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
@@ -165,7 +196,7 @@ export function RagTutor() {
                     <div className="h-2 w-2 bg-primary/50 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
                     <div className="h-2 w-2 bg-primary/50 rounded-full animate-bounce"></div>
                   </div>
-                  <span className="text-xs text-muted-foreground animate-pulse">{searchStatus || 'Processing...'}</span>
+                  <span className="text-xs text-muted-foreground animate-pulse">Running semantic RAG pipeline...</span>
                 </div>
               </div>
             )}

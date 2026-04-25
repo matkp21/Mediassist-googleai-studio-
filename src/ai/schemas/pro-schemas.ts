@@ -67,3 +67,16 @@ export const OnCallHandoverOutputSchema = z.object({
   summaryText: z.string().describe("A structured handover summary in Markdown format."),
 });
 export type OnCallHandoverOutput = z.infer<typeof OnCallHandoverOutputSchema>;
+
+// Schema for Pro Workflow Chatbot
+export const ProWorkflowChatinputSchema = z.object({
+  message: z.string().describe("User's input query or task instruction."),
+  context: z.string().optional().describe("Background context (current patient, department workflow, etc)."),
+});
+export type ProWorkflowChatinput = z.infer<typeof ProWorkflowChatinputSchema>;
+
+export const ProWorkflowChatOutputSchema = z.object({
+  reply: z.string().describe("The chatbot's reply, action confirmation, or request for clarification."),
+  suggestedActions: z.array(z.string()).describe("List of suggested immediate actions or next steps contextually related to the chat."),
+});
+export type ProWorkflowChatOutput = z.infer<typeof ProWorkflowChatOutputSchema>;

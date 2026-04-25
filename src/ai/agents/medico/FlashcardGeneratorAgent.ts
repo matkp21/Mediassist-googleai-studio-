@@ -56,7 +56,7 @@ Number of flashcards to generate: {{{count}}}
 
 For each flashcard, create a 'front' (question or term) and a 'back' (answer or definition).
 The flashcards should be concise and focus on key, high-yield information relevant to the topic, difficulty, and exam style.
-The 'topicGenerated' field must be set to "{{{topic}}}".
+The 'topicGenerated' field must be set to "{{{topic}}}". **Metadata mandatory**: populate subject, system, difficulty_level, clinical_relevance per card.
 
 Format the entire output as a valid JSON object.
 `,

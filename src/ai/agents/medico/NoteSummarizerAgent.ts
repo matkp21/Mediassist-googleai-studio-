@@ -13,6 +13,7 @@
 import { ai } from '@/ai/genkit';
 import { MedicoNoteSummarizerInputSchema, MedicoNoteSummarizerOutputSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
+import { injectKarpathyGuidelines } from './skills/karpathy-guidelines';
 
 export type MedicoNoteSummarizerInput = z.infer<typeof MedicoNoteSummarizerInputSchema> & { format: 'bullet' | 'table' | 'flowchart' | 'diagram' }; // Explicitly include format types
 export type MedicoNoteSummarizerOutput = z.infer<typeof MedicoNoteSummarizerOutputSchema>;
@@ -21,11 +22,7 @@ export async function summarizeNoteText(input: MedicoNoteSummarizerInput): Promi
   return noteSummarizerFlow(input);
 }
 
-const noteSummarizerPrompt = ai.definePrompt({
-  name: 'medicoNoteSummarizerPrompt',
-  input: { schema: MedicoNoteSummarizerInputSchema },
-  output: { schema: MedicoNoteSummarizerOutputSchema },
-  prompt: `You are an expert at summarizing medical notes for students.
+const promptTemplate = `You are an expert at summarizing medical notes for students.
 Your primary task is to generate a JSON object containing a summary of the provided content AND a list of relevant next study steps.
 
 The JSON object you generate MUST have a 'summary' field, a 'format' field, and a 'nextSteps' field.
@@ -63,12 +60,18 @@ Text to summarize:
 {{{text}}}
 {{/if}}
 {{#if imageDataUri}}
-Summarize the content from this image. This could be a picture of a textbook page, a diagram, or handwritten notes.
+Summarize the content from this image. This could be a picture of a textbook page, a diagram, or handwritten notes. Even if the handwriting uses dense medical shorthand, decode the shorthand and transcribe and structure the handwritten notes into a clean format.
 Image to summarize: {{media url=imageDataUri}}
 {{/if}}
 
 Format the entire output as a valid JSON object.
-`,
+`;
+
+const noteSummarizerPrompt = ai.definePrompt({
+  name: 'medicoNoteSummarizerPrompt',
+  input: { schema: MedicoNoteSummarizerInputSchema },
+  output: { schema: MedicoNoteSummarizerOutputSchema },
+  prompt: injectKarpathyGuidelines(promptTemplate),
   config: {
     temperature: 0.2, // Factual and structured
   }

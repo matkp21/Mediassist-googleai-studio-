@@ -1,3 +1,5 @@
+'use server';
+
 import { genkit, z } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai'; // Note: using googleAI to match workspace auth, vertexAI can be swapped here if explicitly deployed
 import { getFirestore } from 'firebase-admin/firestore';

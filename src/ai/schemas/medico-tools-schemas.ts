@@ -6,8 +6,8 @@
  */
 import { z } from 'zod';
 
-const subjects = ["Anatomy", "Physiology", "Biochemistry", "Pathology", "Pharmacology", "Microbiology", "Forensic Medicine", "Community Medicine", "Ophthalmology", "ENT", "General Medicine", "General Surgery", "Obstetrics & Gynaecology", "Pediatrics", "Other"] as const;
-const systems = ["Cardiovascular", "Respiratory", "Gastrointestinal", "Neurological", "Musculoskeletal", "Endocrine", "Genitourinary", "Integumentary", "Hematological", "Immunological", "Other"] as const;
+const subjects = ["Anatomy", "Physiology", "Biochemistry", "Pathology", "Pharmacology", "Microbiology", "Medicine", "Surgery", "Pediatrics", "OB-GYN", "Psychiatry", "Ophthalmology", "ENT", "Forensic Medicine", "Community Medicine", "Other"] as const;
+const systems = ["Cardiovascular", "Respiratory", "Gastrointestinal (GI)", "Neurology", "Renal", "Endocrine", "Hematological/Oncological", "Musculoskeletal (MSK)", "Dermatology", "Infectious Diseases (ID)", "Genitourinary", "Immunological", "Other"] as const;
 
 // Common schema for recommended next steps
 const NextStepSchema = z.object({
@@ -24,6 +24,8 @@ export const StudyNotesGeneratorInputSchema = z.object({
   answerLength: z.enum(['10-mark', '5-mark']).optional().describe('Desired length of the answer based on university exam marks.'),
   subject: z.enum(subjects).optional().describe('The main subject this topic falls under (e.g., "Surgery", "Medicine").'),
   system: z.enum(systems).optional().describe('The physiological system this topic relates to (e.g., "Cardiovascular", "Neurological").'),
+  previousNotes: z.string().optional().describe('Existing notes content if performing a targeted edit.'),
+  surgicalEdit: z.boolean().optional().describe('If true, perform a targeted edit of the existing notes instead of a full rewrite.'),
 });
 export type StudyNotesGeneratorInput = z.infer<typeof StudyNotesGeneratorInputSchema>;
 
@@ -31,6 +33,7 @@ export const StudyNotesGeneratorOutputSchema = z.object({
   notes: z.string().describe('Concise, AI-generated study notes on the topic, formatted for clarity with headings and bullet points where appropriate.'),
   summaryPoints: z.array(z.string()).describe('A separate array of 3-5 key, high-yield summary points for quick revision of the topic.'),
   diagram: z.string().nullable().describe('A Mermaid.js syntax for a flowchart or diagram relevant to the topic. Can be null.'),
+  imagePrompts: z.array(z.string()).optional().describe('Text-to-Image prompts for generating concept art or anatomical diagrams using Imagen 3.'),
   nextSteps: z.array(NextStepSchema).describe('A list of suggested next steps for the user to continue their study session.'),
 });
 export type StudyNotesGeneratorOutput = z.infer<typeof StudyNotesGeneratorOutputSchema>;
@@ -40,8 +43,8 @@ export type StudyNotesGeneratorOutput = z.infer<typeof StudyNotesGeneratorOutput
 export const MedicoMCQGeneratorInputSchema = z.object({
   topic: z.string().min(3, { message: "Topic must be at least 3 characters long." }).describe('The medical topic for which to generate MCQs (e.g., "Cardiology", "Hypertension").'),
   count: z.number().int().min(1).max(10).default(5).describe('The number of MCQs to generate (1-10). Default is 5.'),
-  difficulty: z.enum(['easy', 'medium', 'hard']).default('medium').describe('The difficulty level of the questions.'),
-  examType: z.enum(['university', 'neet-pg', 'usmle']).default('university').describe('The style of exam to pattern the questions after.'),
+  difficulty: z.enum(['easy', 'medium', 'hard']).default('medium').describe('The difficulty level (Easy, Medium, Hard).'),
+  examType: z.enum(['university', 'neet-pg', 'usmle', 'medical-board', 'professional-exam', 'medical-school']).default('university').describe('The style of exam to pattern the questions after.'),
   subject: z.enum(subjects).optional().describe('The main subject this topic falls under (e.g., "Surgery", "Medicine").'),
   system: z.enum(systems).optional().describe('The physiological system this topic relates to (e.g., "Cardiovascular", "Neurological").'),
 });
@@ -57,6 +60,10 @@ export const MCQSchema = z.object({
   options: z.array(MCQOptionSchema).length(4, { message: "Each MCQ must have exactly 4 options."}).describe('Exactly four options for the MCQ, one of which must be correct.'),
   explanation: z.string().optional().describe('A brief explanation for why the correct answer is correct. This helps in learning.'),
   competencyIds: z.array(z.string()).optional().describe("Associated NMC competency codes (e.g., 'AN 5.1')."),
+  subject: z.enum(subjects).optional().describe("The medical subject for this specific question."),
+  system: z.enum(systems).optional().describe("The physiological system context."),
+  difficulty_level: z.number().min(1).max(5).optional().describe("Difficulty 1-5 for adaptive learning algorithms."),
+  clinical_relevance: z.string().optional().describe("High-yield clinical correlation note."),
 });
 export type SingleMCQ = z.infer<typeof MCQSchema>;
 
@@ -73,6 +80,9 @@ export const MedicoExamPaperInputSchema = z.object({
   examType: z.string().min(3, { message: "Exam type must be at least 3 characters." }).describe('The name of the examination (e.g., "Final MBBS Prof").'),
   year: z.string().optional().describe('Optional focus year for pattern analysis (e.g., "2023").'),
   count: z.number().int().min(1).max(20).default(10).describe('The number of MCQs to generate (1-20). Default is 10.'),
+  difficulty: z.enum(['easy', 'medium', 'hard']).default('medium').describe('The difficulty level of the exam questions.'),
+  subject: z.enum(subjects).optional().describe('Filter by specific subject.'),
+  system: z.enum(systems).optional().describe('Filter by specific physiological system.'),
 });
 export type MedicoExamPaperInput = z.infer<typeof MedicoExamPaperInputSchema>;
 
@@ -140,6 +150,10 @@ export type MedicoFlashcardGeneratorInput = z.infer<typeof MedicoFlashcardGenera
 export const MedicoFlashcardSchema = z.object({
   front: z.string().describe('The front side of the flashcard (question/term).'),
   back: z.string().describe('The back side of the flashcard (answer/definition).'),
+  subject: z.enum(subjects).optional().describe("The medical subject for tagging."),
+  system: z.enum(systems).optional().describe("The physiological system for tagging."),
+  difficulty_level: z.number().min(1).max(5).optional().describe("Difficulty rating for spaced-repetition timing."),
+  clinical_relevance: z.string().optional().describe("Brief clinical pearl or significance."),
 });
 export type MedicoFlashcard = z.infer<typeof MedicoFlashcardSchema>;
 
@@ -159,6 +173,7 @@ export type MedicoMnemonicsGeneratorInput = z.infer<typeof MedicoMnemonicsGenera
 export const MedicoMnemonicsGeneratorOutputSchema = z.object({
   mnemonic: z.string().describe('The generated mnemonic phrase or acronym.'),
   explanation: z.string().describe('An explanation of what each letter/part of the mnemonic stands for.'),
+  audioPrompt: z.string().optional().describe('A prompt for AI music generation (Lyria) to create a medical jingle.'),
   topicGenerated: z.string().describe('The topic for which this mnemonic was generated.'),
   imageUrl: z.string().url().optional().describe('URL to a generated visual aid for the mnemonic.'),
   nextSteps: z.array(NextStepSchema).describe('Suggested next study actions.'),
@@ -232,6 +247,7 @@ export const MedicoDDTrainerInputSchema = z.object({
     symptoms: z.string().optional(),
     currentCaseSummary: z.string().optional(),
     userResponse: z.string().optional(),
+    thinkingMode: z.boolean().optional(),
 });
 export type MedicoDDTrainerInput = z.infer<typeof MedicoDDTrainerInputSchema>;
 
@@ -345,7 +361,10 @@ export const MicroMateOutputSchema = z.object({
 export type MicroMateInput = z.infer<typeof MicroMateInputSchema>;
 export type MicroMateOutput = z.infer<typeof MicroMateOutputSchema>;
 
-export const DiagnoBotInputSchema = z.object({ labResults: z.string() });
+export const DiagnoBotInputSchema = z.object({
+  labResults: z.string().optional(),
+  imageDataUri: z.string().optional()
+});
 export const DiagnoBotOutputSchema = z.object({
   interpretation: z.string(),
   likelyDifferentials: z.array(z.string()),
@@ -381,7 +400,19 @@ export const NeuralProfileInputSchema = z.object({
 export const NeuralProfileOutputSchema = z.object({
   cognitiveStrengths: z.array(z.string()).describe("Cognitive strengths identified by Medi."),
   knowledgeGaps: z.array(z.string()).describe("Weak areas where the user struggles."),
-  reasoningStyleText: z.string().describe("Explanatory text summarizing their clinical reasoning approach (e.g. Top-Down vs Bottom-Up) and Medi's recommendations.")
+  subtopicWeaknesses: z.array(z.object({
+    subtopic: z.string(),
+    errorPattern: z.string().describe("e.g., 'Confuses treatment doses', 'Misdiagnoses valvular heart disease'"),
+    remediationPriority: z.number().min(1).max(10)
+  })).describe("Granular breakdown of specific subtopic failures."),
+  examReadiness: z.record(z.string(), z.number()).describe("Score out of 100 for specific exam targets like USMLE, NEET-PG."),
+  reasoningStyleText: z.string().describe("Explanatory text summarizing their clinical reasoning approach (e.g. Top-Down vs Bottom-Up) and Medi's recommendations."),
+  diagnosticTimeline: z.array(z.object({
+    timestamp: z.string(),
+    event: z.string(),
+    gravity: z.enum(['Low', 'Medium', 'High']),
+    topicLink: z.string().optional()
+  })).optional()
 });
 export type NeuralProfileOutput = z.infer<typeof NeuralProfileOutputSchema>;
 
@@ -406,7 +437,8 @@ export type MedicoCaseChallengeGeneratorOutput = z.infer<typeof MedicoCaseChalle
 
 // Schema for Note Structurer Agent
 export const MedicoNoteStructurerInputSchema = z.object({
-  rawText: z.string().describe("The raw, unstructured text from dictation."),
+  rawText: z.string().optional().describe("The raw, unstructured text from dictation."),
+  imageDataUri: z.string().optional().describe("Data URI of handwriting or shorthand image to structure."),
   template: z.enum(['soap', 'general']).describe("The desired note template (e.g., SOAP)."),
 });
 export type MedicoNoteStructurerInput = z.infer<typeof MedicoNoteStructurerInputSchema>;
@@ -415,3 +447,34 @@ export const MedicoNoteStructurerOutputSchema = z.object({
   structuredText: z.string().describe("The AI-formatted and structured note content."),
 });
 export type MedicoNoteStructurerOutput = z.infer<typeof MedicoNoteStructurerOutputSchema>;
+
+// New Schema for Concept Video Creator
+export const ConceptVideoCreatorInputSchema = z.object({
+  medicalText: z.string().describe("The dense medical text or topic to convert into a video script."),
+  targetAudience: z.string().default("medical students").describe("The target audience for the video."),
+  aspectRatio: z.enum(['16:9', '9:16', '1:1']).default('16:9').describe("Desired aspect ratio for the synthesized video."),
+});
+export type ConceptVideoCreatorInput = z.infer<typeof ConceptVideoCreatorInputSchema>;
+
+export const ConceptVideoCreatorOutputSchema = z.object({
+  title: z.string().describe("The title of the generated video."),
+  script: z.string().describe("The narration script for the video."),
+  visualPrompts: z.array(z.string()).describe("Prompts for the image/video generation engine (e.g., Veo 3 / text-to-video)."),
+  estimatedDuration: z.string().describe("Estimated video duration."),
+  videoUrl: z.string().url().optional().describe("URL to the synthesized video clip."),
+  renderStatus: z.string().optional().describe("Current status of the Veo 3 synthesis engine."),
+});
+export type ConceptVideoCreatorOutput = z.infer<typeof ConceptVideoCreatorOutputSchema>;
+
+// New Schema for Focus Music Generator
+export const FocusMusicGeneratorInputSchema = z.object({
+  studyVibe: z.string().describe("The desired vibe or mood for studying (e.g., 'Deep focus lo-fi', 'Ambient rain')."),
+});
+export type FocusMusicGeneratorInput = z.infer<typeof FocusMusicGeneratorInputSchema>;
+
+export const FocusMusicGeneratorOutputSchema = z.object({
+  trackName: z.string().describe("Name of the generated track."),
+  musicPrompt: z.string().describe("The prompt sent to the Lyria model for music generation."),
+  recommendations: z.array(z.string()).describe("Other suggested styles based on the input."),
+});
+export type FocusMusicGeneratorOutput = z.infer<typeof FocusMusicGeneratorOutputSchema>;

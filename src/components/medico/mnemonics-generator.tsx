@@ -180,16 +180,17 @@ export function MnemonicsGenerator({ initialTopic }: MnemonicGeneratorProps) {
                   </div>
                   )}
               </div>
-              <div className="space-y-3">
-                 <h4 className="font-semibold text-md mb-1 text-yellow-700 dark:text-yellow-400">Visual Aid:</h4>
+              <div className="space-y-3 flex flex-col items-center sm:items-start">
+                 <h4 className="font-semibold text-md mb-1 text-yellow-700 dark:text-yellow-400 w-full">Visual Aid (Wallpaper):</h4>
                   {generatedMnemonic.imageUrl ? (
-                     <div className="relative aspect-square w-full border rounded-lg overflow-hidden bg-muted/30">
-                        <Image src={generatedMnemonic.imageUrl} alt={`Visual for ${generatedMnemonic.topicGenerated}`} fill className="object-contain" data-ai-hint="medical mnemonic diagram"/>
+                     <div className="relative aspect-[9/16] w-[280px] sm:w-[320px] max-w-full border-4 border-white dark:border-slate-800 shadow-xl rounded-xl overflow-hidden bg-background rotate-1 hover:rotate-0 transition-transform duration-300">
+                        <Image src={generatedMnemonic.imageUrl} alt={`Visual for ${generatedMnemonic.topicGenerated}`} fill className="object-cover" data-ai-hint="medical mnemonic wallpaper"/>
+                        <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.2)] pointer-events-none rounded-xl" />
                     </div>
                   ) : (
-                    <div className="aspect-square w-full border border-dashed rounded-lg flex flex-col items-center justify-center text-muted-foreground bg-muted/20">
+                    <div className="aspect-[9/16] w-[280px] sm:w-[320px] max-w-full border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-muted-foreground bg-muted/20">
                         <ImageIcon className="h-10 w-10 opacity-50 mb-2"/>
-                        <p className="text-xs">No visual generated.</p>
+                        <p className="text-xs">No wallpaper generated.</p>
                     </div>
                   )}
               </div>

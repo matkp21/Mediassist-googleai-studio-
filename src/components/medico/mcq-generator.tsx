@@ -26,14 +26,14 @@ import Link from 'next/link';
 import { MarkdownRenderer } from '../markdown/markdown-renderer';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-const subjects = ["Anatomy", "Physiology", "Biochemistry", "Pathology", "Pharmacology", "Microbiology", "Forensic Medicine", "Community Medicine", "Ophthalmology", "ENT", "General Medicine", "General Surgery", "Obstetrics & Gynaecology", "Pediatrics", "Other"] as const;
-const systems = ["Cardiovascular", "Respiratory", "Gastrointestinal", "Neurological", "Musculoskeletal", "Endocrine", "Genitourinary", "Integumentary", "Hematological", "Immunological", "Other"] as const;
+const subjects = ["Anatomy", "Physiology", "Biochemistry", "Pathology", "Pharmacology", "Microbiology", "Medicine", "Surgery", "Pediatrics", "OB-GYN", "Psychiatry", "Ophthalmology", "ENT", "Forensic Medicine", "Community Medicine", "Other"] as const;
+const systems = ["Cardiovascular", "Respiratory", "Gastrointestinal (GI)", "Neurology", "Renal", "Endocrine", "Hematological/Oncological", "Musculoskeletal (MSK)", "Dermatology", "Infectious Diseases (ID)", "Genitourinary", "Immunological", "Other"] as const;
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: "Topic must be at least 3 characters long." }).max(100, {message: "Topic too long."}),
   count: z.coerce.number().int().min(1, {message: "Minimum 1 MCQ."}).max(10, {message: "Maximum 10 MCQs."}).default(5),
   difficulty: z.enum(['easy', 'medium', 'hard']).default('medium'),
-  examType: z.enum(['university', 'neet-pg', 'usmle']).default('university'),
+  examType: z.enum(['university', 'neet-pg', 'usmle', 'medical-board', 'professional-exam', 'medical-school']).default('university'),
   subject: z.enum(subjects).optional(),
   system: z.enum(systems).optional(),
 });
@@ -242,9 +242,12 @@ export function McqGenerator({ initialTopic }: McqGeneratorProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="university">University</SelectItem>
+                      <SelectItem value="university">University Exam</SelectItem>
                       <SelectItem value="neet-pg">NEET-PG</SelectItem>
                       <SelectItem value="usmle">USMLE</SelectItem>
+                      <SelectItem value="medical-board">Medical Board</SelectItem>
+                      <SelectItem value="professional-exam">Professional Exam</SelectItem>
+                      <SelectItem value="medical-school">Medical School</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

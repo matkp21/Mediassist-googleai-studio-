@@ -11,6 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { MedicoNoteStructurerInputSchema, MedicoNoteStructurerOutputSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
+import { injectKarpathyGuidelines } from './skills/karpathy-guidelines';
 
 export type MedicoNoteStructurerInput = z.infer<typeof MedicoNoteStructurerInputSchema>;
 export type MedicoNoteStructurerOutput = z.infer<typeof MedicoNoteStructurerOutputSchema>;
@@ -19,21 +20,33 @@ export async function structureNote(input: MedicoNoteStructurerInput): Promise<M
   return noteStructurerFlow(input);
 }
 
+const promptTemplate = `You are an expert clinical note editor AI. Your task is to reformat the following raw, dictated text or handwritten image into a clean and organized note.
+The requested format is '{{{template}}}'.
+
+CRITICAL INSTRUCTION (VoxCPM/VibeVoice Simulation):
+When processing dictated raw text, analyze it for conversational shifts to simulate "Speaker Diarization". Differentiate between the Doctor's assessment and the Patient's reported symptoms if conversational cues exist. 
+
+- If the template is 'soap', structure the text under the headings "S (Subjective):", "O (Objective):", "A (Assessment):", and "P (Plan):". Use your clinical knowledge to correctly categorize the information.
+- If the template is 'general', clean up the text, correct medical typos, and format it into logical paragraphs.
+
+{{#if rawText}}
+Raw Text:
+"{{{rawText}}}"
+{{/if}}
+
+{{#if imageDataUri}}
+Extract the handwritten text or shorthand from the image and apply the requested template format.
+Image: {{media url=imageDataUri}}
+{{/if}}
+
+Based on this, generate a JSON object with a single field 'structuredText' containing the newly formatted note.
+`;
+
 const noteStructurerPrompt = ai.definePrompt({
   name: 'medicoNoteStructurerPrompt',
   input: { schema: MedicoNoteStructurerInputSchema },
   output: { schema: MedicoNoteStructurerOutputSchema },
-  prompt: `You are an expert clinical note editor AI. Your task is to reformat the following raw, dictated text into a clean and organized note.
-The requested format is '{{{template}}}'.
-
-- If the template is 'soap', structure the text under the headings "S (Subjective):", "O (Objective):", "A (Assessment):", and "P (Plan):". Use your clinical knowledge to correctly categorize the information.
-- If the template is 'general', simply clean up the text, correct obvious typos, and format it into logical paragraphs.
-
-Raw Dictated Text:
-"{{{rawText}}}"
-
-Based on this, generate a JSON object with a single field 'structuredText' containing the newly formatted note.
-`,
+  prompt: injectKarpathyGuidelines(promptTemplate),
   config: {
     temperature: 0.2, // Factual and precise for structuring
   }

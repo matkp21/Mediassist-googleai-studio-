@@ -11,6 +11,7 @@
  */
 
 import { ai } from '@/ai/genkit';
+import { gemini25Flash } from '@genkit-ai/googleai';
 import { MedicoMCQGeneratorInputSchema, MedicoMCQGeneratorOutputSchema, MCQOptionSchema, MCQSchema as SingleMCQSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
 
@@ -67,7 +68,8 @@ For each MCQ:
 3.  Ensure one option is clearly the correct answer.
 4.  The other three options should be plausible distractors, relevant to the topic but incorrect.
 5.  Provide a brief explanation for why the correct answer is correct and, if relevant, why common distractors are incorrect.
-6. The 'topicGenerated' field must be set to "{{{topic}}}".
+6.  **Granular Metadata**: Set "subject", "system", "difficulty_level" (1-5), and "clinical_relevance".
+7. The 'topicGenerated' field must be set to "{{{topic}}}".
 
 Ensure the final output is a single valid JSON object.
 `,
@@ -84,7 +86,7 @@ const mcqGeneratorFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      const { output } = await mcqGeneratorPrompt(input);
+      const { output } = await mcqGeneratorPrompt({ ...input }, { model: gemini25Flash });
       if (!output || !output.mcqs || output.mcqs.length === 0) {
         console.error('MedicoMCQGeneratorPrompt did not return valid MCQs for topic:', input.topic);
         throw new Error('Failed to generate MCQs. The AI model did not return the expected output or returned an empty set. Please try a different topic or adjust the count.');

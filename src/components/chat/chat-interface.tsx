@@ -168,7 +168,7 @@ export function ChatInterface() {
 
     let displayMessage = currentMessage;
     if (attachedFiles.length > 0) {
-        displayMessage = `[Attached \${attachedFiles.length} file(s)] ` + currentMessage;
+        displayMessage = `[Attached ${attachedFiles.length} file(s)] ` + currentMessage;
     }
 
     const userMessage: Message = { id: Date.now().toString(), content: displayMessage, sender: 'user', timestamp: new Date() };

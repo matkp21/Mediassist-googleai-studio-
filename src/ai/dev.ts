@@ -30,12 +30,19 @@ import '@/ai/agents/medico/VirtualPatientRoundsAgent.ts';
 import '@/ai/agents/medico/ProgressTrackerAgent.ts';
 import '@/ai/agents/medico/CaseChallengeGeneratorAgent.ts'; // Newly added
 import '@/ai/agents/medico/NoteStructurerAgent.ts'; // Newly added
+import '@/ai/agents/medico/ConceptVideoCreatorAgent.ts'; // Newly added
+import '@/ai/agents/medico/FocusMusicGeneratorAgent.ts'; // Newly added
+import '@/ai/agents/medico/SmartSearchAgent.ts'; // Newly added
+import '@/ai/agents/medico/VideoAnalyzerAgent.ts'; // Newly added
+import '@/ai/agents/medico/AskRezzyAgent.ts'; // Newly added
+import '@/ai/agents/medico/MedTutorAgent.ts'; // Newly added
 
 // Professional tools
 import '@/ai/agents/pro/DischargeSummaryGeneratorAgent.ts';
 import '@/ai/agents/pro/TriageAndReferralAgent.ts'; 
 import '@/ai/agents/pro/PatientCommunicationDrafterAgent.ts';
 import '@/ai/agents/pro/OnCallHandoverAssistantAgent.ts';
+import '@/ai/agents/pro/ProWorkflowChatbotAgent.ts'; // Newly added
 import '@/ai/schemas/pro-schemas.ts'; // Ensure pro schemas are included
 import '@/ai/schemas/symptom-analyzer-schemas.ts'; // Ensure symptom schemas are included
 import '@/ai/schemas/medico-tools-schemas.ts'; // Ensure medico schemas are included

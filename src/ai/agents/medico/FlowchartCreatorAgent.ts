@@ -11,6 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { MedicoFlowchartCreatorInputSchema, MedicoFlowchartCreatorOutputSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
+import { injectKarpathyGuidelines } from './skills/karpathy-guidelines';
 
 export type MedicoFlowchartCreatorInput = z.infer<typeof MedicoFlowchartCreatorInputSchema>;
 export type MedicoFlowchartCreatorOutput = z.infer<typeof MedicoFlowchartCreatorOutputSchema>;
@@ -19,11 +20,7 @@ export async function createFlowchart(input: MedicoFlowchartCreatorInput): Promi
   return flowchartCreatorFlow(input);
 }
 
-const flowchartCreatorPrompt = ai.definePrompt({
-  name: 'medicoFlowchartCreatorPrompt',
-  input: { schema: MedicoFlowchartCreatorInputSchema },
-  output: { schema: MedicoFlowchartCreatorOutputSchema },
-  prompt: `You are an AI assistant that creates educational flowcharts for medical students.
+const promptTemplate = `You are an AI assistant that creates educational flowcharts for medical students.
 Your primary task is to generate a structured JSON object representing a flowchart AND a list of relevant next study steps for the topic: {{{topic}}}.
 
 The JSON object you generate MUST have 'nodes', 'edges', 'topicGenerated', and a 'nextSteps' field.
@@ -58,7 +55,13 @@ Example for 'nextSteps':
 - The 'topicGenerated' field should reflect the input topic.
 
 Format the entire output as a valid JSON object.
-`,
+`;
+
+const flowchartCreatorPrompt = ai.definePrompt({
+  name: 'medicoFlowchartCreatorPrompt',
+  input: { schema: MedicoFlowchartCreatorInputSchema },
+  output: { schema: MedicoFlowchartCreatorOutputSchema },
+  prompt: injectKarpathyGuidelines(promptTemplate),
   config: {
     temperature: 0.3, // For structured, factual output
   }

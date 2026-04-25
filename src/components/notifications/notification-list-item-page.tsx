@@ -64,7 +64,9 @@ export function NotificationListItemPage({ item, onMarkAsRead }: NotificationLis
       {item.isRead && (
           <span className="mt-1.5 flex-shrink-0 h-2.5 w-2.5" /> 
       )}
-      <IconComponent className={cn("h-6 w-6 mt-0.5 flex-shrink-0", item.isRead ? "text-muted-foreground" : "text-primary")} />
+      <div className={cn("mt-0.5 flex-shrink-0", item.isRead ? "text-muted-foreground" : "text-primary")}>
+        {IconComponent && <IconComponent className="h-6 w-6" />}
+      </div>
       <div className="flex-grow overflow-hidden">
         <div className="flex justify-between items-start mb-0.5">
             <h3 className={cn("text-md font-semibold text-foreground", !item.isRead && "text-primary")}>{item.title}</h3>

@@ -28,7 +28,7 @@ const formSchema = z.object({
   file: z.instanceof(File, { message: "Please upload a file." })
     .refine(file => file.size > 0, "File cannot be empty.")
     .refine(file => file.size < 5 * 1024 * 1024, "File size must be less than 5MB.")
-    .refine(file => ["text/plain", "image/jpeg", "image/png"].includes(file.type), "Only .txt, .jpeg, and .png files are supported."),
+    .refine(file => ["text/plain", "image/jpeg", "image/png", "application/pdf"].includes(file.type), "Only .txt, .jpeg, .png, and .pdf files are supported."),
   format: z.enum(['bullet', 'flowchart', 'table', 'diagram']).default('bullet'),
 });
 
@@ -70,7 +70,7 @@ export default function NoteSummarizer() {
           throw new Error("Document content is too short to summarize effectively.");
         }
         input = { text, format: data.format };
-      } else if (fileType === 'image/jpeg' || fileType === 'image/png') {
+      } else if (fileType === 'image/jpeg' || fileType === 'image/png' || fileType === 'application/pdf') {
         const reader = new FileReader();
         const dataUriPromise = new Promise<string>((resolve, reject) => {
             reader.onerror = reject;
@@ -78,7 +78,7 @@ export default function NoteSummarizer() {
             reader.readAsDataURL(data.file);
         });
         const imageDataUri = await dataUriPromise;
-        setExtractedText(null); // No text preview for images
+        setExtractedText(null); // No text preview for images/PDFs
         input = { imageDataUri, format: data.format };
       } else {
         throw new Error("Unsupported file type.");
@@ -147,12 +147,12 @@ export default function NoteSummarizer() {
                     <Input
                       id="file-upload-summarizer"
                       type="file"
-                      accept=".txt,.jpeg,.jpg,.png"
+                      accept=".txt,.jpeg,.jpg,.png,.pdf"
                       onChange={(e) => field.onChange(e.target.files?.[0])}
                       className="rounded-lg text-base py-2.5 border-border/70 focus:border-primary file:text-sm file:font-medium"
                     />
                   </FormControl>
-                  <FormDescription className="text-xs">Supports .txt, .jpeg, and .png files up to 5MB.</FormDescription>
+                  <FormDescription className="text-xs">Supports .txt, .pdf, .jpeg, and .png files up to 5MB.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

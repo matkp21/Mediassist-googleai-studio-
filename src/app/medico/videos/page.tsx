@@ -5,12 +5,15 @@ import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Loader2, Youtube, Video, AlertTriangle } from 'lucide-react';
+import { Search, Loader2, Youtube, Video, AlertTriangle, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import Image from 'next/image';
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { analyzeVideo, type MedicoVideoAnalyzerOutput } from '@/ai/agents/medico/VideoAnalyzerAgent';
 
 interface Video {
     id: string;
@@ -23,6 +26,11 @@ export default function VideoLibraryPage() {
     const [videos, setVideos] = useState<Video[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    
+    // Video Analysis State
+    const [analyzingVideoId, setAnalyzingVideoId] = useState<string | null>(null);
+    const [analyzerResult, setAnalyzerResult] = useState<MedicoVideoAnalyzerOutput | null>(null);
+    
     const { toast } = useToast();
 
     const searchYouTubeVideos = useCallback(async (query: string) => {
@@ -56,6 +64,21 @@ export default function VideoLibraryPage() {
             return;
         }
         searchYouTubeVideos(searchQuery);
+    };
+
+    const handleAnalyze = async (video: Video) => {
+        setAnalyzingVideoId(video.id);
+        setAnalyzerResult(null);
+        try {
+            const result = await analyzeVideo({ videoId: video.id, videoTitle: video.title, topic: searchQuery });
+            setAnalyzerResult(result);
+            toast({ title: "Analysis Complete", description: "Summaries and key moments extracted." });
+        } catch (error) {
+            console.error("Analyzer Error:", error);
+            toast({ title: "Analysis Error", description: "Could not analyze the video.", variant: "destructive" });
+        } finally {
+            setAnalyzingVideoId(null);
+        }
     };
 
     return (
@@ -102,8 +125,8 @@ export default function VideoLibraryPage() {
             ) : videos.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {videos.map(video => (
-                        <Card key={video.id} className="shadow-md rounded-xl overflow-hidden hover:shadow-primary/20 transition-all duration-300 group flex flex-col">
-                            <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer" className="block">
+                        <Card key={video.id} className="shadow-md rounded-xl overflow-hidden hover:shadow-primary/20 transition-all duration-300 flex flex-col group">
+                            <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer" className="block relative">
                                 <CardHeader className="p-0">
                                     <div className="aspect-video relative">
                                         <Image 
@@ -111,20 +134,29 @@ export default function VideoLibraryPage() {
                                             alt={video.title}
                                             fill
                                             className="object-cover group-hover:scale-105 transition-transform"
-                                            data-ai-hint="youtube thumbnail"
                                         />
                                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Video className="h-12 w-12 text-white/80" />
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="p-3 flex-grow">
-                                    <h3 className="font-semibold text-sm line-clamp-2 text-foreground group-hover:text-primary transition-colors">{video.title}</h3>
-                                </CardContent>
-                                <CardFooter className="p-3 pt-0">
-                                    <p className="text-xs text-muted-foreground">{video.channel}</p>
-                                </CardFooter>
                             </a>
+                            <CardContent className="p-3 flex-grow cursor-pointer" onClick={() => window.open(`https://www.youtube.com/watch?v=${video.id}`, '_blank')}>
+                                <h3 className="font-semibold text-sm line-clamp-2 text-foreground group-hover:text-primary transition-colors">{video.title}</h3>
+                            </CardContent>
+                            <CardFooter className="p-3 pt-0 flex justify-between items-center bg-card">
+                                <p className="text-xs text-muted-foreground line-clamp-1 flex-1">{video.channel}</p>
+                                <Button 
+                                    size="sm" 
+                                    variant="secondary" 
+                                    className="ml-2 h-8 rounded-full" 
+                                    onClick={() => handleAnalyze(video)}
+                                    disabled={analyzingVideoId === video.id}
+                                >
+                                    {analyzingVideoId === video.id ? <Loader2 className="h-3 w-3 animate-spin"/> : <Wand2 className="h-3 w-3 mr-1"/>}
+                                    Analyze
+                                </Button>
+                            </CardFooter>
                         </Card>
                     ))}
                 </div>
@@ -135,6 +167,55 @@ export default function VideoLibraryPage() {
                     <p className="text-sm">Try a different search term to find lectures.</p>
                 </div>
             )}
+
+            {/* Video Analysis Results Dialog */}
+            <Dialog open={!!analyzerResult} onOpenChange={(open) => !open && setAnalyzerResult(null)}>
+                <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col p-0">
+                    {analyzerResult && (
+                        <>
+                            <DialogHeader className="p-6 pb-2">
+                                <DialogTitle>Video Content Analysis</DialogTitle>
+                                <DialogDescription>AI-generated summary, timestamps, and flashcards derived from the video stream.</DialogDescription>
+                            </DialogHeader>
+                            <ScrollArea className="flex-grow p-6 pt-0 space-y-6">
+                                <div className="space-y-2 mb-6">
+                                    <h4 className="font-semibold text-primary">Key Summary</h4>
+                                    <p className="text-sm bg-muted/50 p-4 rounded-lg">{analyzerResult.summary}</p>
+                                </div>
+                                <div className="space-y-3 mb-6">
+                                    <h4 className="font-semibold text-primary">Key Moments</h4>
+                                    <ul className="space-y-2">
+                                        {analyzerResult.keyMoments.map((km, idx) => (
+                                            <li key={idx} className="flex gap-4 items-start text-sm border-l-2 border-primary/40 pl-3 py-1">
+                                                <span className="font-mono font-medium text-primary bg-primary/10 px-1 rounded">{km.timestamp}</span>
+                                                <span>{km.description}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="space-y-3">
+                                    <h4 className="font-semibold text-primary">Extracted Flashcards</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {analyzerResult.flashcards.map((fc, idx) => (
+                                            <Card key={idx} className="bg-card">
+                                                <CardHeader className="p-3 pb-1 border-b">
+                                                    <CardTitle className="text-sm text-foreground">Q: {fc.front}</CardTitle>
+                                                </CardHeader>
+                                                <CardContent className="p-3 pt-2">
+                                                    <p className="text-sm text-muted-foreground">A: {fc.back}</p>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                </div>
+                            </ScrollArea>
+                            <DialogFooter className="p-4 border-t bg-muted/50">
+                                <Button onClick={() => setAnalyzerResult(null)}>Close Analysis</Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </DialogContent>
+            </Dialog>
         </PageWrapper>
     );
 }
