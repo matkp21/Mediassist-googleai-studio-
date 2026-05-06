@@ -1,7 +1,7 @@
 'use server';
 
 import { generate } from '@genkit-ai/ai';
-import { gemini25Flash } from '@genkit-ai/googleai';
+
 import { ai } from '@/ai/genkit';
 import { ConceptVideoCreatorInputSchema, ConceptVideoCreatorOutputSchema, type ConceptVideoCreatorInput, type ConceptVideoCreatorOutput } from '@/ai/schemas/medico-tools-schemas';
 import { injectKarpathyGuidelines } from './skills/karpathy-guidelines';
@@ -32,7 +32,7 @@ Return a JSON object with:
 `;
 
     const response = await generate({
-      model: gemini25Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: injectKarpathyGuidelines(promptTemplate),
       output: {
         schema: ConceptVideoCreatorOutputSchema,

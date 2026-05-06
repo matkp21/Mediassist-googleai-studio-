@@ -1,5 +1,5 @@
 import { genkit, z } from "genkit";
-import { googleAI, gemini25Flash } from "@genkit-ai/googleai";
+import { googleAI } from "@genkit-ai/googleai";
 import { getFirestore } from "firebase-admin/firestore";
 
 const ai = genkit({ plugins: [googleAI()] });

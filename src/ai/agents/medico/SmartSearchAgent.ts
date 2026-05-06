@@ -1,7 +1,7 @@
 'use server';
 
 import { ai } from '@/ai/genkit';
-import { gemini25Flash } from '@genkit-ai/googleai';
+
 import { z } from 'zod';
 
 export const SmartSearchCompletionInputSchema = z.object({
@@ -42,7 +42,7 @@ const smartSearchCompletionFlow = ai.defineFlow(
       if (!input.query || input.query.trim().length < 2) {
         return { suggestions: [] };
       }
-      const { output } = await smartSearchCompletionPrompt({ ...input }, { model: gemini25Flash });
+      const { output } = await smartSearchCompletionPrompt({ ...input }, { model: 'googleai/gemini-3.0-flash' });
       if (!output || !output.suggestions) {
         return { suggestions: [] };
       }

@@ -1,5 +1,5 @@
 import { genkit, z } from "genkit";
-import { googleAI, gemini25Flash } from "@genkit-ai/googleai";
+import { googleAI } from '@genkit-ai/googleai';
 
 const ai = genkit({ plugins: [googleAI()] });
 
@@ -12,7 +12,7 @@ export async function generateWithRepair<T>(
   schema: z.ZodType<T>,
   options: { retries?: number; model?: any } = {}
 ): Promise<T> {
-  const { retries = 3, model = gemini25Flash } = options;
+  const { retries = 3, model = gemini15Flash } = options;
   let lastError: any;
 
   for (let i = 0; i < retries; i++) {
@@ -53,19 +53,19 @@ export const ideaGenFlow = ai.defineFlow(
   async (input) => {
     // Stage 1: Loose Filter (Brainstorm)
     const brainstorm = await ai.generate({
-      model: gemini25Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Generate 20 loose ideas for: ${input.topic}`,
     });
 
     // Stage 2: Explore (Deepen)
     const explored = await ai.generate({
-      model: gemini25Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Select the 10 most promising ideas from this list and elaborate briefly on each:\n${brainstorm.text}`,
     });
 
     // Stage 3: Strict Filter (Validate)
     const filtered = await ai.generate({
-      model: gemini25Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `From these 10 ideas, pick the top ${input.count} that are most clinically relevant and unique. Return ONLY a JSON list of strings.`,
     });
 

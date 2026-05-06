@@ -1,6 +1,6 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
-import { gemini20Flash } from "@genkit-ai/googleai";
+
 
 export const coWriteFlow = ai.defineFlow(
   { name: "coWriteAction",
@@ -13,7 +13,7 @@ export const coWriteFlow = ai.defineFlow(
       shorten: `Condense this to the essential high-yield points only:\n"${text}"`,
     };
     const resp = await ai.generate({
-      model: gemini25Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: prompts[action],
       config: { temperature: 0.4 },
     });
@@ -27,7 +27,7 @@ export const generateTitleFlow = ai.defineFlow(
     outputSchema: z.object({ title: z.string() }) },
   async ({ text }) => {
     const resp = await ai.generate({
-      model: gemini25Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Generate a concise 5-7 word medical document title for:\n"${text}"\nReturn ONLY the title.`,
       config: { temperature: 0.3 },
     });

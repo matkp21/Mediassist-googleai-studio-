@@ -1,6 +1,6 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
-import { gemini20Flash } from "@genkit-ai/googleai";
+
 
 export const webSearchTool = ai.defineTool(
   {
@@ -10,7 +10,7 @@ export const webSearchTool = ai.defineTool(
     outputSchema: z.object({ summary: z.string() }),
   },
   async ({ query }) => {
-    const resp = await ai.generate({ model: gemini20Flash, prompt: `Search: ${query}` });
+    const resp = await ai.generate({ model: 'googleai/gemini-3.0-flash', prompt: `Search: ${query}` });
     return { summary: resp.text };
   }
 );

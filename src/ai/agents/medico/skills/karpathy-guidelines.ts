@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
-import { gemini25Flash } from '@genkit-ai/googleai';
+
 
 // 1-5: Prompt & Reasoning Upgrades (Karpathy Guidelines)
 

@@ -1,14 +1,14 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
 import { VisualizeInputSchema } from "@/lib/schemas/medi-schemas";
-import { gemini20Pro } from "@genkit-ai/googleai";
+
 
 export const visualizeFlow = ai.defineFlow(
   { name: "visualizeFlow", inputSchema: VisualizeInputSchema,
     outputSchema: z.object({ mermaidCode: z.string(), explanation: z.string(), title: z.string() }) },
   async (input) => {
     const resp = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Generate a Mermaid.js ${input.diagramType} diagram for the medical concept:
 "${input.concept}"
 
@@ -24,7 +24,7 @@ Return ONLY the raw Mermaid diagram code.`,
     });
 
     const explanationResp = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `In 2-3 sentences, explain the key clinical takeaway from this diagram about "${input.concept}".`,
       config: { temperature: 0.4 },
     });

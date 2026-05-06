@@ -12,12 +12,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@genkit-ai/firebase": "^1.32.0",
-    "@genkit-ai/google-genai": "^1.32.0",
+    "@genkit-ai/firebase": "^1.33.0",
+    "@genkit-ai/google-genai": "^1.33.0",
     "@genkit-ai/googleai": "^1.28.0",
-    "@genkit-ai/mcp": "^1.32.0",
-    "@genkit-ai/next": "1.8.0",
-    "@genkit-ai/vertexai": "^1.32.0",
+    "@genkit-ai/mcp": "^1.33.0",
+    "@genkit-ai/next": "^1.33.0",
+    "@genkit-ai/vertexai": "^1.33.0",
     "@google-cloud/speech": "^6.5.0",
     "@google/genai": "^1.50.1",
     "@hookform/resolvers": "^3.10.0",
@@ -44,6 +44,8 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.2.15",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "@reactflow/node-resizer": "^2.1.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/react-query": "5.70.0",
@@ -59,12 +61,14 @@
     "firebase-admin": "^13.8.0",
     "firebase-functions": "^7.2.5",
     "framer-motion": "11.5.1",
-    "genkit": "1.8.0",
+    "genkit": "^1.33.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "lucide-react": "0.490.0",
     "mermaid": "^10.9.1",
+    "motion": "^12.38.0",
     "next": "^15.0.0",
+    "next-themes": "^0.4.6",
     "patch-package": "^8.0.0",
     "pdf-lib": "^1.17.1",
     "pdf.js-extract": "^1.0.1",
@@ -83,6 +87,7 @@
     "zod": "3.25.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.4",
     "@types/node": "20.14.9",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
@@ -90,9 +95,9 @@
     "cross-env": "^10.1.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.2",
-    "genkit-cli": "1.8.0",
+    "genkit-cli": "^1.33.0",
     "postcss": "8.4.38",
-    "tailwindcss": "3.4.4",
+    "tailwindcss": "^4.0.0",
     "typescript": "5.5.2"
   }
 }

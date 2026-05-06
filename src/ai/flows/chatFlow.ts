@@ -1,7 +1,7 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
 import { ChatInputSchema } from "@/lib/schemas/medi-schemas";
-import { gemini20Pro } from "@genkit-ai/googleai";
+
 import * as admin from 'firebase-admin';
 import { db } from "@/lib/firebase-admin";
 
@@ -42,7 +42,7 @@ export const chatFlow = ai.defineFlow(
       .filter(Boolean);
 
     const response = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       tools: activeTools,
       system: `You are MediAssistant, a professional clinical companion. 
       Use tools when necessary to provide accurate medical calculations and literature search.

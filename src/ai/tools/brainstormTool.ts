@@ -1,6 +1,6 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
-import { gemini20Flash } from "@genkit-ai/googleai";
+
 
 export const brainstormTool = ai.defineTool(
   {
@@ -31,7 +31,7 @@ export const brainstormTool = ai.defineTool(
     };
 
     const resp = await ai.generate({
-      model: gemini20Flash,
+      model: 'googleai/gemini-3.0-flash',
       config: { temperature: 0.9 },
       prompt: `${modePrompts[mode]}
 
@@ -42,7 +42,7 @@ Return as JSON: [{"title":"...","description":"...","category":"...","rarity":"c
     const ideas = JSON.parse(clean);
 
     const summaryResp = await ai.generate({
-      model: gemini20Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Summarize in 1 sentence the key clinical teaching point from these ideas about "${topic}".`,
       config: { temperature: 0.3 },
     });

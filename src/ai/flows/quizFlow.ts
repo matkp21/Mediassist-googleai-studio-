@@ -1,7 +1,7 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
 import { QuizInputSchema, QuestionSchema } from "@/lib/schemas/medi-schemas";
-import { gemini20Flash } from "@genkit-ai/googleai";
+
 import { db } from "@/lib/firebase-admin";
 
 // ─── Retrieve Agent ───────────────────────────────────────────
@@ -11,7 +11,7 @@ const retrieveAgent = ai.defineFlow(
     outputSchema: z.string() },
   async ({ topic }) => {
     const resp = await ai.generate({
-      model: gemini20Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Provide key medical facts, definitions, and clinical pearls about: ${topic}
 Focus on exam-relevant, high-yield points.`,
     });
@@ -26,7 +26,7 @@ const generateAgent = ai.defineFlow(
     outputSchema: z.array(QuestionSchema) },
   async ({ context, input }) => {
     const resp = await ai.generate({
-      model: gemini20Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Generate ${input.count} ${input.type} questions about "${input.topic}".
 Difficulty: ${input.difficulty}. Use this context:
 ${context}

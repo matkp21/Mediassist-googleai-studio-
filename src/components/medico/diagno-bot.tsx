@@ -21,7 +21,7 @@ import { firestore } from '@/lib/firebase';
 import { MarkdownRenderer } from '@/components/markdown/markdown-renderer';
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 
 const formSchema = z.object({
@@ -33,7 +33,7 @@ const formSchema = z.object({
 });
 type DiagnoBotFormValues = z.infer<typeof formSchema>;
 
-export function DiagnoBot() {
+export function DiagnoBot({ initialTopic }: { initialTopic?: string | null }) {
   const { toast } = useToast();
   const { user } = useProMode();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -49,8 +49,17 @@ export function DiagnoBot() {
 
   const form = useForm<DiagnoBotFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { labResults: "" },
+    defaultValues: { labResults: initialTopic || "" },
   });
+
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
+
+  useEffect(() => {
+    if (initialTopic && !hasAutoStarted && !interpretationData && !isLoading) {
+      setHasAutoStarted(true);
+      form.handleSubmit(onSubmit)();
+    }
+  }, [initialTopic, hasAutoStarted, interpretationData, isLoading, form]);
 
   const onSubmit: SubmitHandler<DiagnoBotFormValues> = async (data) => {
     let imageDataUri: string | undefined = undefined;

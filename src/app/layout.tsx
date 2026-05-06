@@ -9,14 +9,38 @@ export const metadata: Metadata = {
   description: "Advanced Medical Assistant powered by DeepTutor and Genkit",
 };
 
+import { ThemeProvider } from "@/components/theme-provider";
+import { AppSidebar } from "@/components/app-sidebar";
+import { ProModeProvider } from "@/contexts/pro-mode-context";
+import { NotificationProvider } from "@/contexts/notification-context";
+import { IPadNotificationPill } from "@/components/notifications/ipad-notification-pill";
+import { Toaster } from "@/components/ui/toaster";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ProModeProvider>
+            <NotificationProvider>
+              <IPadNotificationPill />
+              <AppSidebar>
+                {children}
+              </AppSidebar>
+              <Toaster />
+            </NotificationProvider>
+          </ProModeProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

@@ -2,7 +2,7 @@
 // src/components/medico/clinical-case-simulator.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -33,7 +33,7 @@ const responseFormSchema = z.object({
 });
 type ResponseFormValues = z.infer<typeof responseFormSchema>;
 
-export default function ClinicalCaseSimulator() {
+export default function ClinicalCaseSimulator({ initialTopic }: { initialTopic?: string | null }) {
   const [caseData, setCaseData] = useState<MedicoClinicalCaseOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,13 +42,22 @@ export default function ClinicalCaseSimulator() {
 
   const newCaseForm = useForm<NewCaseFormValues>({
     resolver: zodResolver(newCaseFormSchema),
-    defaultValues: { topic: "" },
+    defaultValues: { topic: initialTopic || "" },
   });
 
   const responseForm = useForm<ResponseFormValues>({
     resolver: zodResolver(responseFormSchema),
     defaultValues: { userResponse: "" },
   });
+
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
+
+  useEffect(() => {
+    if (initialTopic && !hasAutoStarted && !caseData && !isLoading) {
+      setHasAutoStarted(true);
+      newCaseForm.handleSubmit(handleNewCaseSubmit)();
+    }
+  }, [initialTopic, hasAutoStarted, caseData, isLoading, newCaseForm]);
 
   const handleNewCaseSubmit: SubmitHandler<NewCaseFormValues> = async (data) => {
     setIsLoading(true);

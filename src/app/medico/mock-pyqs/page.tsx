@@ -1,7 +1,8 @@
 // src/app/medico/mock-pyqs/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -35,8 +36,10 @@ const formSchema = z.object({
 });
 type ExamPaperFormValues = z.infer<typeof formSchema>;
 
-export default function MockPYQsPage() {
+function MockPYQsContent() {
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const initialTopic = searchParams.get('topic');
   const { user } = useProMode();
   const { execute: runGenerateExam, data: examData, isLoading, error, reset } = useAiAgent(generateExamPaper, MedicoExamPaperOutputSchema, {
     onSuccess: (data, input) => {
@@ -57,8 +60,17 @@ export default function MockPYQsPage() {
 
   const form = useForm<ExamPaperFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { examType: "Final MBBS Prof Mock", year: "", count: 10 },
+    defaultValues: { examType: initialTopic || "Final MBBS Prof Mock", year: "", count: 10 },
   });
+
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
+
+  useEffect(() => {
+    if (initialTopic && !hasAutoStarted && !examData && !isLoading) {
+      setHasAutoStarted(true);
+      form.handleSubmit(onSubmit)();
+    }
+  }, [initialTopic, hasAutoStarted, examData, isLoading, form]);
 
   const onSubmit: SubmitHandler<ExamPaperFormValues> = async (data) => {
     await runGenerateExam(data);
@@ -270,4 +282,12 @@ export default function MockPYQsPage() {
       </div>
     </PageWrapper>
   );
+}
+
+export default function MockPYQsPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <MockPYQsContent />
+        </Suspense>
+    );
 }

@@ -29,6 +29,7 @@ import {
   PillIcon,
   BellRing,
   Orbit,
+  Users,
 } from 'lucide-react';
 import {
   Tooltip,
@@ -57,6 +58,7 @@ const allNavItems = [
   { href: '/patient-management', label: 'Patient Management', icon: ClipboardList, ariaLabel: 'Open Patient Management', roles: ['pro'] },
   { href: '/medico', label: 'Medico Hub', icon: GraduationCap, ariaLabel: 'Open Medico Study Hub', roles: ['medico', 'pro', null] },
   { href: '/medico/library', label: 'Study Library', icon: Library, ariaLabel: 'Open Study Library', roles: ['medico', 'pro', null] },
+  { href: '/medico/community', label: 'Community', icon: Users, ariaLabel: 'Open Community Hub', roles: ['medico', 'pro', null] },
   { href: '/notifications', label: 'Notifications', icon: BellRing, ariaLabel: 'View Notifications', roles: ['pro', 'medico', 'diagnosis', null] },
   { href: '/feedback', label: 'Feedback', icon: Info, ariaLabel: 'Submit Feedback', roles: ['pro', 'medico', 'diagnosis'] },
 ];

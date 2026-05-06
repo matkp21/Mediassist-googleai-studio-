@@ -1,7 +1,7 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
 import { AnimatorInputSchema } from "@/lib/schemas/medi-schemas";
-import { gemini20Pro } from "@genkit-ai/googleai";
+
 
 // ─── SVG Medical Pathway Generator ──
 const svgPathwayFlow = ai.defineFlow(
@@ -10,7 +10,7 @@ const svgPathwayFlow = ai.defineFlow(
     outputSchema: z.string() },
   async ({ concept, type }) => {
     const resp = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Generate a complete, self-contained SVG animation for this medical concept:
 Concept: "${concept}" | Type: ${type}
 
@@ -37,7 +37,7 @@ const htmlVisualizerFlow = ai.defineFlow(
     outputSchema: z.string() },
   async ({ concept, type }) => {
     const resp = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Create a complete interactive HTML page visualizing this medical concept.
 Concept: "${concept}" | Type: ${type}
 

@@ -17,7 +17,8 @@ import {
   BrainCircuit,
   Terminal,
   RefreshCcw,
-  History
+  History,
+  CheckSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getMedicalOrchestrator } from '@/ai/orchestrator/MedicalOrchestrator';
@@ -35,8 +36,8 @@ interface Message {
 
 import { useAiStreaming } from '@/hooks/use-ai-streaming';
 
-export default function AutonomousSupervisor() {
-  const [query, setQuery] = useState('');
+export default function AutonomousSupervisor({ initialTopic }: { initialTopic?: string | null }) {
+  const [query, setQuery] = useState(initialTopic || '');
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: 'system', 
@@ -128,6 +129,16 @@ export default function AutonomousSupervisor() {
       setActiveTask(null);
     }
   };
+
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
+
+  useEffect(() => {
+    if (initialTopic && !hasAutoStarted) {
+      setHasAutoStarted(true);
+      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+      handleSubmit(fakeEvent);
+    }
+  }, [initialTopic, hasAutoStarted]);
 
   const handleHitlApproval = async (metadata: any) => {
     setActiveTask('Executing Approved Action...');

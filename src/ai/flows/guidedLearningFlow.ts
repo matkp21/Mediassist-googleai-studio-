@@ -1,6 +1,6 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
-import { gemini20Pro } from "@genkit-ai/googleai";
+
 import { db } from "@/lib/firebase-admin";
 
 export const designLearningPlanFlow = ai.defineFlow(
@@ -12,7 +12,7 @@ export const designLearningPlanFlow = ai.defineFlow(
     const profile = profileSnap.data() ?? {};
 
     const resp = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Design a 4-step progressive learning plan for a medical student studying:
 Topic: "${topic}"
 Student level: ${profile.knowledgeLevel ?? "MBBS Year 3"}
@@ -37,7 +37,7 @@ export const generateStepHTMLFlow = ai.defineFlow(
     }) },
   async ({ topic, step }) => {
     const resp = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `Create an interactive HTML learning page for Step ${step.stepNumber}: "${step.title}"
 Topic: ${topic} | Objective: ${step.objective}
 
@@ -54,7 +54,7 @@ Return ONLY complete HTML.`,
     });
 
     const keyPointsResp = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       prompt: `List 5 high-yield exam points for "${step.title}" as JSON: ["point1","point2",...]`,
     });
     const keyPoints = JSON.parse(keyPointsResp.text.replace(/```json|```/g, "").trim());

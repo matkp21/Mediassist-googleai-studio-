@@ -103,7 +103,7 @@ export class CrashSentinelBrain {
     context?: { brainModule?: string; flowId?: string; userId?: string }
   ): Promise<T> {
     // Pick circuit breaker based on brainModule hint
-    const breakerKey = context?.brainModule?.includes("Brain-2") ? "medGemma4B" : "gemini25Pro";
+    const breakerKey = context?.brainModule?.includes("Brain-2") ? "medGemma4B" : "gemini15Pro";
     const breaker = BREAKERS[breakerKey as keyof typeof BREAKERS]();
 
     try {
@@ -126,7 +126,7 @@ export class CrashSentinelBrain {
     return {
       ...this.state,
       activeCircuits: [
-        BREAKERS.gemini25Pro(),
+        BREAKERS.gemini15Pro(),
         BREAKERS.medGemma4B(),
         BREAKERS.pubmedMCP(),
         BREAKERS.openFdaMCP(),

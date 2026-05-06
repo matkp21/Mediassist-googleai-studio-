@@ -126,7 +126,7 @@ export function getBreaker(name: string, config?: Partial<CircuitConfig>): Circu
 
 /** Convenience: pre-configured breakers for MediAssistant AI endpoints */
 export const BREAKERS = {
-  gemini25Pro:   () => getBreaker("gemini-2.5-pro",   { failureThreshold: 3, openDurationMs: 45_000 }),
+  gemini15Pro:   () => getBreaker("gemini-2.5-pro",   { failureThreshold: 3, openDurationMs: 45_000 }),
   medGemma4B:    () => getBreaker("medgemma-4b",       { failureThreshold: 5, openDurationMs: 20_000 }),
   pubmedMCP:     () => getBreaker("pubmed-mcp",        { failureThreshold: 4, openDurationMs: 30_000 }),
   openFdaMCP:    () => getBreaker("openfda-mcp",       { failureThreshold: 4, openDurationMs: 30_000 }),

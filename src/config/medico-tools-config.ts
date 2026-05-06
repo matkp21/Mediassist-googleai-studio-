@@ -38,6 +38,8 @@ const RagTutor = dynamic(() => import('@/components/medico/rag-tutor'), { ssr: f
 const ConceptVideoCreator = dynamic(() => import('@/components/medico/concept-video-creator'), { ssr: false });
 const VibeVoiceLectureRecorder = dynamic(() => import('@/components/medico/vibevoice-lecture-recorder').then(mod => mod.VibeVoiceLectureRecorder), { ssr: false });
 const FocusMusicGenerator = dynamic(() => import('@/components/medico/focus-music-generator'), { ssr: false });
+const GuidelinesCompass = dynamic(() => import('@/components/medico/guidelines-compass').then(mod => mod.GuidelinesCompass), { ssr: false });
+const KnowledgeAugmenter = dynamic(() => import('@/components/medico/knowledge-augmenter').then(mod => mod.KnowledgeAugmenter), { ssr: false });
 const TriageReferralStreamliner = dynamic(() => import('@/components/medico/triage-referral-streamliner').then(m => m.TriageReferralStreamliner), { ssr: false });
 const ProWorkflowChatbot = dynamic(() => import('@/components/medico/pro-workflow-chatbot').then(m => m.ProWorkflowChatbot), { ssr: false });
 
@@ -71,6 +73,7 @@ export const allMedicoToolsList: MedicoTool[] = [
   { id: 'sequential-thinking', title: 'Sequential Diagnostic Workspace', description: 'Deep reflective reasoning engine for complex symptoms through explicit thought sequences. (Inspiration: MCP)', icon: BrainCircuit, component: SequentialDiagnosticWorkspace, isFrequentlyUsed: true },
   { id: 'research-scraper', title: 'Advanced Research Scraper', description: 'Perform deep-scrapping of clinical portals to get LLM-ready markdown summaries. (Inspiration: Firecrawl)', icon: Globe, component: AdvancedResearchScraper, isFrequentlyUsed: true },
   { id: 'timetable', title: 'Active Study Coach', description: 'Task trees, automated study triggers, and proactive planning powered by Brain-3 scheduling tools.', icon: CalendarClock, component: StudyPlannerActiveCoach, isFrequentlyUsed: true },
+  { id: 'timetable-creator', title: 'Timetable Creator', description: 'AI-generated timetables based on remaining exam days.', icon: CalendarClock, component: StudyTimetableCreator, isFrequentlyUsed: true },
   { id: 'calculators', title: 'Clinical Calculators', description: 'Specialized medical scores (HEART, Wells, CHA2DS2-VASc) powered by dynamic Agent-Skills loading.', icon: Calculator, component: ClinicalCalculators },
   { id: 'virtual-board', title: 'Virtual Medical Board', description: 'Simulate a multi-specialist round table discussion (Cardio, Nephro, ID) for complex patient cases.', icon: Users, component: VirtualMedicalBoard },
   { id: 'support-chatbot', title: 'IT Support Bot', description: 'Context-aware IT agent fueled by the app history to help you troubleshoot MediAssistant features.', icon: Bot, component: SupportAgent },
@@ -107,6 +110,8 @@ export const allMedicoToolsList: MedicoTool[] = [
   { id: 'videos', title: 'Video Lecture Library', description: 'Search and find relevant medical video lectures.', icon: Youtube, href: '/medico/videos' },
   { id: 'library', title: 'Knowledge Hub', description: 'Your personal library of notes, MCQs, and community content.', icon: Library, href: '/medico/library' },
   { id: 'rag-tutor', title: 'Ask Medi (RAG)', description: 'Resident Genius mentor using semantic RAG for grounded PYQs and flashcards.', icon: DatabaseZap, component: RagTutor, isFrequentlyUsed: true },
+  { id: 'guidelines-compass', title: 'Guidelines Compass', description: 'NICE, WHO, AHA, IDSA — latest clinical guidelines always at hand.', icon: BookOpen, component: GuidelinesCompass },
+  { id: 'knowledge-augmenter', title: 'Knowledge Augmenter', description: 'Expands brief notes with additional comprehensive medical context.', icon: Sparkles, component: KnowledgeAugmenter },
   
   // Goose Adaptations
   { id: 'clinical-recipes', title: 'Clinical & Study Recipes', description: 'Portable YAML workflows to standardize complex, multi-agent AI processes.', icon: FileCode, component: ClinicalRecipesManager, isFrequentlyUsed: true },

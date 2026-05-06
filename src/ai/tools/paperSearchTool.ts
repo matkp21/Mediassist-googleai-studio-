@@ -1,6 +1,6 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
-import { gemini20Flash } from "@genkit-ai/googleai";
+
 
 export const paperSearchTool = ai.defineTool(
   {
@@ -53,7 +53,7 @@ export const paperSearchTool = ai.defineTool(
     const withRelevance = await Promise.all(
       papers.slice(0, 3).map(async (paper) => {
         const resp = await ai.generate({
-          model: gemini20Flash,
+          model: 'googleai/gemini-3.0-flash',
           prompt: `In 1 sentence, what is the clinical takeaway from this study?\nTitle: ${paper.title}`,
           config: { temperature: 0.2 },
         });

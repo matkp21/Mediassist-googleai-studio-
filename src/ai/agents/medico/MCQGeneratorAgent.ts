@@ -11,7 +11,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { gemini25Flash } from '@genkit-ai/googleai';
+
 import { MedicoMCQGeneratorInputSchema, MedicoMCQGeneratorOutputSchema, MCQOptionSchema, MCQSchema as SingleMCQSchema } from '@/ai/schemas/medico-tools-schemas';
 import type { z } from 'zod';
 
@@ -86,7 +86,7 @@ const mcqGeneratorFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      const { output } = await mcqGeneratorPrompt({ ...input }, { model: gemini25Flash });
+      const { output } = await mcqGeneratorPrompt({ ...input }, { model: 'googleai/gemini-3.0-flash' });
       if (!output || !output.mcqs || output.mcqs.length === 0) {
         console.error('MedicoMCQGeneratorPrompt did not return valid MCQs for topic:', input.topic);
         throw new Error('Failed to generate MCQs. The AI model did not return the expected output or returned an empty set. Please try a different topic or adjust the count.');

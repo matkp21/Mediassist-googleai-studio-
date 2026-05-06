@@ -2,6 +2,7 @@
 
 "use client";
 
+import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -27,7 +28,7 @@ const formSchema = z.object({
 });
 type PharmaGenieFormValues = z.infer<typeof formSchema>;
 
-export function PharmaGenie() {
+export function PharmaGenie({ initialTopic }: { initialTopic?: string | null }) {
   const { toast } = useToast();
   const { user } = useProMode();
   const { execute: runGetDrugInfo, data: drugData, isLoading, error, reset } = useAiAgent(getDrugInfo, {
@@ -41,8 +42,17 @@ export function PharmaGenie() {
 
   const form = useForm<PharmaGenieFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { drugName: "" },
+    defaultValues: { drugName: initialTopic || "" },
   });
+
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
+
+  useEffect(() => {
+    if (initialTopic && !hasAutoStarted && !drugData && !isLoading) {
+      setHasAutoStarted(true);
+      form.handleSubmit(onSubmit)();
+    }
+  }, [initialTopic, hasAutoStarted, drugData, isLoading, form]);
 
   const onSubmit: SubmitHandler<PharmaGenieFormValues> = async (data) => {
     await runGetDrugInfo(data as PharmaGenieInput);

@@ -1,6 +1,6 @@
 import { z } from "genkit";
 import { ai } from "@/ai/genkit";
-import { gemini20Pro } from "@genkit-ai/googleai";
+
 
 export const deepReasoningTool = ai.defineTool(
   {
@@ -20,7 +20,7 @@ export const deepReasoningTool = ai.defineTool(
   },
   async ({ problem, context, reasoningType }) => {
     const resp = await ai.generate({
-      model: gemini20Pro,
+      model: 'googleai/gemini-3.0-flash',
       config: {
         temperature: 0.1,
       },

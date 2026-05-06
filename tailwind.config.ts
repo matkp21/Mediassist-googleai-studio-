@@ -33,15 +33,34 @@ const config: Config = {
   			},
   			accent: {
   				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
+  				foreground: 'hsl(var(--accent-foreground))',
+                cyan: '#06b6d4'
   			},
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
-  			border: 'hsl(var(--border))',
+  			border: {
+                DEFAULT: 'hsl(var(--border))',
+                ui: 'var(--theme-border-ui)'
+            },
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
+            surface: {
+                main: 'var(--background)',
+                card: 'var(--theme-surface-card)',
+                hover: '#1f2937'
+            },
+            text: {
+                main: 'var(--foreground)',
+                bright: 'var(--theme-text-bright)',
+                muted: 'var(--theme-text-muted)'
+            },
+            action: {
+                blue: '#0ea5e9',
+                green: '#10b981',
+                purple: '#a78bfa'
+            },
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',

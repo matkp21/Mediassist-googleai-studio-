@@ -1,7 +1,7 @@
 // src/components/medico/anatomy-visualizer.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -29,7 +29,7 @@ const formSchema = z.object({
 
 type AnatomyFormValues = z.infer<typeof formSchema>;
 
-export default function AnatomyVisualizer() {
+export default function AnatomyVisualizer({ initialTopic }: { initialTopic?: string | null }) {
   const { toast } = useToast();
   const { user } = useProMode();
   const { execute: runGetAnatomy, data: anatomyData, isLoading, error, reset } = useAiAgent(getAnatomyDescription, MedicoAnatomyVisualizerOutputSchema, {
@@ -45,9 +45,18 @@ export default function AnatomyVisualizer() {
   const form = useForm<AnatomyFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      anatomicalStructure: "",
+      anatomicalStructure: initialTopic || "",
     },
   });
+
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
+
+  useEffect(() => {
+    if (initialTopic && !hasAutoStarted && !anatomyData && !isLoading) {
+      setHasAutoStarted(true);
+      form.handleSubmit(onSubmit)();
+    }
+  }, [initialTopic, hasAutoStarted, anatomyData, isLoading, form]);
 
   const onSubmit: SubmitHandler<AnatomyFormValues> = async (data) => {
     await runGetAnatomy(data as MedicoAnatomyVisualizerInput);

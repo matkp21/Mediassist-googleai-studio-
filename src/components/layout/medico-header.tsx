@@ -20,11 +20,14 @@ export function MedicoHeader() {
       )}
     >
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild className="text-foreground/80 hover:text-foreground">
-          <Link href="/" aria-label="Back to main dashboard">
-            <ArrowLeft />
-          </Link>
-        </Button>
+        <Link 
+          href="/" 
+          aria-label="Back to main dashboard"
+          className="flex items-center justify-center gap-1.5 h-[36px] px-[12px] pl-[8px] rounded-full bg-[var(--gb)] backdrop-blur-3xl border border-[var(--gbr)] shadow-[var(--shm),inset_0_1px_0_var(--gs)] text-[var(--blue)] hover:text-[#0A7DF2] font-medium text-[13px] hover:scale-[1.05] active:scale-[0.95] transition-all duration-300 ease-[cubic-bezier(0.34,1.36,0.64,1)] animate-in slide-in-from-left-4 fade-in z-30"
+        >
+          <ArrowLeft size={16} strokeWidth={2.5} />
+          <span>Dashboard</span>
+        </Link>
         <Link href="/medico" className="flex items-center gap-2" aria-label="Go to Medico Dashboard">
           <Logo simple />
           <span className="text-lg font-semibold text-primary hidden sm:inline">Medico Mode</span>

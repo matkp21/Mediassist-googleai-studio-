@@ -12,7 +12,7 @@ import { useProMode } from '@/contexts/pro-mode-context';
 import { toast } from '@/hooks/use-toast';
 import { MarkdownRenderer } from '@/components/markdown/markdown-renderer';
 
-export function VibeVoiceLectureRecorder() {
+export function VibeVoiceLectureRecorder({ initialTopic }: { initialTopic?: string | null }) {
   const { user } = useProMode(); // Assuming user context provides uid
   const [sessionId] = useState(`session_${Date.now()}`);
   const uid = user?.uid || 'guest_user';
@@ -54,7 +54,9 @@ export function VibeVoiceLectureRecorder() {
             <Mic className={isRecording ? "text-red-500 animate-pulse" : "text-teal-400"} />
             VibeVoice <span className="text-teal-400">Lecture Recorder</span>
           </h2>
-          <p className="text-zinc-400">Hybrid ASR + Agentic Synthesis for Medical Lectures.</p>
+          <p className="text-zinc-400">
+            Hybrid ASR + Agentic Synthesis for Medical Lectures. {initialTopic ? `Topic: ${initialTopic}` : ''}
+          </p>
         </div>
         
         <div className="flex items-center gap-3">

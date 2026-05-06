@@ -113,7 +113,7 @@ export async function executeRecovery<T>(ctx: RetryContext<T>): Promise<T> {
     case "FIX_MODEL_IMPORT": {
       throw new Error(
         "[MediAssistant] Genkit model reference missing. " +
-        "Fix: import { gemini25Pro } from '@genkit-ai/googleai' and pass directly to generate(). " +
+        "Fix:  and pass directly to generate(). " +
         "Do NOT use string literals like 'gemini-2.5-pro' without explicit plugin import."
       );
     }

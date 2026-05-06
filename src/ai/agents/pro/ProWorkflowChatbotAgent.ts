@@ -1,5 +1,5 @@
 import { generate } from '@genkit-ai/ai';
-import { gemini25Flash } from '@genkit-ai/googleai';
+
 import { ai } from '@/ai/genkit';
 import { ProWorkflowChatinputSchema, ProWorkflowChatOutputSchema, type ProWorkflowChatinput, type ProWorkflowChatOutput } from '@/ai/schemas/pro-schemas';
 
@@ -19,7 +19,7 @@ Context: ${input.context || 'None'}
 `;
 
     const response = await generate({
-      model: gemini25Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: prompt,
       output: {
         schema: ProWorkflowChatOutputSchema,

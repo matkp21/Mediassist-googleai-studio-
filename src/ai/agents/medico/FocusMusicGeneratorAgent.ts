@@ -1,7 +1,7 @@
 'use server';
 
 import { generate } from '@genkit-ai/ai';
-import { gemini25Flash } from '@genkit-ai/googleai';
+
 import { ai } from '@/ai/genkit';
 import { FocusMusicGeneratorInputSchema, FocusMusicGeneratorOutputSchema, type FocusMusicGeneratorInput, type FocusMusicGeneratorOutput } from '@/ai/schemas/medico-tools-schemas';
 
@@ -17,7 +17,7 @@ export const FocusMusicGeneratorAgent = ai.defineAction(
 Include the track name, the precise prompt for the Lyria engine, and recommend a few other similar styles.`;
 
     const response = await generate({
-      model: gemini25Flash,
+      model: 'googleai/gemini-3.0-flash',
       prompt: prompt,
       output: {
         schema: FocusMusicGeneratorOutputSchema,
