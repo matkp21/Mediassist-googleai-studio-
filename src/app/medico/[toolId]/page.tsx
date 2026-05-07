@@ -5,7 +5,7 @@ import { useParams, useSearchParams, notFound } from 'next/navigation';
 import { allMedicoToolsList } from '@/config/medico-tools-config';
 import React, { Suspense, useMemo } from 'react';
 import { PageWrapper } from '@/components/layout/page-wrapper';
-import { Loader2, Sparkles, BookOpen, Clock, Activity, Brain, Target, Network, Layers, CheckSquare, Lightbulb, TrendingUp, Palette, FileText, Workflow, DatabaseZap, CheckCircle2, Swords, Trophy, BrainCircuit } from 'lucide-react';
+import { Loader2, Sparkles, BookOpen, Clock, Activity, Brain, Target, Network, Layers, CheckSquare, Lightbulb, TrendingUp, Palette, FileText, Workflow, DatabaseZap, CheckCircle2, Swords, Trophy, BrainCircuit, Mic, Calculator, Navigation } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Custom functionality insights for each StudyBot tool
@@ -120,6 +120,87 @@ const TOOL_INSIGHTS: Record<string, {
              { icon: BrainCircuit, label: 'Mapping', value: 'Cognitive Footprint' },
              { icon: Target, label: 'Intervention', value: 'Automated Routing' },
              { icon: Network, label: 'Visualization', value: 'Knowledge Graph' }
+        ]
+    },
+    'deep-solve': {
+         subtitle: 'Deep Solve Diagnostic Pipeline',
+         descriptionExt: 'A recursive, multi-agent reasoning pipeline that cross-examines clinical symptoms, lab findings, and imaging data to synthesize a high-confidence step-by-step diagnostic verification.',
+         architectures: [
+             { icon: BrainCircuit, label: 'Pipeline', value: 'Multi-Agent Tree' },
+             { icon: Activity, label: 'Validation', value: 'Cross-Examination' },
+             { icon: Sparkles, label: 'Output', value: 'Differential Proof' }
+        ]
+    },
+    'rounds': {
+         subtitle: 'Virtual Patient Rounds',
+         descriptionExt: 'Immerse yourself in photorealistic, voice-enabled, open-ended clinical interactions. Practice delivering difficult news, taking histories, and formulating management plans as if you are on the wards.',
+         architectures: [
+             { icon: Network, label: 'Interaction', value: 'Voice & Semantic RAG' },
+             { icon: Brain, label: 'Simulation', value: 'Dynamic State' },
+             { icon: CheckSquare, label: 'Feedback', value: 'Examiner Grading' }
+        ]
+    },
+    'ddx': {
+         subtitle: 'DDX Trainer',
+         descriptionExt: 'Given a complex constellation of symptoms, synthesize an accurate differential diagnosis. AI actively interprets labs and imaging while prodding you to refine your diagnostic anchors.',
+         architectures: [
+             { icon: Layers, label: 'Reasoning', value: 'Diagnostic Anchors' },
+             { icon: Target, label: 'Mechanism', value: 'Iterative Refinement' },
+             { icon: Sparkles, label: 'Guidance', value: 'Socratic Prompting' }
+        ]
+    },
+    'visualize': {
+         subtitle: 'Clinical Telemetry Visualizer',
+         descriptionExt: 'Generates mock, real-time-like ICU telemetry visuals from raw diagnostic data. Formulate critical interventions by practicing reading dynamically changing patient trends.',
+         architectures: [
+             { icon: Activity, label: 'Engine', value: 'Time-Series Gen' },
+             { icon: Workflow, label: 'Visualization', value: 'D3/Recharts' },
+             { icon: Brain, label: 'Context', value: 'Physiologic Rules' }
+        ]
+    },
+    'diagnobot': {
+         subtitle: 'DiagnoBot AI Assistant',
+         descriptionExt: 'Your bedside companion. Ask DiagnoBot any symptom inquiry or ask it to interpret a raw ABG output, and get instant, clinically contextualized, evidence-based direction.',
+         architectures: [
+             { icon: Brain, label: 'Function', value: 'Instant Interpretation' },
+             { icon: DatabaseZap, label: 'Context', value: 'Guidelines Synced' },
+             { icon: Sparkles, label: 'Output', value: 'Actionable Advice' }
+        ]
+    },
+    'dictation': {
+         subtitle: 'Smart Dictation Transcriber',
+         descriptionExt: 'A voice-to-text integration optimized purely for complex medical taxonomy. Talk through your clinical note naturally and watch it perfectly structure itself into a SOAP format.',
+         architectures: [
+             { icon: Mic, label: 'Input', value: 'Speech-to-Text' },
+             { icon: Brain, label: 'Parsing', value: 'Taxonomy Dictionary' },
+             { icon: FileText, label: 'Output', value: 'Structured SOAP' }
+        ]
+    },
+    'guided-learning': {
+         subtitle: 'Guided Rehab Journeys',
+         descriptionExt: 'Standardized post-operative discharge instructions are transformed effortlessly into clear, actionable daily milestones for improved patient compliance and engagement.',
+         architectures: [
+             { icon: Layers, label: 'Parsing', value: 'Instruction Mapping' },
+             { icon: Network, label: 'Structure', value: 'Milestone Journey' },
+             { icon: Activity, label: 'Goal', value: 'Recovery Tracking' }
+        ]
+    },
+    'calculators': {
+         subtitle: 'Dynamic Clinical Calculators',
+         descriptionExt: 'A unified suite of specialized medical scores (HEART, Wells, CHA2DS2-VASc, etc.) loaded dynamically via specific agentic skills to guide crucial clinical pathways.',
+         architectures: [
+             { icon: Calculator, label: 'Computation', value: 'Formula Logic' },
+             { icon: Target, label: 'Integration', value: 'Agentic Tools' },
+             { icon: CheckCircle2, label: 'Precision', value: 'Deterministic' }
+        ]
+    },
+    'triage-streamliner': {
+         subtitle: 'Intelligent Triage & Referral',
+         descriptionExt: 'Triage patient symptoms efficiently through an active red-flag analysis. Automate predictive specialty referrals and connect via Google Maps for surrounding facility routing.',
+         architectures: [
+             { icon: Network, label: 'Analysis', value: 'Red-Flag Parsing' },
+             { icon: Navigation, label: 'Routing', value: 'Google Maps API' },
+             { icon: Workflow, label: 'Output', value: 'Triage Protocol' }
         ]
     }
 };

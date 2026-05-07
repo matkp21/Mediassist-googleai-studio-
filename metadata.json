@@ -1,5 +1,8 @@
 {
-  "name": "MediAssistant Pro",
+  "name": "MediAssistant Ai",
   "description": "Enterprise-grade Medical AI with VibeVoice, Genkit, and multi-agent synthesis.",
-  "requestFramePermissions": ["microphone"]
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": []
 }

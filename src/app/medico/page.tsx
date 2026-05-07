@@ -41,19 +41,20 @@ const TOOLS = [
   { id: 12, name: "Neural Progress Tracker", desc: "Visual dashboard of memory retention over time.", agent: "studybot", Icon: "Activity", routeId: "progress" },
 
   // ClinicalAI (9)
-  { id: 13, name: "Deep Solve Diagnostic", desc: "A multi-agent reasoning pipeline for step-by-step diagnostic verification.", agent: "clinical", Icon: "Stethoscope" },
-  { id: 14, name: "Virtual Patient Rounds", desc: "Practice clinical skills with virtual patient encounters.", agent: "clinical", Icon: "Activity" },
-  { id: 15, name: "DDX Trainer", desc: "Interprets labs/radiology and runs differential diagnosis challenges.", agent: "clinical", Icon: "BrainCircuit" },
-  { id: 16, name: "Telemetry Viz", desc: "Maps raw patient vitals into interactive graphical trends.", agent: "clinical", Icon: "Activity" },
-  { id: 17, name: "ECG Interpreter", desc: "Upload any ECG — AI reads rhythm, axis and pathology.", agent: "clinical", Icon: "HeartPulse" },
-  { id: 18, name: "OSCE Examiner", desc: "Structured clinical exams with examiner-grade feedback.", agent: "clinical", Icon: "Star" },
-  { id: 19, name: "DiagnoBot", desc: "Answers clinical queries based on patient symptoms.", agent: "clinical", Icon: "Stethoscope" },
-  { id: 20, name: "Smart Dictation", desc: "Voice-to-text dictation optimized for medical terms.", agent: "clinical", Icon: "FileText" },
-  { id: 21, name: "Guided Rehab Journeys", desc: "Converts standard discharge instructions into structured, interactive milestones.", agent: "clinical", Icon: "Layers" },
+  { id: 13, name: "Deep Solve Diagnostic", desc: "A multi-agent reasoning pipeline for step-by-step diagnostic verification.", agent: "clinical", Icon: "Stethoscope", routeId: "deep-solve" },
+  { id: 14, name: "Virtual Patient Rounds", desc: "Practice clinical skills with virtual patient encounters.", agent: "clinical", Icon: "Activity", routeId: "rounds" },
+  { id: 15, name: "DDX Trainer", desc: "Interprets labs/radiology and runs differential diagnosis challenges.", agent: "clinical", Icon: "BrainCircuit", routeId: "ddx" },
+  { id: 16, name: "Telemetry Viz", desc: "Maps raw patient vitals into interactive graphical trends.", agent: "clinical", Icon: "Activity", routeId: "visualize" },
+  { id: 17, name: "DiagnoBot", desc: "Answers clinical queries based on patient symptoms.", agent: "clinical", Icon: "Stethoscope", routeId: "diagnobot" },
+  { id: 18, name: "Smart Dictation", desc: "Voice-to-text dictation optimized for medical terms.", agent: "clinical", Icon: "FileText", routeId: "dictation" },
+  { id: 19, name: "Guided Rehab Journeys", desc: "Converts standard discharge instructions into structured, interactive milestones.", agent: "clinical", Icon: "Layers", routeId: "guided-learning" },
+  { id: 20, name: "Clinical Calculators", desc: "Specialized medical scores powered by dynamic Agent-Skills loading.", agent: "clinical", Icon: "Calculator", routeId: "calculators" },
+  { id: 21, name: "Triage & Referral", desc: "Triage patients, recommend specialties, and find nearby facilities.", agent: "clinical", Icon: "Navigation", routeId: "triage-streamliner" },
 
-  // KnowledgeHub (9)
+  // KnowledgeHub (10)
   { id: 22, name: "Ask Medi RAG-Tutor", desc: "A dedicated semantic RAG chat linked directly to student's uploaded materials and notes.", agent: "knowledge", Icon: "Search", routeId: "rag-tutor" },
   { id: 23, name: "EBM Research", desc: "Searches PubMed and academic databases for Evidence-Based answers.", agent: "knowledge", Icon: "BookMarked", routeId: "ebm-assistant" },
+  { id: 56, name: "GP Notes Quick-Ref", desc: "Commonly prescribed medications, dosages, and condition-based guidelines at a glance.", agent: "knowledge", Icon: "BookMarked", routeId: "gp-notes" },
   { id: 24, name: "Note Summarizer", desc: "Convert long lecture notes into high-yield summaries.", agent: "knowledge", Icon: "FileText", routeId: "summarizer" },
   { id: 25, name: "Knowledge Augmenter", desc: "Enriches your study notes with latest guidelines.", agent: "knowledge", Icon: "BrainCircuit", routeId: "knowledge-augmenter" },
   { id: 26, name: "MarkItDown Ingest", desc: "An enterprise-grade multimodal document structuralization tool.", agent: "knowledge", Icon: "Layers", routeId: "ingestion" },

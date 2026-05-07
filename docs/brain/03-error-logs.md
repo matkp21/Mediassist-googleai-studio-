@@ -14,3 +14,15 @@
 ## 4. Transition to Hierarchical Orchestration (Self-Healing AI)
 - **Problem**: Monolithic "Brain" modules (Brain-1 & Brain-2) were prone to silent failures, structural hallucinations, and context overflows without recovery mechanisms.
 - **Root Cause & Fix**: Transitioned to a multi-agent hierarchical architecture inspired by OpenHands and crewAI. Introduced a **Supervisor Orchestrator** in `MedicalOrchestrator.ts` that delegates tasks to 5 specialized subagents. Implemented a `executeSelfHealingAgent` wrapper that uses an autonomous feedback loop to correct AI validation errors (Zod failures) in real-time. Added persistent state logging to Firestore (`orchestratorLog`) to ensure system resilience and state recovery after hard crashes.
+
+## 5. File System Timeouts & Cortex Deadlocks
+- **Problem**: Encountered recurrent `TimeoutCancellationException` and `RPC::DEADLINE_EXCEEDED` errors when interacting with workspace bounds via shell limits.
+- **Root Cause & Fix**: Deep, rapid concurrent file-system scanning exceeded runtime subsystem capabilities. The fix requires sequential file traversals and avoidance of non-specific `grep` scans across `/var/log/*` or root bounds.
+
+## 6. Over-Escaped Template Literal Syntax Errors
+- **Problem**: React and AI generation scripts threw typescript errors indicating unexpected identifiers and unbalanced template strings. 
+- **Root Cause & Fix**: AI script outputs were injecting double-escaped backticks (`\\\``) and interpolations (`\\\${`). Authored and executed a bespoke runtime cleaner script (`fix_syntax.ts`) to recursively locate and repair the escaping errors across `src/components/`, `src/ai/`, and `src/app/`.
+
+## 7. Experimental Genkit Model Unavailability Node Failures
+- **Problem**: Unstable build / module failure resolving `gemini25Flash` and `gemini25Pro`.
+- **Root Cause & Fix**: Rolled back model instantiations across the repository via an automated AST/Regex walker (`fix.ts`) to rely on the stable implementations of `gemini15Flash` and `gemini15Pro`.

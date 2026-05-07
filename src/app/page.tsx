@@ -137,6 +137,9 @@ export default function MediAssistantDashboard() {
            <button onClick={() => router.push('/ask-medi')} className="flex items-center gap-2 bg-[#a07df0] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90">
              <MessageCircle size={16} /> Ask Medi
            </button>
+           <button onClick={() => router.push('/medico/gp-notes')} className="flex items-center gap-2 bg-[#32c97e] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90">
+             <BookMarked size={16} /> GP Notes
+           </button>
            <button onClick={() => router.push('/calendar')} className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-sm active:scale-95 transition-transform hover:bg-[var(--fill)]">
              <Clock size={16} /> Calendar
            </button>
