@@ -5,7 +5,7 @@ import { useParams, useSearchParams, notFound } from 'next/navigation';
 import { allMedicoToolsList } from '@/config/medico-tools-config';
 import React, { Suspense, useMemo } from 'react';
 import { PageWrapper } from '@/components/layout/page-wrapper';
-import { Loader2, Sparkles, BookOpen, Clock, Activity, Brain, Target, Network, Layers, CheckSquare, Lightbulb, TrendingUp, Palette, FileText, Workflow, DatabaseZap, CheckCircle2, Swords, Trophy, BrainCircuit, Mic, Calculator, Navigation } from 'lucide-react';
+import { Loader2, Sparkles, BookOpen, Clock, Activity, Brain, Target, Network, Layers, CheckSquare, Lightbulb, TrendingUp, Palette, FileText, Workflow, DatabaseZap, CheckCircle2, Swords, Trophy, BrainCircuit, Mic, Calculator, Navigation, TestTubeDiagonal, ScanEye, Microscope, FlaskConical, Github, BookMarked, Search, MapPin, BotMessageSquare, Bot, FileUp, PenLine, Heart, Wand2, Globe, FileCode, MonitorSmartphone, ShieldAlert, HeartPulse, Pill, Zap, LayoutDashboard, Stethoscope, Sparkle, Award, Users, Youtube } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Custom functionality insights for each StudyBot tool
@@ -26,7 +26,7 @@ const TOOL_INSIGHTS: Record<string, {
     'timetable-creator': {
         subtitle: 'Predictive Timetable Creator',
         descriptionExt: 'Input your exam date and weaknesses. The AI schedules optimal study hours using spaced repetition curves, ensuring you hit peak memory retention right on exam day.',
-         architectures: [
+        architectures: [
              { icon: Clock, label: 'Scheduling', value: 'Spaced Optimization' },
              { icon: Target, label: 'Targeting', value: 'Weakness Prioritized' },
              { icon: Sparkles, label: 'Engine', value: 'Generative Algorithm' }
@@ -35,7 +35,7 @@ const TOOL_INSIGHTS: Record<string, {
     'mcq': {
         subtitle: 'Dynamic MCQ Generator',
         descriptionExt: 'Stop relying on static question banks. Generate on-the-fly, clinical-scenario MCQs tailored to your exact prompt, complete with comprehensive explanations and distractors.',
-         architectures: [
+        architectures: [
              { icon: Brain, label: 'AI Model', value: 'Clinical Reasoning Refined' },
              { icon: CheckSquare, label: 'Validation', value: 'Distractor Analysis' },
              { icon: Sparkles, label: 'Capability', value: 'Infinite Generation' }
@@ -44,7 +44,7 @@ const TOOL_INSIGHTS: Record<string, {
     'flashcards': {
          subtitle: 'Spaced Repetition Engine',
          descriptionExt: 'Paste your notes or provide a topic. The agent instantly breaks it down into Anki-style flashcards using proven memory techniques like active recall formatting.',
-          architectures: [
+         architectures: [
              { icon: Layers, label: 'Algorithm', value: 'SuperMemo-2 Pattern' },
              { icon: Activity, label: 'Format', value: 'Active Recall' },
              { icon: Network, label: 'Structure', value: 'Granular Chunking' }
@@ -53,7 +53,7 @@ const TOOL_INSIGHTS: Record<string, {
     'mnemonics': {
          subtitle: 'Custom Mnemonic Creator',
          descriptionExt: 'Struggling to remember drug classes or cranial nerves? Generates creative, vivid mnemonics tailored to your exact syllabus requirements.',
-          architectures: [
+         architectures: [
              { icon: Lightbulb, label: 'Pattern', value: 'Cognitive Association' },
              { icon: Brain, label: 'Model', value: 'Semantic Engine' },
              { icon: Sparkles, label: 'Output', value: 'Memory Triggers' }
@@ -62,7 +62,7 @@ const TOOL_INSIGHTS: Record<string, {
     'exams': {
          subtitle: 'Interactive Mock Exam Suite',
          descriptionExt: 'Simulate high-stakes exam environments with timed, multi-disciplinary question sets. Features built-in predictive scoring models to track readiness.',
-          architectures: [
+         architectures: [
              { icon: Activity, label: 'Simulation', value: 'Real-time Environment' },
              { icon: Target, label: 'Scoring', value: 'Predictive Analytics' },
              { icon: Network, label: 'Dataset', value: 'Multidisciplinary' }
@@ -165,7 +165,7 @@ const TOOL_INSIGHTS: Record<string, {
              { icon: Brain, label: 'Function', value: 'Instant Interpretation' },
              { icon: DatabaseZap, label: 'Context', value: 'Guidelines Synced' },
              { icon: Sparkles, label: 'Output', value: 'Actionable Advice' }
-        ]
+         ]
     },
     'dictation': {
          subtitle: 'Smart Dictation Transcriber',
@@ -174,7 +174,7 @@ const TOOL_INSIGHTS: Record<string, {
              { icon: Mic, label: 'Input', value: 'Speech-to-Text' },
              { icon: Brain, label: 'Parsing', value: 'Taxonomy Dictionary' },
              { icon: FileText, label: 'Output', value: 'Structured SOAP' }
-        ]
+         ]
     },
     'guided-learning': {
          subtitle: 'Guided Rehab Journeys',
@@ -183,7 +183,7 @@ const TOOL_INSIGHTS: Record<string, {
              { icon: Layers, label: 'Parsing', value: 'Instruction Mapping' },
              { icon: Network, label: 'Structure', value: 'Milestone Journey' },
              { icon: Activity, label: 'Goal', value: 'Recovery Tracking' }
-        ]
+         ]
     },
     'calculators': {
          subtitle: 'Dynamic Clinical Calculators',
@@ -192,7 +192,7 @@ const TOOL_INSIGHTS: Record<string, {
              { icon: Calculator, label: 'Computation', value: 'Formula Logic' },
              { icon: Target, label: 'Integration', value: 'Agentic Tools' },
              { icon: CheckCircle2, label: 'Precision', value: 'Deterministic' }
-        ]
+         ]
     },
     'triage-streamliner': {
          subtitle: 'Intelligent Triage & Referral',
@@ -201,6 +201,141 @@ const TOOL_INSIGHTS: Record<string, {
              { icon: Network, label: 'Analysis', value: 'Red-Flag Parsing' },
              { icon: Navigation, label: 'Routing', value: 'Google Maps API' },
              { icon: Workflow, label: 'Output', value: 'Triage Protocol' }
+         ]
+    },
+    'pharmagenie': {
+         subtitle: 'PharmaGenie: Interaction Engine',
+         descriptionExt: 'Analyzes multi-drug interactions and provides safe dosage adjustments based on genetic metabolism profiles and comorbid conditions.',
+         architectures: [
+             { icon: Pill, label: 'System', value: 'Ontology Mapping' },
+             { icon: BrainCircuit, label: 'Logic', value: 'Interaction Tree' },
+             { icon: CheckCircle2, label: 'Safety', value: 'Error Guarding' }
+         ]
+    },
+    'micromate': {
+         subtitle: 'MicroMate: Lab Assistant',
+         descriptionExt: 'Automates pathogen identification from lab reports and suggests targeted antimicrobial therapy while monitoring for resistance patterns.',
+         architectures: [
+             { icon: Microscope, label: 'Vision', value: 'Smear Analysis' },
+             { icon: FlaskConical, label: 'Testing', value: 'Sensitivity Matrix' },
+             { icon: ShieldAlert, label: 'Global', value: 'Resistance Tracking' }
+         ]
+    },
+    'pathomind': {
+         subtitle: 'PathoMind: Disease Explainer',
+         descriptionExt: 'Explain any disease pathophysiology using animated causal chains. Bridges the gap between basic science and clinical presentation.',
+         architectures: [
+             { icon: BrainCircuit, label: 'Reasoning', value: 'Causal Chain' },
+             { icon: Activity, label: 'Dynamic', value: 'Live Simulation' },
+             { icon: Sparkles, label: 'Visual', value: 'Animated Path' }
+         ]
+    },
+    'ebm-assistant': {
+        subtitle: 'EBM Research Scraper',
+        descriptionExt: 'Autonomously searches current medical literature to answer clinical queries with the highest level of evidence. Grades papers using Oxford CEBM criteria.',
+        architectures: [
+            { icon: Globe, label: 'Scope', value: 'Global Literature' },
+            { icon: DatabaseZap, label: 'Search', value: 'Semantic RAG' },
+            { icon: Award, label: 'Grading', value: 'CEBM Standards' }
+        ]
+    },
+    'summarizer': {
+        subtitle: 'Smart Note Summarizer',
+        descriptionExt: 'Upload lecture slides, textbooks, or patient history files. Agentic summarization preserves high-yield facts while trimming academic fluff for rapid review.',
+        architectures: [
+            { icon: FileText, label: 'Input', value: 'Multimodal Parsing' },
+            { icon: Brain, label: 'Logic', value: 'High-Yield Filter' },
+            { icon: CheckSquare, label: 'Verification', value: 'Fact-Check Loop' }
+        ]
+    },
+    'ingestion': {
+        subtitle: 'Enterprise Document Ingest',
+        descriptionExt: 'Convert any clinical report (PDF, Image, Scan) into clean, high-reasoning Markdown. Preserves critical table structures and medical notation integrity.',
+        architectures: [
+            { icon: FileUp, label: 'Ingest', value: 'Omni-Parsing' },
+            { icon: ScanEye, label: 'Vision', value: 'OCR Refinement' },
+            { icon: Workflow, label: 'Format', value: 'Markdown Struct' }
+        ]
+    },
+    'virtual-board': {
+        subtitle: 'Virtual Medical Board',
+        descriptionExt: 'Simulate a high-level case conference. Distinct AI personas representing different specialties (Surgeon, Internist, Pathologist) debate clinical cases for optimal outcomes.',
+        architectures: [
+            { icon: Users, label: 'Simulation', value: 'Multi-Persona' },
+            { icon: BrainCircuit, label: 'Logic', value: 'Contradictory Logic' },
+            { icon: Target, label: 'Outcome', value: 'Consensus Report' }
+        ]
+    },
+    'vibevoice-lecture': {
+        subtitle: 'VibeVoice: Lecture Sync',
+        descriptionExt: 'Real-time lecture recording that auto-segments audio into concept-nodes. Generates a master knowledge graph of the lecture by cross-referencing textbook data.',
+        architectures: [
+            { icon: Mic, label: 'Capture', value: 'Segmented Audio' },
+            { icon: Network, label: 'Linkage', value: 'Knowledge Graph' },
+            { icon: Clock, label: 'Latency', value: 'Zero-Lag Sync' }
+        ]
+    },
+    'concept-video': {
+        subtitle: 'Veo-Med: Video Synthesis',
+        descriptionExt: 'Generate 4K medical animations and surgical procedures. Describe the procedure, and Veo-Med synthesizes a photorealistic visualization for educational use.',
+        architectures: [
+            { icon: Youtube, label: 'Engine', value: 'Veo-Med Video Gen' },
+            { icon: Palette, label: 'Visuals', value: 'Imagen 3 Context' },
+            { icon: Brain, label: 'Accuracy', value: 'Anatomical Reality' }
+        ]
+    },
+    'ai-cowriter': {
+        subtitle: 'Clinical Documentation Partner',
+        descriptionExt: 'Collaborative AI that writes *with* you. Start a patient note, and it suggests relevant examination findings or ICD-10 codes based on the clinical context.',
+        architectures: [
+            { icon: PenLine, label: 'Co-Writing', value: 'Contextual Suggest' },
+            { icon: Brain, label: 'Code', value: 'ICD-10 Auto-map' },
+            { icon: FileText, label: 'Output', value: 'Full SOAP Note' }
+        ]
+    },
+    'rag-tutor': {
+        subtitle: 'Ask Medi: Generative RAG',
+        descriptionExt: 'A resident genius mentor that uses semantic Retrieval Augmented Generation (RAG) to ground every answer in current clinical evidence, PYQs, and high-yield flashcards.',
+        architectures: [
+            { icon: DatabaseZap, label: 'Knowledge', value: 'Semantic Vector DB' },
+            { icon: BrainCircuit, label: 'Logic', value: 'Hybrid search' },
+            { icon: Sparkles, label: 'Response', value: 'Grounded Output' }
+        ]
+    },
+    'knowledge-augmenter': {
+        subtitle: 'Context Extrapolator',
+        descriptionExt: 'Paste a brief clinical finding or a single sentence from a textbook. The Knowledge Augmenter expands it into a comprehensive deep-dive note with related mechanisms and literature links.',
+        architectures: [
+            { icon: Sparkles, label: 'Expansion', value: 'Knowledge Synthesis' },
+            { icon: Layers, label: 'Depth', value: 'Mechanism-focused' },
+            { icon: BookOpen, label: 'Linkage', value: 'PubMed References' }
+        ]
+    },
+    'guidelines-compass': {
+        subtitle: 'Global Guidelines Engine',
+        descriptionExt: 'Real-time access to NICE, WHO, AHA, and local hospital protocols. The compass maps patient scenarios directly to the current standard of care with level-of-evidence grading.',
+        architectures: [
+            { icon: Navigation, label: 'Guidance', value: 'Clinical Pathways' },
+            { icon: Globe, label: 'Scope', value: 'WHO/NICE Standard' },
+            { icon: Award, label: 'Grading', value: 'Evidence Grade A-D' }
+        ]
+    },
+    'supervisor': {
+        subtitle: 'Brain-3 Hierarchical Orchestrator',
+        descriptionExt: 'The brain of MediAssistant. Routes any complex medical query to a specialized fleet of subagents, recursively refining the output until it meets clinical-grade accuracy.',
+        architectures: [
+            { icon: BrainCircuit, label: 'Hierarchy', value: 'Supervisor Pattern' },
+            { icon: Workflow, label: 'Execution', value: 'Agentic Routing' },
+            { icon: HeartPulse, label: 'Self-Healing', value: 'Feedback Loop' }
+        ]
+    },
+    'heartbeat': {
+        subtitle: 'Proactive Monitoring Engine',
+        descriptionExt: 'A background service that continuously evaluates patient telemetry and medication adherence. Triggers proactive alerts when it detects deviations from the care plan.',
+        architectures: [
+            { icon: Heart, label: 'Telemetry', value: 'Asynchronous Scan' },
+            { icon: Activity, label: 'Alerting', value: 'Threshold Analysis' },
+            { icon: ShieldAlert, label: 'Safety', value: 'Deviance Guard' }
         ]
     }
 };

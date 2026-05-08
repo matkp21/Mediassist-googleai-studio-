@@ -90,22 +90,136 @@ const CONDITIONS_DB = [
     ]
   },
   {
-    id: "otitis-media",
-    category: "ENT",
-    title: "Acute Otitis Media (AOM)",
-    lastUpdated: "2025-10-05",
-    tags: ["acute", "infection", "paediatrics"],
-    redFlags: ["Mastoiditis (swelling behind ear)", "Systemically very unwell", "Symptoms > 4 days without improvement"],
+    id: "fever-adult",
+    category: "General Practice",
+    title: "Fever / Pyrexia (Adult)",
+    lastUpdated: "2026-05-08",
+    tags: ["fever", "infection", "OPD"],
+    redFlags: ["Persistent high-grade fever > 103°F", "Altered sensorium", "Severe headache/neck stiffness", "Petechial rash"],
     guidelines: [
-      "Most cases self-resolve in 3 days. Recommend analgesia (Paracetamol/Ibuprofen).",
-      "Consider delayed antibiotic prescription (to use if no improvement after 3 days).",
-      "Immediate antibiotics ONLY IF: systemically unwell, high risk of complications, <2 yrs with bilateral AOM, or perforation with discharge."
+      "Fever Criteria: Morning > 98.9°F, Evening > 99.9°F.",
+      "Tepid sponging with lukewarm water for high-grade fever.",
+      "Maintain high fluid intake (IV fluids if high grade or dehydrated).",
+      "Steam inhalation for nasal congestion if present."
+    ],
+    investigations: ["CBP (Complete Blood Picture)", "ESR", "CRP", "Urine RE"],
+    medications: [
+      { name: "Tab. DOLO (Paracetamol)", dose: "650mg", maxDose: "TID", notes: "Primary antipyretic. Duration: 3-5 days." },
+      { name: "Tab. RANTAC (Ranitidine)", dose: "150mg", maxDose: "BD", notes: "Take 30 mins before food. Gastric cover." },
+      { name: "Inj. Paracetamol", dose: "2cc (150mg/ml)", maxDose: "IM STAT", notes: "Use if fever > 99.9°F and oral route not preferred." }
+    ]
+  },
+  {
+    id: "casualty-pain",
+    category: "Casualty",
+    title: "Acute Pain / Colic",
+    lastUpdated: "2026-05-08",
+    tags: ["casualty", "pain", "acute"],
+    redFlags: ["Signs of shock (tachycardia, hypotension)", "Rigid abdomen", "Uncontrolled severe pain despite meds"],
+    guidelines: [
+      "Immediate assessment of pain intensity and location.",
+      "Establish IV access if severe pain or vomiting.",
+      "Monitor vitals post IM/IV analgesic administration."
     ],
     medications: [
-      { name: "Amoxicillin", dose: "500mg TDS (Adult) or age-weight based (Paeds)", maxDose: "5 day course", notes: "First line if antibiotics indicated." },
-      { name: "Clarithromycin", dose: "250-500mg BD (Adult)", maxDose: "5 day course", notes: "If penicillin allergic." },
-      { name: "Co-amoxiclav", dose: "500/125mg TDS", maxDose: "5 day course", notes: "Second line if worsening on Amoxicillin after 2-3 days." }
+      { name: "Inj. Diclofenac (Dynapar)", dose: "1 amp", maxDose: "IM STAT", notes: "For general/musculoskeletal pain." },
+      { name: "Inj. Tramadol", dose: "1 amp", maxDose: "IM STAT", notes: "For severe pain." },
+      { name: "Inj. Buscopan", dose: "1 amp", maxDose: "IM/IV STAT", notes: "For spasmodic/abdominal pain." },
+      { name: "Inj. Pantop", dose: "40mg", maxDose: "IV STAT", notes: "Gastric cover for NSAIDs/stress." }
     ]
+  },
+  {
+    id: "cough-productive",
+    category: "Respiratory",
+    title: "Cough (Productive)",
+    lastUpdated: "2026-05-08",
+    tags: ["cough", "infection", "OPD"],
+    redFlags: ["Hemoptysis", "Stridor", "Respiratory distress", "Crackles on auscultation"],
+    guidelines: [
+      "Differentiate from dry cough (require Ascoril-D).",
+      "Ensure adequate hydration to thin secretions.",
+      "Complete the full antibiotic course if prescribed."
+    ],
+    medications: [
+      { name: "Syp. ASCORIL", dose: "2 tsp", maxDose: "TID", notes: "Expectorant for productive cough. Duration: 3 days." },
+      { name: "Cap. MOX (Amoxycillin)", dose: "500mg", maxDose: "TID", notes: "Standard antibiotic. Duration: 5 days." },
+      { name: "Tab. AZEE (Azithromycin)", dose: "500mg", maxDose: "OD", notes: "Alternative: 1 tab daily x 3 days." },
+      { name: "Tab. RANTAC", dose: "150mg", maxDose: "BD", notes: "Duration: 5 days." }
+    ],
+    peds: { available: true, drug: "Amoxycillin", baseDose: 15, unit: "mg/kg", freq: "TID", concentration: "125mg/5ml" }
+  },
+  {
+    id: "cough-dry",
+    category: "Respiratory",
+    title: "Cough (Dry / Non-Productive)",
+    lastUpdated: "2026-05-08",
+    tags: ["cough", "allergy", "OPD"],
+    redFlags: ["Stridor", "Wheezing", "Foreign body suspicion", "Night cough affecting sleep"],
+    guidelines: [
+      "No antibiotics needed unless secondary infection suspected.",
+      "Identify potential allergens or triggers.",
+      "Consider antihistamines if allergic component is suspected."
+    ],
+    medications: [
+      { name: "Syp. ASCORIL-D", dose: "2 tsp", maxDose: "TID", notes: "Antitussive for dry cough. Contains Dextromethorphan." },
+      { name: "Tab. MONTINA-L (Montelukast + Levocetirizine)", dose: "1 tab", maxDose: "HS", notes: "If allergic cough or post-viral hyperreactivity." }
+    ]
+  },
+  {
+    id: "rodenticide",
+    category: "Casualty",
+    title: "Rodenticide Poisoning",
+    lastUpdated: "2026-05-08",
+    tags: ["poisoning", "emergency", "toxicology"],
+    redFlags: ["Altered consciousness", "Coagulopathy signs (bleeding)", "Hepatic failure signs"],
+    guidelines: [
+      "Immediate Gastric Lavage (if within 1-2 hours of ingestion).",
+      "Monitor LFT and PT/INR.",
+      "Ensure airway protection."
+    ],
+    medications: [
+      { name: "Inj. Pantop", dose: "40mg", maxDose: "IV", notes: "Gastric protection." },
+      { name: "Inj. Emeset (Ondansetron)", dose: "4mg", maxDose: "IV", notes: "Anti-emetic." },
+      { name: "Inj. NAC (N-Acetylcysteine)", dose: "Protocol based", maxDose: "IV", notes: "Antioxidant / liver protection." }
+    ]
+  },
+  {
+    id: "epistaxis",
+    category: "Casualty",
+    title: "Epistaxis (Nosebleed)",
+    lastUpdated: "2026-05-08",
+    tags: ["emergency", "ENT", "bleeding"],
+    redFlags: ["Inability to control bleeding with pressure", "Posterior bleed signs", "Signs of hypovolemia", "Anticoagulant use"],
+    guidelines: [
+      "Sit patient upright, head tilted forward.",
+      "Pinch soft part of nose for 10-15 mins without letting go.",
+      "Ice packs to the bridge of the nose or forehead.",
+      "If bleeding persists: topical vasoconstrictors (e.g., oxymetazoline) or anterior packing."
+    ],
+    medications: [
+      { name: "Oxymetazoline Spray", dose: "2-3 sprays", maxDose: "PRN", notes: "Topical vasoconstriction." },
+      { name: "Tranexamic Acid (TXA)", dose: "500-1000mg", maxDose: "TID", notes: "Antifibrinolytic if indicated." }
+    ]
+  },
+  {
+    id: "peds-common",
+    category: "Paediatrics",
+    title: "Common Pediatric Dosing",
+    lastUpdated: "2026-05-08",
+    tags: ["peds", "dosing", "reference"],
+    redFlags: ["Weight < 5th percentile", "Dehydration", "High-grade fever non-responsive to antipyretics"],
+    guidelines: [
+      "Always calculate dose based on current weight in kg.",
+      "Check concentration of the syrup/suspension available.",
+      "Educate parents on using measuring syringes, not household spoons."
+    ],
+    medications: [
+      { name: "Paracetamol", dose: "15 mg/kg/dose", maxDose: "QDS", notes: "Standard antipyretic/analgesic." },
+      { name: "Ibuprofen", dose: "10 mg/kg/dose", maxDose: "TDS", notes: "Anti-inflammatory/antipyretic." },
+      { name: "Cefixime", dose: "8 mg/kg/day", maxDose: "BD", notes: "Third-gen cephalosporin." },
+      { name: "Azithromycin", dose: "10 mg/kg/day", maxDose: "OD", notes: "Macrolide antibiotic. Often 3-day course." }
+    ],
+    peds: { available: true, drug: "Reference", baseDose: 15, unit: "mg/kg", freq: "variable" }
   }
 ];
 
@@ -114,6 +228,7 @@ export default function GPNotesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedConditionId, setSelectedConditionId] = useState<string | null>(CONDITIONS_DB[0].id);
   const [isMobileListOpen, setIsMobileListOpen] = useState(true);
+  const [pedsWeight, setPedsWeight] = useState<number | "">("");
 
   // Group conditions by category
   const categories = useMemo(() => {
@@ -134,11 +249,12 @@ export default function GPNotesPage() {
     );
   }, [searchQuery]);
 
-  const selectedCondition = CONDITIONS_DB.find(c => c.id === selectedConditionId);
+  const selectedCondition = CONDITIONS_DB.find(c => c.id === selectedConditionId) as any;
 
   // Handle selection on mobile
   const handleSelect = (id: string) => {
     setSelectedConditionId(id);
+    setPedsWeight(""); // Reset weight on change
     if (window.innerWidth < 768) {
       setIsMobileListOpen(false);
     }
@@ -321,7 +437,7 @@ export default function GPNotesPage() {
                        </div>
                        
                        <ul className="flex flex-col gap-4">
-                         {selectedCondition.guidelines.map((guide, idx) => (
+                         {selectedCondition.guidelines.map((guide: any, idx: number) => (
                            <li key={idx} className="flex gap-3 text-[14px] leading-relaxed text-[var(--sec)] font-medium">
                              <div className="w-5 h-5 rounded-full bg-[var(--fill)] border border-[var(--sep)] flex items-center justify-center text-[var(--lb)] flex-shrink-0 text-[10px] mt-0.5 shadow-sm font-bold">
                                {idx + 1}
@@ -331,10 +447,94 @@ export default function GPNotesPage() {
                          ))}
                        </ul>
                     </div>
+
+                    {/* Investigations Section */}
+                    {selectedCondition.investigations && selectedCondition.investigations.length > 0 && (
+                      <div className="glass-card rounded-[24px] p-5 md:p-6 bg-[var(--s1)] shadow-sm">
+                         <div className="flex items-center gap-2 mb-5">
+                           <div className="w-8 h-8 rounded-full bg-[var(--pur)]/10 flex items-center justify-center text-[var(--pur)]">
+                             <Search size={16} />
+                           </div>
+                           <h3 className="font-bold text-[16px] text-[var(--lb)]">Recommended Investigations</h3>
+                         </div>
+                         
+                         <div className="flex flex-wrap gap-2">
+                           {selectedCondition.investigations.map((inv: string, idx: number) => (
+                             <span key={idx} className="px-3 py-1.5 rounded-xl bg-[var(--s2)] border border-[var(--sep)] text-[13px] font-medium text-[var(--sec)]">
+                               {inv}
+                             </span>
+                           ))}
+                         </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Right Column - Medications */}
                   <div className="flex flex-col gap-6">
+                    {/* Pediatric Calculator */}
+                    {selectedCondition.peds?.available && (
+                      <div className="glass-card rounded-[24px] p-5 md:p-6 bg-[var(--blue)]/5 border border-[var(--blue)]/20 shadow-sm overflow-hidden relative mb-6">
+                        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                           <Activity size={120} />
+                        </div>
+                        <div className="flex items-center gap-2 mb-5">
+                          <div className="w-8 h-8 rounded-full bg-[var(--blue)]/10 flex items-center justify-center text-[var(--blue)]">
+                            <Activity size={16} />
+                          </div>
+                          <h3 className="font-bold text-[16px] text-[var(--lb)]">Pediatric Auto-Calculator</h3>
+                        </div>
+
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between bg-[var(--s1)] p-4 rounded-2xl border border-[var(--sep)]">
+                             <div>
+                               <p className="text-xs font-bold text-[var(--ter)] uppercase tracking-wider mb-1">Standard Dose</p>
+                               <p className="text-[14px] font-bold text-[var(--lb)]">{selectedCondition.peds.drug} ({selectedCondition.peds.baseDose} {selectedCondition.peds.unit})</p>
+                             </div>
+                             <div className="flex flex-col items-end">
+                               <p className="text-xs font-bold text-[var(--ter)] uppercase tracking-wider mb-1">Frequency</p>
+                               <p className="text-sm font-bold text-[var(--blue)]">{selectedCondition.peds.freq}</p>
+                             </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-4">
+                            <div className="flex-1 min-w-[120px]">
+                               <label className="text-xs font-bold text-[var(--sec)] ml-2 mb-1 block">Patient Weight (kg)</label>
+                               <input 
+                                 type="number" 
+                                 placeholder="Wt (kg)" 
+                                 value={pedsWeight}
+                                 onChange={e => setPedsWeight(Number(e.target.value) || "")}
+                                 className="w-full bg-[var(--s2)] border border-[var(--sep)] rounded-xl px-4 py-3 text-sm font-bold text-[var(--lb)] outline-none focus:ring-2 focus:ring-[var(--blue)]/20 transition-all font-mono"
+                               />
+                            </div>
+                            <div className="flex-1 min-w-[120px]">
+                               <label className="text-xs font-bold text-[var(--sec)] ml-2 mb-1 block">Dose (mg)</label>
+                               <div className="w-full bg-[var(--fill)] border border-[var(--sep)] rounded-xl px-4 py-3 text-[18px] font-bold text-[var(--blue)] flex items-center justify-center font-mono">
+                                 {pedsWeight ? `${(pedsWeight * selectedCondition.peds.baseDose).toFixed(1)} mg` : "—"}
+                               </div>
+                            </div>
+                            {selectedCondition.peds.concentration && (
+                               <div className="flex-1 min-w-[120px]">
+                                 <label className="text-xs font-bold text-[var(--sec)] ml-2 mb-1 block">Volume (ml)</label>
+                                 <div className="w-full bg-[var(--blue)]/10 border border-[var(--blue)]/20 rounded-xl px-4 py-3 text-[18px] font-bold text-[var(--blue)] flex items-center justify-center font-mono">
+                                   {pedsWeight ? (() => {
+                                      const [mg, ml] = selectedCondition.peds.concentration.split('/').map((s: string) => parseFloat(s));
+                                      const totalMg = pedsWeight * selectedCondition.peds.baseDose;
+                                      return `${(totalMg * ml / mg).toFixed(1)} ml`;
+                                   })() : "—"}
+                                 </div>
+                               </div>
+                            )}
+                          </div>
+                          
+                          {selectedCondition.peds.concentration && (
+                             <p className="text-[10px] text-[var(--ter)] font-bold uppercase text-center">
+                               Based on concentration: {selectedCondition.peds.concentration}
+                             </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
                     <div className="glass-card rounded-[24px] p-5 md:p-6 bg-[var(--s1)] shadow-sm">
                        <div className="flex items-center gap-2 mb-5">
                          <div className="w-8 h-8 rounded-full bg-[#32c97e]/10 flex items-center justify-center text-[#32c97e]">

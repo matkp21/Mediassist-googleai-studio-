@@ -35,9 +35,29 @@
         "status": { "type": "string" }
       },
       "required": ["type", "values", "date", "status"]
+    },
+    "GPProtocol": {
+      "title": "GP Note Protocol",
+      "description": "Structured clinical GP note for OPD quick reference.",
+      "type": "object",
+      "properties": {
+        "condition": { "type": "string" },
+        "setting": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "criteria": { "type": "string" },
+        "rx_lines": { "type": "array" },
+        "adjuncts": { "type": "array", "items": { "type": "string" } },
+        "investigations": { "type": "array", "items": { "type": "string" } },
+        "peds_dosing": { "type": "object" }
+      },
+      "required": ["condition", "setting"]
     }
   },
   "firestore": {
+    "/gp_protocols/{protocolId}": {
+      "schema": "GPProtocol",
+      "description": "Deterministic knowledge graph for standard prescriptions."
+    },
     "/clinical_guidelines/{guidelineId}": {
       "schema": "ClinicalGuideline",
       "description": "Knowledge hub for RAG guidelines."

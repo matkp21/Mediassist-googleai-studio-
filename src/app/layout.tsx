@@ -14,6 +14,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { ProModeProvider } from "@/contexts/pro-mode-context";
 import { NotificationProvider } from "@/contexts/notification-context";
 import { IPadNotificationPill } from "@/components/notifications/ipad-notification-pill";
+import { OpdGlancePalette } from "@/components/medico/OpdGlancePalette";
 import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout({
@@ -33,6 +34,7 @@ export default function RootLayout({
           <ProModeProvider>
             <NotificationProvider>
               <IPadNotificationPill />
+              <OpdGlancePalette />
               <AppSidebar>
                 {children}
               </AppSidebar>

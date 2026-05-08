@@ -6,10 +6,11 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { 
   BookMarked, BrainCircuit, FileText, Stethoscope, 
   Activity, Star, Search, Pill, Layers, Eye, 
-  FlaskConical, HeartPulse, ChevronRight, Crown, Lock, X
+  FlaskConical, HeartPulse, ChevronRight, Crown, Lock, X, Calculator, Navigation, MapPin
 } from "lucide-react";
 import { useProMode } from "@/contexts/pro-mode-context";
 import { MiniOrgan } from "@/components/medico/MiniOrgan";
+import { allMedicoToolsList } from "@/config/medico-tools-config";
 
 const AGENTS = {
   studybot: { label: "StudyBot", color: "#4B8FF7", shape: "brain", desc: "Your personal intelligent assistant for planning schedules and optimizing your study habits with cognitive spacing techniques." },
@@ -19,81 +20,6 @@ const AGENTS = {
   tutor: { label: "DeepTutor", color: "#F7BC26", shape: "brain", desc: "Socratic tutoring model that challenges your thought process. It won't give you the answer, but it will lead you to it." },
   pro: { label: "Pro Mode", color: "#6366f1", isProMode: true, shape: "heart", desc: "Unlock all advanced medical models, remove usage limits, and get priority access to 3D AR diagnostic simulations." },
 };
-
-const iconMap: Record<string, any> = {
-  Activity, BrainCircuit, Layers, Star, FileText, Search,
-  BookMarked, Stethoscope, HeartPulse, Eye, Pill, FlaskConical
-};
-
-const TOOLS = [
-  // StudyBot (12)
-  { id: 1, name: "Active Study Coach", desc: "Generates task trees and scheduling powered by Brain-3 learning agents.", agent: "studybot", Icon: "Activity", routeId: "timetable" },
-  { id: 2, name: "MCQ Generator", desc: "Automatic, AI-generated study aids with visual associations.", agent: "studybot", Icon: "BrainCircuit", routeId: "mcq" },
-  { id: 3, name: "Flashcard Generator", desc: "Spaced repetition flashcards generated from your notes.", agent: "studybot", Icon: "Layers", routeId: "flashcards" },
-  { id: 4, name: "Mnemonic Generator", desc: "Custom memory aids for difficult drug lists.", agent: "studybot", Icon: "Star", routeId: "mnemonics" },
-  { id: 5, name: "Mock Exam Suite", desc: "Interactive medical challenges to prep you for the real deal.", agent: "studybot", Icon: "FileText", routeId: "exams" },
-  { id: 6, name: "Timetable Creator", desc: "AI-generated timetables based on remaining exam days.", agent: "studybot", Icon: "Activity", routeId: "timetable-creator" },
-  { id: 7, name: "High-Yield Predictor", desc: "Predicts high-yield topics based on past year questions.", agent: "studybot", Icon: "Search", routeId: "topics" },
-  { id: 8, name: "Notes Generator", desc: "Generates notes from uploaded textbooks and slides.", agent: "studybot", Icon: "BookMarked", routeId: "theorycoach-generator" },
-  { id: 9, name: "Flowchart Creator", desc: "Interactive flowchart generation for complex cases.", agent: "studybot", Icon: "Layers", routeId: "flowcharts" },
-  { id: 10, name: "PYQ Simulator", desc: "USMLE, PLAB & MBBS past-year questions with pattern analysis.", agent: "studybot", Icon: "Star", routeId: "mock-pyqs" },
-  { id: 11, name: "Gamified Challenges", desc: "Gamified Case Challenges to test your knowledge.", agent: "studybot", Icon: "Star", routeId: "challenges" },
-  { id: 12, name: "Neural Progress Tracker", desc: "Visual dashboard of memory retention over time.", agent: "studybot", Icon: "Activity", routeId: "progress" },
-
-  // ClinicalAI (9)
-  { id: 13, name: "Deep Solve Diagnostic", desc: "A multi-agent reasoning pipeline for step-by-step diagnostic verification.", agent: "clinical", Icon: "Stethoscope", routeId: "deep-solve" },
-  { id: 14, name: "Virtual Patient Rounds", desc: "Practice clinical skills with virtual patient encounters.", agent: "clinical", Icon: "Activity", routeId: "rounds" },
-  { id: 15, name: "DDX Trainer", desc: "Interprets labs/radiology and runs differential diagnosis challenges.", agent: "clinical", Icon: "BrainCircuit", routeId: "ddx" },
-  { id: 16, name: "Telemetry Viz", desc: "Maps raw patient vitals into interactive graphical trends.", agent: "clinical", Icon: "Activity", routeId: "visualize" },
-  { id: 17, name: "DiagnoBot", desc: "Answers clinical queries based on patient symptoms.", agent: "clinical", Icon: "Stethoscope", routeId: "diagnobot" },
-  { id: 18, name: "Smart Dictation", desc: "Voice-to-text dictation optimized for medical terms.", agent: "clinical", Icon: "FileText", routeId: "dictation" },
-  { id: 19, name: "Guided Rehab Journeys", desc: "Converts standard discharge instructions into structured, interactive milestones.", agent: "clinical", Icon: "Layers", routeId: "guided-learning" },
-  { id: 20, name: "Clinical Calculators", desc: "Specialized medical scores powered by dynamic Agent-Skills loading.", agent: "clinical", Icon: "Calculator", routeId: "calculators" },
-  { id: 21, name: "Triage & Referral", desc: "Triage patients, recommend specialties, and find nearby facilities.", agent: "clinical", Icon: "Navigation", routeId: "triage-streamliner" },
-
-  // KnowledgeHub (10)
-  { id: 22, name: "Ask Medi RAG-Tutor", desc: "A dedicated semantic RAG chat linked directly to student's uploaded materials and notes.", agent: "knowledge", Icon: "Search", routeId: "rag-tutor" },
-  { id: 23, name: "EBM Research", desc: "Searches PubMed and academic databases for Evidence-Based answers.", agent: "knowledge", Icon: "BookMarked", routeId: "ebm-assistant" },
-  { id: 56, name: "GP Notes Quick-Ref", desc: "Commonly prescribed medications, dosages, and condition-based guidelines at a glance.", agent: "knowledge", Icon: "BookMarked", routeId: "gp-notes" },
-  { id: 24, name: "Note Summarizer", desc: "Convert long lecture notes into high-yield summaries.", agent: "knowledge", Icon: "FileText", routeId: "summarizer" },
-  { id: 25, name: "Knowledge Augmenter", desc: "Enriches your study notes with latest guidelines.", agent: "knowledge", Icon: "BrainCircuit", routeId: "knowledge-augmenter" },
-  { id: 26, name: "MarkItDown Ingest", desc: "An enterprise-grade multimodal document structuralization tool.", agent: "knowledge", Icon: "Layers", routeId: "ingestion" },
-  { id: 27, name: "Video Lecture Library", desc: "Browse through a rich library of medical videos.", agent: "knowledge", Icon: "Eye", routeId: "videos" },
-  { id: 28, name: "CBME Browser", desc: "CBME Competency Browser & Solved Papers Viewer for curriculum-focused study.", agent: "knowledge", Icon: "FileText", routeId: "cbme" },
-  { id: 29, name: "Community Sharing & Library", desc: "Your personal library and community resources.", agent: "knowledge", Icon: "Activity", routeId: "library" },
-  { id: 30, name: "Guidelines Compass", desc: "NICE, WHO, AHA, IDSA — latest guidelines always ready.", agent: "knowledge", Icon: "Layers", routeId: "guidelines-compass" },
-
-  // LabCraft (9)
-  { id: 31, name: "PharmaGenie", desc: "Specialized pharmacological interactions engine.", agent: "labcraft", Icon: "Pill" },
-  { id: 32, name: "MicroMate", desc: "Microbiological profile engine identifying pathogens.", agent: "labcraft", Icon: "FlaskConical" },
-  { id: 33, name: "PathoMind", desc: "Explains disease pathophysiology alongside AI-generated diagrams.", agent: "labcraft", Icon: "BrainCircuit" },
-  { id: 34, name: "Radiology Reader", desc: "AI reads X-ray, CT, MRI, Ultrasound with confidence scores.", agent: "labcraft", Icon: "Eye" },
-  { id: 35, name: "Anatomy Atlas", desc: "Interactive layered anatomy from surface to histology.", agent: "labcraft", Icon: "Layers" },
-  { id: 36, name: "ABG Analyser", desc: "Arterial blood gas interpretation with compensation check.", agent: "labcraft", Icon: "FlaskConical" },
-  { id: 37, name: "Pathology Slides", desc: "Virtual microscope simulator for 100+ tissue types.", agent: "labcraft", Icon: "Eye" },
-  { id: 38, name: "Clinical Calculators", desc: "Dedicated models for medical scoring.", agent: "labcraft", Icon: "Activity" },
-  { id: 39, name: "Drug Dosage", desc: "Weight-based precision dosing guidelines.", agent: "labcraft", Icon: "Pill" },
-
-  // DeepTutor (8)
-  { id: 40, name: "Virtual Medical Board", desc: "Simulates a round-table collaboration where distinct AI personas debate complex cases.", agent: "tutor", Icon: "BrainCircuit" },
-  { id: 41, name: "VibeVoice", desc: "Synthesizes hours of lectures via Gemini 2.5 Pro into precise architectural notes.", agent: "tutor", Icon: "HeartPulse" },
-  { id: 42, name: "Concept Video Creator", desc: "Leverages generative architectures for medical animations.", agent: "tutor", Icon: "Eye" },
-  { id: 43, name: "Physiology Simulator", desc: "Interactive cardiac, renal, respiratory system models.", agent: "tutor", Icon: "HeartPulse" },
-  { id: 44, name: "Pharmacology Tutor", desc: "MOA, side effects, mnemonics and high-yield pearls.", agent: "tutor", Icon: "Pill" },
-  { id: 45, name: "Guided Study Flow", desc: "A guided curriculum-based study path.", agent: "tutor", Icon: "Activity" },
-  { id: 46, name: "TheoryCoach", desc: "Generates conceptual medical summaries containing custom generated art/diagrams.", agent: "tutor", Icon: "FileText" },
-  { id: 47, name: "Ophthalmology Cases", desc: "Slit-lamp, fundoscopy and visual field defect quizzes.", agent: "tutor", Icon: "Eye" },
-
-  // Pro Mode (8)
-  { id: 48, name: "Discharge Summary", desc: "Automated generation of patient discharge documents.", agent: "pro", Icon: "FileText", isPro: true },
-  { id: 49, name: "Handover Assistant", desc: "Streamlines shift handovers with AI-summarized insights.", agent: "pro", Icon: "Activity", isPro: true },
-  { id: 50, name: "Clinical Co-Writer", desc: "Assists in drafting complex clinical notes securely.", agent: "pro", Icon: "Stethoscope", isPro: true },
-  { id: 51, name: "Pharmacopeia Checker", desc: "Enterprise-grade drug cross-checks and allergies.", agent: "pro", Icon: "Pill", isPro: true },
-  { id: 52, name: "Referral Streamliner", desc: "Identifies right specialists and drafts referral letters.", agent: "pro", Icon: "Layers", isPro: true },
-  { id: 53, name: "Treatment Protocol", desc: "Provides step-by-step consensus-based treatment guidelines.", agent: "pro", Icon: "FileText", isPro: true },
-  { id: 54, name: "Heartbeat Monitor", desc: "Proactive continuous engine evaluating telemetry.", agent: "pro", Icon: "HeartPulse", isPro: true },
-  { id: 55, name: "Triage Tool", desc: "Advanced triaging capabilities based on multi-parameter check.", agent: "pro", Icon: "Activity", isPro: true }
-];
 
 function StudyHubContent() {
   const searchParams = useSearchParams();
@@ -112,9 +38,9 @@ function StudyHubContent() {
     }
   }, [searchParams]);
 
-  const filteredTools = TOOLS.filter(t => {
+  const filteredTools = allMedicoToolsList.filter(t => {
     if (filter !== "all" && t.agent !== filter) return false;
-    if (search.trim() && !t.name.toLowerCase().includes(search.toLowerCase()) && !t.desc.toLowerCase().includes(search.toLowerCase())) return false;
+    if (search.trim() && !t.title.toLowerCase().includes(search.toLowerCase()) && !t.description.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
@@ -150,12 +76,12 @@ function StudyHubContent() {
               Master the curriculum with <span className="italic text-[var(--blue)]" style={{ textShadow: '0 0 20px var(--blue)' }}>Agentic Tutors.</span>
             </h2>
             <p className="text-[15px] text-[var(--sec)] leading-relaxed font-medium mb-6">
-              Access 55+ specialized sub-agents covering OSCEs, mock exams, visual diagnostics, pharmacology, and clinical decision making.
+              Access {allMedicoToolsList.length}+ specialized sub-agents covering OSCEs, mock exams, visual diagnostics, pharmacology, and clinical decision making.
             </p>
 
             <div className="flex flex-wrap gap-2.5 relative z-10">
               {Object.entries(AGENTS).map(([key, config]) => {
-                const count = TOOLS.filter(t => t.agent === key).length;
+                const count = allMedicoToolsList.filter(t => t.agent === key).length;
                 return (
                   <div key={key} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--fill)] border border-[var(--sep)] text-[12px] font-medium text-[var(--sec)]">
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: config.color, boxShadow: `0 0 6px ${config.color}80` }} />
@@ -245,9 +171,10 @@ function StudyHubContent() {
       <AnimatePresence mode="popLayout">
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredTools.map((tool, i) => {
-            const agentConfig = AGENTS[tool.agent as keyof typeof AGENTS];
+            const agentCategory = tool.agent as keyof typeof AGENTS || 'studybot';
+            const agentConfig = AGENTS[agentCategory] || AGENTS.studybot;
             const isLocked = tool.isPro && !isProMode;
-            const IconComponent = iconMap[tool.Icon];
+            const IconComponent = tool.icon || Activity;
             
             return (
               <motion.div 
@@ -260,11 +187,11 @@ function StudyHubContent() {
                 className={`glass-card rounded-[24px] p-5 cursor-pointer group transition-all relative overflow-hidden ${isLocked ? '' : 'hover:-translate-y-[2px]'}`}
                 onClick={() => {
                   if (isLocked) {
-                    router.push('/settings'); // Or wherever Pro Mode toggle is
-                  } else if ((tool as any).routeId) {
-                    router.push(`/medico/${(tool as any).routeId}`);
+                    router.push('/settings'); 
+                  } else if (tool.href) {
+                    router.push(tool.href);
                   } else {
-                    router.push(`/ask-medi?action=${encodeURIComponent(tool.name)}`);
+                    router.push(`/medico/${tool.id}`);
                   }
                 }}
               >
@@ -272,11 +199,6 @@ function StudyHubContent() {
                   <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-purple-500 to-indigo-500 z-10" />
                 )}
                 
-                {/* Shimmer animation on card when Pro (optional extra flair) */}
-                {tool.isPro && !isLocked && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
-                )}
-
                 <div className={`glass-card-content flex flex-col h-full relative ${isLocked ? 'opacity-60' : ''}`}>
                   <div className="flex justify-between items-start mb-4">
                     <div className="relative">
@@ -296,10 +218,10 @@ function StudyHubContent() {
                   </div>
                   
                   <h3 className="text-[17px] font-bold text-[var(--lb)] mb-2 group-hover:text-[var(--blue)] transition-colors pr-2">
-                    {tool.name}
+                    {tool.title}
                   </h3>
                   <p className="text-[13px] text-[var(--sec)] font-medium leading-relaxed mb-6 flex-1">
-                    {tool.desc}
+                    {tool.description}
                   </p>
                   
                   <div className="flex items-center justify-between mt-auto">

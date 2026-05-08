@@ -2,7 +2,7 @@
 import type { MedicoTool } from '@/types/medico-tools';
 import {
   NotebookText, FileQuestion, CalendarClock, Layers, CaseUpper, Lightbulb, BookCopy,
-  Users, Eye, Brain, TrendingUp, Calculator, Workflow, Award, Star, Settings, CheckSquare, GripVertical, FileText, Youtube, Mic, FlaskConical, Microscope, TestTubeDiagonal, Swords, Library, Trophy, BookMarked, FileCheck, DatabaseZap, Search, MapPin, BotMessageSquare, BrainCircuit, Bot, FileUp, Activity, PenLine, Navigation, Heart, Wand2, Globe, FileCode, MonitorSmartphone, ShieldAlert, ScanEye
+  Users, Eye, Brain, TrendingUp, Calculator, Workflow, Award, Star, Settings, CheckSquare, GripVertical, FileText, Youtube, Mic, FlaskConical, Microscope, TestTubeDiagonal, Swords, Library, Trophy, BookMarked, FileCheck, DatabaseZap, Search, MapPin, BotMessageSquare, BrainCircuit, Bot, FileUp, Activity, PenLine, Navigation, Heart, Wand2, Globe, FileCode, MonitorSmartphone, ShieldAlert, ScanEye, Zap, LayoutDashboard, Stethoscope, HeartPulse, BookOpen, Sparkles
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -63,66 +63,90 @@ const InteractiveToolPrompts = dynamic(() => import('@/components/medico/interac
 
 // Define the full list of tools
 export const allMedicoToolsList: MedicoTool[] = [
-  { id: 'supervisor', title: 'Autonomous Supervisor', description: 'Brain-3 hierarchical orchestrator. Ask anything, and the supervisor will route your request to the best specialized subagent with self-healing feedback loops.', icon: BrainCircuit, component: AutonomousSupervisor, isFrequentlyUsed: true },
-  { id: 'deep-solve', title: 'Deep Solve: Diagnostic Solver', description: 'Multi-agent reasoning pipeline for solving complex patient cases with step-by-step verification.', icon: Brain, component: DeepSolveDiagnostic, isFrequentlyUsed: true },
-  { id: 'visualize', title: 'Clinical Telemetry Visualizer', description: 'Transform raw patient vitals and lab data into interactive graphical trends for rapid comprehension.', icon: Activity, component: ClinicalTelemetryVisualizer },
-  { id: 'guided-learning', title: 'Guided Rehab Journeys', description: 'Structured post-operative recovery pathways converted from discharge instructions into interactive milestones.', icon: Navigation, component: GuidedRehabJourney },
-  { id: 'heartbeat', title: 'Proactive Heartbeat: Monitoring', description: 'Continuous patient monitoring engine that evaluates telemetry & medication adherence asynchronously.', icon: Heart, component: PatientMonitoringDashboard, isFrequentlyUsed: true },
-  { id: 'ai-cowriter', title: 'Clinical Co-Writer', description: 'Collaborative AI documentation assistant for drafting SOAP notes, referral letters and summaries.', icon: PenLine, component: ClinicalCoWriter, isFrequentlyUsed: true },
-  { id: 'skill-generator', title: 'Clinical Skill Generator', description: 'Extract reusable AI skills from medical documents and structured guidelines. (Inspiration: autoskills)', icon: Wand2, component: ClinicalSkillGenerator, isFrequentlyUsed: true },
-  { id: 'sequential-thinking', title: 'Sequential Diagnostic Workspace', description: 'Deep reflective reasoning engine for complex symptoms through explicit thought sequences. (Inspiration: MCP)', icon: BrainCircuit, component: SequentialDiagnosticWorkspace, isFrequentlyUsed: true },
-  { id: 'research-scraper', title: 'Advanced Research Scraper', description: 'Perform deep-scrapping of clinical portals to get LLM-ready markdown summaries. (Inspiration: Firecrawl)', icon: Globe, component: AdvancedResearchScraper, isFrequentlyUsed: true },
-  { id: 'timetable', title: 'Active Study Coach', description: 'Task trees, automated study triggers, and proactive planning powered by Brain-3 scheduling tools.', icon: CalendarClock, component: StudyPlannerActiveCoach, isFrequentlyUsed: true },
-  { id: 'timetable-creator', title: 'Timetable Creator', description: 'AI-generated timetables based on remaining exam days.', icon: CalendarClock, component: StudyTimetableCreator, isFrequentlyUsed: true },
-  { id: 'calculators', title: 'Clinical Calculators', description: 'Specialized medical scores (HEART, Wells, CHA2DS2-VASc) powered by dynamic Agent-Skills loading.', icon: Calculator, component: ClinicalCalculators },
-  { id: 'virtual-board', title: 'Virtual Medical Board', description: 'Simulate a multi-specialist round table discussion (Cardio, Nephro, ID) for complex patient cases.', icon: Users, component: VirtualMedicalBoard },
-  { id: 'support-chatbot', title: 'IT Support Bot', description: 'Context-aware IT agent fueled by the app history to help you troubleshoot MediAssistant features.', icon: Bot, component: SupportAgent },
-  { id: 'markitdown', title: 'MarkItDown Ingest', description: 'Multimodal document structuralization. Upload any clinical report or image to convert it into clean, structured Markdown.', icon: FileUp, component: MarkItDownIngest },
-  { id: 'theorycoach-generator', title: 'TheoryCoach: Notes+', description: 'Generates medical summaries with custom aspect-ratio concept art and diagrams using high-fidelity Imagen 3.', component: StudyNotesGenerator, isFrequentlyUsed: true },
-  { id: 'triage-streamliner', title: 'Triage & Referral Streamliner', description: 'Triage patients, recommend specialties, and find nearby facilities with Google Maps.', icon: MapPin, component: TriageReferralStreamliner },
-  { id: 'workflow-chatbot', title: 'Pro Workflow Chatbot', description: 'Context-aware conversational agent for administrative troubleshooting and complex clinical workflows.', icon: BotMessageSquare, component: ProWorkflowChatbot },
-  { id: 'ebm-assistant', title: 'EBM Research Assistant', description: 'Search PubMed for Evidence-Based Medicine (EBM) papers and synthesize clinical answers.', icon: Search, component: EbmResearchAssistant, isFrequentlyUsed: true },
-  { id: 'vibevoice-lecture', title: 'VibeVoice: Lecture Recorder', description: 'Zero-latency lecture capture with 6-minute agentic chunking and 1-hour master synthesis via Gemini 2.5 Pro.', icon: Mic, component: VibeVoiceLectureRecorder, isFrequentlyUsed: true },
-  { id: 'concept-video', title: 'Veo-Med: Video Synthesis', description: 'Agentic video synthesis for photorealistic medical animations and surgical procedures using Veo 3 architecture.', icon: Youtube, component: ConceptVideoCreator, isFrequentlyUsed: true },
-  { id: 'focus-music', title: 'Focus Music Generator', description: 'Generate optimal Lyria prompts for lo-fi deep focus music.', icon: Mic, component: FocusMusicGenerator },
-  { id: 'mock-pyqs', title: 'Mock Exam Paper', description: "Generate mock exam papers simulating previous years, with MCQs and essay questions.", icon: BookCopy, href: '/medico/mock-pyqs', isFrequentlyUsed: true },
-  { id: 'solved-papers', title: 'Solved Question Papers Viewer', description: 'Browse and view solved previous year question papers.', icon: FileCheck, component: SolvedPapersViewer, isFrequentlyUsed: true },
-  { id: 'cbme', title: 'CBME Competency Browser', description: 'Search and browse through NMC-aligned competencies.', icon: BookMarked, href: '/medico/cbme' },
-  { id: 'mcq', title: 'MCQ Generator', description: 'Create multiple-choice questions for exam practice.', icon: FileQuestion, component: McqGenerator, isFrequentlyUsed: true },
-  { id: 'flashcards', title: 'Flashcard Generator', description: 'Create digital flashcards for quick revision.', icon: Layers, component: FlashcardGenerator, isFrequentlyUsed: true },
-  { id: 'mnemonics', title: 'Mnemonic Generator', description: 'Create memory aids with AI-generated visuals.', icon: Lightbulb, component: MnemonicsGenerator, isFrequentlyUsed: true },
-  { id: 'pathomind', title: 'PathoMind', description: 'Explain any disease pathophysiology with diagrams.', icon: Brain, component: PathoMindExplainer, isFrequentlyUsed: true },
-  { id: 'pharmagenie', title: 'PharmaGenie', description: 'Drug classification, mechanisms, side effects.', icon: FlaskConical, component: PharmaGenie },
-  { id: 'micromate', title: 'MicroMate', description: 'Bugs, virulence factors, lab diagnosis.', icon: Microscope, component: MicroMate },
-  { id: 'diagnobot', title: 'DiagnoBot', description: 'Interpret labs, ECGs, X-rays, ABG, etc.', icon: TestTubeDiagonal, component: DiagnoBot },
-  { id: 'challenges', title: 'Gamified Case Challenges', description: 'Solve timed diagnostic challenges and compete on leaderboards.', icon: Swords, component: GamifiedCaseChallenges },
-  { id: 'exams', title: 'Mock Exam Suite', description: 'Take full-length mock exams with MCQs and essays.', icon: Trophy, component: MockExamSuite },
-  { id: 'cases', title: 'Clinical Case Simulations', description: 'Practice with interactive patient scenarios.', icon: CaseUpper, component: ClinicalCaseSimulator },
-  { id: 'ddx', title: 'Differential Diagnosis Trainer', description: 'List diagnoses based on symptoms with feedback.', icon: Brain, component: DifferentialDiagnosisTrainer },
-  { id: 'anatomy', title: 'Interactive Anatomy Visualizer', description: 'Explore anatomical structures.', icon: Eye, component: AnatomyVisualizer },
-  { id: 'dosage', title: 'Drug Dosage Calculator', description: 'Practice calculating drug doses.', icon: Calculator, component: DrugDosageCalculator },
-  { id: 'flowcharts', title: 'Flowchart Creator', description: 'Generate flowcharts for medical topics to aid revision.', icon: Workflow, component: FlowchartCreator },
-  { id: 'dictation', title: 'Smart Dictation', description: 'Use your voice to dictate notes, which AI can help structure.', icon: Mic, component: SmartDictation },
-  { id: 'summarizer', title: 'Smart Note Summarizer', description: 'Upload notes (PDF/TXT) and get AI-powered summaries.', icon: FileText, component: NoteSummarizer },
-  { id: 'topics', title: 'High-Yield Topic Predictor', description: 'Suggest priority topics for study based on exam trends or user performance.', icon: TrendingUp, component: HighYieldTopicPredictor },
-  { id: 'rounds', title: 'Virtual Patient Rounds', description: 'Simulate ward rounds with patient cases.', icon: Users, component: VirtualPatientRounds },
-  { id: 'progress', title: 'Neural Progress Tracker', description: 'Adaptive self-learning profile that tracks cognitive strengths and weaknesses.', icon: Award, component: ProgressTracker },
-  { id: 'videos', title: 'Video Lecture Library', description: 'Search and find relevant medical video lectures.', icon: Youtube, href: '/medico/videos' },
-  { id: 'library', title: 'Knowledge Hub', description: 'Your personal library of notes, MCQs, and community content.', icon: Library, href: '/medico/library' },
-  { id: 'rag-tutor', title: 'Ask Medi (RAG)', description: 'Resident Genius mentor using semantic RAG for grounded PYQs and flashcards.', icon: DatabaseZap, component: RagTutor, isFrequentlyUsed: true },
-  { id: 'guidelines-compass', title: 'Guidelines Compass', description: 'NICE, WHO, AHA, IDSA — latest clinical guidelines always at hand.', icon: BookOpen, component: GuidelinesCompass },
-  { id: 'knowledge-augmenter', title: 'Knowledge Augmenter', description: 'Expands brief notes with additional comprehensive medical context.', icon: Sparkles, component: KnowledgeAugmenter },
-  
-  // Goose Adaptations
-  { id: 'clinical-recipes', title: 'Clinical & Study Recipes', description: 'Portable YAML workflows to standardize complex, multi-agent AI processes.', icon: FileCode, component: ClinicalRecipesManager, isFrequentlyUsed: true },
-  { id: 'omnichannel-sessions', title: 'Omnichannel Sessions', description: 'Seamlessly transition across devices, export AI reasoning chains, and review adversary decisions.', icon: MonitorSmartphone, component: OmnichannelSessionManager, isFrequentlyUsed: true },
-  { id: 'interactive-prompts', title: 'Interactive Safety Control', description: 'Manage Human-In-The-Loop approvals and toggle local-first model resilience.', icon: ShieldAlert, component: InteractiveToolPrompts, isFrequentlyUsed: true },
-  
-  // Advanced Expansion Features
-  { id: 'geospatial-routing', title: 'Geospatial Referral Agent', description: 'Connects to real-time Google Maps data for intelligent patient routing and referral optimization.', icon: Navigation, isFrequentlyUsed: true },
-  { id: 'ingestion', title: 'MarkItDown: Advanced Ingest', description: 'Enterprise-grade multimodal document structuralization. Preserves tables and Math formulas.', icon: FileUp, component: MarkItDownIngest, isFrequentlyUsed: true },
-  { id: 'high-thinking', title: 'Thinking Mode: Differential', description: 'Enable high-reasoning tokens for complex, multi-system diagnostic failures.', icon: BrainCircuit, isFrequentlyUsed: true },
-  { id: 'spatial-ai', title: 'Spatial AI: Scan Analysis', description: 'Multimodal vision agent for analyzing X-rays, MRIs, and CT scans with MedGemma reasoning.', icon: ScanEye, isFrequentlyUsed: true },
+  // Master Orchestrators
+  { id: 'supervisor', title: 'Autonomous Supervisor', description: 'Brain-3 hierarchical orchestrator. Ask anything, and the supervisor will route your request to the best specialized subagent with self-healing feedback loops.', icon: BrainCircuit, component: AutonomousSupervisor, isFrequentlyUsed: true, agent: 'studybot' },
+  { id: 'deep-solve', title: 'Deep Solve: Diagnostic Solver', description: 'Multi-agent reasoning pipeline for solving complex patient cases with step-by-step verification.', icon: Brain, component: DeepSolveDiagnostic, isFrequentlyUsed: true, agent: 'clinical' },
+  { id: 'rag-tutor', title: 'Ask Medi (RAG)', description: 'Resident Genius mentor using semantic RAG for grounded PYQs and flashcards.', icon: DatabaseZap, component: RagTutor, isFrequentlyUsed: true, agent: 'knowledge' },
+
+  // Phase 1: Study & Exam Prep (StudyBot)
+  { id: 'timetable', title: 'Active Study Coach', description: 'Task trees, automated study triggers, and proactive planning powered by Brain-3 scheduling tools.', icon: CalendarClock, component: StudyPlannerActiveCoach, isFrequentlyUsed: true, agent: 'studybot' },
+  { id: 'mcq', title: 'MCQ Generator', description: 'Create multiple-choice questions for exam practice.', icon: FileQuestion, component: McqGenerator, isFrequentlyUsed: true, agent: 'studybot' },
+  { id: 'flashcards', title: 'Flashcard Generator', description: 'Create digital flashcards for quick revision.', icon: Layers, component: FlashcardGenerator, isFrequentlyUsed: true, agent: 'studybot' },
+  { id: 'mnemonics', title: 'Mnemonic Generator', description: 'Create memory aids with AI-generated visuals.', icon: Lightbulb, component: MnemonicsGenerator, isFrequentlyUsed: true, agent: 'studybot' },
+  { id: 'exams', title: 'Mock Exam Suite', description: 'Take full-length mock exams with MCQs and essays.', icon: Trophy, component: MockExamSuite, agent: 'studybot' },
+  { id: 'timetable-creator', title: 'Timetable Creator', description: 'AI-generated timetables based on remaining exam days.', icon: CalendarClock, component: StudyTimetableCreator, isFrequentlyUsed: true, agent: 'studybot' },
+  { id: 'topics', title: 'High-Yield Topic Predictor', description: 'Suggest priority topics for study based on exam trends or user performance.', icon: TrendingUp, component: HighYieldTopicPredictor, agent: 'studybot' },
+  { id: 'theorycoach-generator', title: 'TheoryCoach: Notes+', description: 'Generates medical summaries with custom aspect-ratio concept art and diagrams using high-fidelity Imagen 3.', component: StudyNotesGenerator, isFrequentlyUsed: true, agent: 'studybot', icon: FileText },
+  { id: 'flowcharts', title: 'Flowchart Creator', description: 'Generate flowcharts for medical topics to aid revision.', icon: Workflow, component: FlowchartCreator, agent: 'studybot' },
+  { id: 'mock-pyqs', title: 'Mock Exam Paper', description: "Generate mock exam papers simulating previous years, with MCQs and essay questions.", icon: BookCopy, href: '/medico/mock-pyqs', isFrequentlyUsed: true, agent: 'studybot' },
+  { id: 'challenges', title: 'Gamified Case Challenges', description: 'Solve timed diagnostic challenges and compete on leaderboards.', icon: Swords, component: GamifiedCaseChallenges, agent: 'studybot' },
+  { id: 'progress', title: 'Neural Progress Tracker', description: 'Adaptive self-learning profile that tracks cognitive strengths and weaknesses.', icon: Award, component: ProgressTracker, agent: 'studybot' },
+  { id: 'study-sprint', title: 'Study Sprint Planner', description: 'Plan ultra-focused 2-hour study sprints with automated milestone tracking.', icon: Zap, agent: 'studybot' },
+  { id: 'anki-export', title: 'Anki Deck Generator', description: 'Export your flashcards directly to .apkg format for Anki synchronization.', icon: DatabaseZap, agent: 'studybot' },
+  { id: 'usmle-mimic', title: 'USMLE Question Mimic', description: 'Master NBME style questions with complex multi-step reasoning requirements.', icon: FileQuestion, agent: 'studybot' },
+
+  // Phase 2: Clinical Practice (ClinicalAI)
+  { id: 'rounds', title: 'Virtual Patient Rounds', description: 'Simulate ward rounds with patient cases.', icon: Users, component: VirtualPatientRounds, agent: 'clinical' },
+  { id: 'ddx', title: 'Differential Diagnosis Trainer', description: 'List diagnoses based on symptoms with feedback.', icon: Brain, component: DifferentialDiagnosisTrainer, agent: 'clinical' },
+  { id: 'visualize', title: 'Clinical Telemetry Visualizer', description: 'Transform raw patient vitals and lab data into interactive graphical trends for rapid comprehension.', icon: Activity, component: ClinicalTelemetryVisualizer, agent: 'clinical' },
+  { id: 'diagnobot', title: 'DiagnoBot', description: 'Interpret labs, ECGs, X-rays, ABG, etc.', icon: TestTubeDiagonal, component: DiagnoBot, agent: 'clinical' },
+  { id: 'dictation', title: 'Smart Dictation', description: 'Use your voice to dictate notes, which AI can help structure.', icon: Mic, component: SmartDictation, agent: 'clinical' },
+  { id: 'guided-learning', title: 'Guided Rehab Journeys', description: 'Structured post-operative recovery pathways converted from discharge instructions into interactive milestones.', icon: Navigation, component: GuidedRehabJourney, agent: 'clinical' },
+  { id: 'calculators', title: 'Clinical Calculators', description: 'Specialized medical scores (HEART, Wells, CHA2DS2-VASc) powered by dynamic Agent-Skills loading.', icon: Calculator, component: ClinicalCalculators, agent: 'clinical' },
+  { id: 'triage-streamliner', title: 'Triage & Referral Streamliner', description: 'Triage patients, recommend specialties, and find nearby facilities with Google Maps.', icon: MapPin, component: TriageReferralStreamliner, agent: 'clinical' },
+  { id: 'ecg-analyzer', title: 'ECG Rhythm Analyzer', description: 'Practice interpreting 12-lead ECGs with interactive step-by-step guidance.', icon: Activity, agent: 'clinical' },
+  { id: 'osce-simulator', title: 'OSCE Scenario Simulator', description: 'Interactive OSCE station practice with a virtual examiner and grading rubric.', icon: Users, agent: 'clinical' },
+  { id: 'case-builder', title: 'Case Scenario Builder', description: 'Create custom clinical cases to test fellow students or for personal study.', icon: CaseUpper, agent: 'clinical' },
+  { id: 'physical-exam', title: 'Physical Exam Pro', description: 'Step-by-step guidance on clinical examination techniques with visual cues.', icon: Stethoscope, agent: 'clinical' },
+
+  // Phase 3: Research & Content (KnowledgeHub)
+  { id: 'ebm-assistant', title: 'EBM Research Assistant', description: 'Search PubMed for Evidence-Based Medicine (EBM) papers and synthesize clinical answers.', icon: Search, component: EbmResearchAssistant, isFrequentlyUsed: true, agent: 'knowledge' },
+  { id: 'gp-notes', title: 'GP Notes Quick-Ref', description: 'Commonly prescribed medications, dosages, and condition-based guidelines at a glance.', icon: BookMarked, href: '/medico/gp-notes', agent: 'knowledge' },
+  { id: 'summarizer', title: 'Smart Note Summarizer', description: 'Upload notes (PDF/TXT) and get AI-powered summaries.', icon: FileText, component: NoteSummarizer, agent: 'knowledge' },
+  { id: 'knowledge-augmenter', title: 'Knowledge Augmenter', description: 'Expands brief notes with additional comprehensive medical context.', icon: Sparkles, component: KnowledgeAugmenter, agent: 'knowledge' },
+  { id: 'ingestion', title: 'MarkItDown: Advanced Ingest', description: 'Enterprise-grade multimodal document structuralization. Preserves tables and Math formulas.', icon: FileUp, component: MarkItDownIngest, isFrequentlyUsed: true, agent: 'knowledge' },
+  { id: 'videos', title: 'Video Lecture Library', description: 'Search and find relevant medical video lectures.', icon: Youtube, href: '/medico/videos', agent: 'knowledge' },
+  { id: 'cbme', title: 'CBME Competency Browser', description: 'Search and browse through NMC-aligned competencies.', icon: BookMarked, href: '/medico/cbme', agent: 'knowledge' },
+  { id: 'library', title: 'Knowledge Hub', description: 'Your personal library of notes, MCQs, and community content.', icon: Library, href: '/medico/library', agent: 'knowledge' },
+  { id: 'guidelines-compass', title: 'Guidelines Compass', description: 'NICE, WHO, AHA, IDSA — latest clinical guidelines always at hand.', icon: BookOpen, component: GuidelinesCompass, agent: 'knowledge' },
+  { id: 'literature-miner', title: 'Literature Review Miner', description: 'Extract key findings and statistics from a batch of medical journals.', icon: DatabaseZap, agent: 'knowledge' },
+  { id: 'texbook-synth', title: 'Textbook Synthesizer', description: 'Merge multiple textbook perspectives on a single topic into a master note.', icon: Layers, agent: 'knowledge' },
+
+  // Phase 4: Specialist Diagnostics (LabCraft)
+  { id: 'pharmagenie', title: 'PharmaGenie', description: 'Drug classification, mechanisms, side effects.', icon: FlaskConical, component: PharmaGenie, agent: 'labcraft' },
+  { id: 'micromate', title: 'MicroMate', description: 'Bugs, virulence factors, lab diagnosis.', icon: Microscope, component: MicroMate, agent: 'labcraft' },
+  { id: 'pathomind', title: 'PathoMind', description: 'Explain any disease pathophysiology with diagrams.', icon: Brain, component: PathoMindExplainer, isFrequentlyUsed: true, agent: 'labcraft' },
+  { id: 'anatomy', title: 'Interactive Anatomy Visualizer', description: 'Explore anatomical structures.', icon: Eye, component: AnatomyVisualizer, agent: 'labcraft' },
+  { id: 'dosage', title: 'Drug Dosage Calculator', description: 'Practice calculating drug doses.', icon: Calculator, component: DrugDosageCalculator, agent: 'labcraft' },
+  { id: 'lab-mapper', title: 'Lab Value Pathology Mapper', description: 'Maps abnormal lab values to potential under-lying pathophysiological states.', icon: TestTubeDiagonal, agent: 'labcraft' },
+  { id: 'radiology-reader', title: 'Radiology Reader (Vision)', description: 'AI-assisted interpretation of X-rays and imaging with MedGemma reasoning.', icon: Eye, agent: 'labcraft' },
+  { id: 'abg-analyser', title: 'ABG Analyser', description: 'Complex acid-base balance interpretation with clinical correlations.', icon: FlaskConical, agent: 'labcraft' },
+  { id: 'pathology-slides', title: 'Pathology Slide Viewer', description: 'Virtual microscopy for identifying histological features of diseases.', icon: Microscope, agent: 'labcraft' },
+
+  // Phase 5: Advanced Simulation (DeepTutor)
+  { id: 'virtual-board', title: 'Virtual Medical Board', description: 'Simulate a multi-specialist round table discussion (Cardio, Nephro, ID) for complex patient cases.', icon: Users, component: VirtualMedicalBoard, agent: 'tutor' },
+  { id: 'vibevoice-lecture', title: 'VibeVoice: Lecture Recorder', description: 'Zero-latency lecture capture with 6-minute agentic chunking and 1-hour master synthesis via Gemini 2.5 Pro.', icon: Mic, component: VibeVoiceLectureRecorder, isFrequentlyUsed: true, agent: 'tutor' },
+  { id: 'concept-video', title: 'Veo-Med: Video Synthesis', description: 'Agentic video synthesis for photorealistic medical animations and surgical procedures using Veo 3 architecture.', icon: Youtube, component: ConceptVideoCreator, isFrequentlyUsed: true, agent: 'tutor' },
+  { id: 'physiology-sim', title: 'Physiology Lab Simulator', description: 'Interactive models of cardiac output, renal filtration, and respiratory mechanics.', icon: HeartPulse, agent: 'tutor' },
+  { id: 'focus-music', title: 'Focus Music Generator', description: 'Generate optimal Lyria prompts for lo-fi deep focus music.', icon: Mic, component: FocusMusicGenerator, agent: 'tutor' },
+  { id: 'socratic-tutor', title: 'Socratic Preceptor', description: 'A teaching bot that guides you through a case without giving direct answers.', icon: BrainCircuit, agent: 'tutor' },
+
+  // Phase 6: Professional Workflow (Pro Mode)
+  { id: 'discharge-summary', title: 'Discharge Summary Tool', description: 'Automated generation of finalized patient discharge documentation from daily notes.', icon: FileText, isPro: true, agent: 'pro' },
+  { id: 'handover-assistant', title: 'On-Call Handover Assistant', description: 'Streamline shift transitions with AI-summarized patient status and outstanding tasks.', icon: Activity, isPro: true, agent: 'pro' },
+  { id: 'ai-cowriter', title: 'Clinical Co-Writer', description: 'Collaborative AI documentation assistant for drafting SOAP notes, referral letters and summaries.', icon: PenLine, component: ClinicalCoWriter, isFrequentlyUsed: true, agent: 'pro' },
+  { id: 'pharmacopeia-checker', title: 'Pharmacopeia Pro', description: 'Verify interactions across entire patient medication lists with real-time safety alerts.', icon: Pill, isPro: true, agent: 'pro' },
+  { id: 'heartbeat', title: 'Proactive Heartbeat: Monitoring', description: 'Continuous patient monitoring engine that evaluates telemetry & medication adherence asynchronously.', icon: Heart, component: PatientMonitoringDashboard, isFrequentlyUsed: true, agent: 'pro' },
+  { id: 'ward-manager', title: 'Patient Ward Manager', description: 'Centralized dashboard for tracking 30+ patients with automated priority triaging.', icon: LayoutDashboard, isPro: true, agent: 'pro' },
+  { id: 'admission-flow', title: 'Admission to Discharge', description: 'End-to-end clinical workflow management tool for the entire hospital stay.', icon: Workflow, isPro: true, agent: 'pro' },
+  { id: 'presentation-synth', title: 'Ward Round Formatter', description: 'Instantly format patient data into a concise presentation for consultant rounds.', icon: FileText, isPro: true, agent: 'pro' },
+
+  // Metadata & System
+  { id: 'support-chatbot', title: 'IT Support Bot', description: 'Context-aware IT agent fueled by the app history to help you troubleshoot MediAssistant features.', icon: Bot, component: SupportAgent, agent: 'studybot' },
+  { id: 'clinical-recipes', title: 'Clinical & Study Recipes', description: 'Portable YAML workflows to standardize complex, multi-agent AI processes.', icon: FileCode, component: ClinicalRecipesManager, isFrequentlyUsed: true, agent: 'pro' },
+  { id: 'omnichannel-sessions', title: 'Omnichannel Sessions', description: 'Seamlessly transition across devices, export AI reasoning chains, and review adversary decisions.', icon: MonitorSmartphone, component: OmnichannelSessionManager, isFrequentlyUsed: true, agent: 'pro' },
+  { id: 'interactive-prompts', title: 'Interactive Safety Control', description: 'Manage Human-In-The-Loop approvals and toggle local-first model resilience.', icon: ShieldAlert, component: InteractiveToolPrompts, isFrequentlyUsed: true, agent: 'pro' },
 ];
+
 
 export const frequentlyUsedMedicoToolIds: ActiveToolId[] = ['supervisor', 'rag-tutor', 'ebm-assistant', 'mcq', 'theorycoach-generator', 'vibevoice-lecture', 'concept-video', 'flashcards', 'mnemonics', 'pathomind', 'mock-pyqs'];

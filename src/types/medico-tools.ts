@@ -1,51 +1,17 @@
 // src/types/medico-tools.ts
 import type { ReactNode, ComponentType } from 'react';
 
-export type ActiveToolId =
-  | 'q-bank'
-  | 'theorycoach-generator'
-  | 'topics'
-  | 'flowcharts'
-  | 'flashcards'
-  | 'mnemonics'
-  | 'timetable'
-  | 'mcq'
-  | 'cases'
-  | 'ddx'
-  | 'anatomy'
-  | 'rounds'
-  | 'dosage'
-  | 'progress'
-  | 'summarizer' 
-  | 'videos'
-  | 'dictation'
-  | 'challenges'
-  | 'exams'
-  | 'library'
-  | 'pathomind'
-  | 'pharmagenie'
-  | 'micromate'
-  | 'diagnobot'
-  | 'mock-pyqs' // Added new tool id
-  | 'cbme' // Added new tool id
-  | 'solved-papers' // Added new tool id
-  | 'ebm-assistant'
-  | 'rag-tutor'
-  | 'geospatial-routing'
-  | 'ingestion'
-  | 'high-thinking'
-  | 'clinical-recipes'
-  | 'omnichannel-sessions'
-  | 'interactive-prompts'
-  | null;
+export type ActiveToolId = string | null;
 
 export interface MedicoTool {
-  id: ActiveToolId;
+  id: string;
   title: string;
   description: string;
-  icon: React.ElementType;
-  component?: ComponentType<any>; // Changed from LazyExoticComponent
+  icon: any; 
+  component?: ComponentType<any>;
   href?: string; 
   comingSoon?: boolean;
-  isFrequentlyUsed?: boolean; // New optional property
+  isFrequentlyUsed?: boolean;
+  isPro?: boolean;
+  agent?: 'studybot' | 'clinical' | 'knowledge' | 'labcraft' | 'tutor' | 'pro';
 }
