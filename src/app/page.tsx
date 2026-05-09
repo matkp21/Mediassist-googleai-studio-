@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { 
   HeartPulse, LayoutDashboard, BookOpen, MessageCircle,
   Settings, Sun, Moon, ChevronRight, ChevronLeft, ArrowLeft,
@@ -10,7 +10,8 @@ import {
   BookMarked, Layers, FlaskConical, Star, SendHorizonal,
   Mic, RotateCcw, Bot, Copy, ThumbsUp, ThumbsDown, Cpu,
   Sparkles, User, Shield, Globe, Palette, Volume2,
-  Info, Check, Plus, Play, Crown, Network, Loader2, CheckCircle
+  Info, Check, Plus, Play, Crown, Network, Loader2, CheckCircle,
+  Calendar as CalendarIcon
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -80,31 +81,31 @@ export default function MediAssistantDashboard() {
   return (
     <div className="relative min-h-screen bg-transparent overflow-x-hidden pt-6 pb-32 px-4 md:px-10">
       
-      <main className="relative z-10 w-full max-w-[600px] mx-auto">
+      <main className="relative z-10 w-full max-w-[1280px] mx-auto">
 
         {/* Top Header Row */}
         <div className="flex items-center justify-between mb-8 px-2 md:px-0">
-           <div className="text-[17px] font-medium text-[var(--lb)] tracking-tight">Dashboard</div>
+           <div className="text-[1.1rem] font-medium text-[var(--lb)] tracking-tight">Dashboard</div>
            <div className="flex items-center gap-2">
-             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--gb)] border border-[var(--sep)] shadow-sm text-[9px] font-mono tracking-[0.15em] text-[var(--sec)] uppercase">
+             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--gb)] border border-[var(--sep)] shadow-sm text-[0.6rem] font-mono tracking-[0.15em] text-[var(--sec)] uppercase">
                <div className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.5)]"></div>
-               GEMINI 3.1 PRO
+               GEMINI 2.5 PRO
              </div>
-             <button className="w-8 h-8 rounded-full border border-[var(--sep)] bg-[var(--gb)] hover:bg-[var(--fill)] flex items-center justify-center text-[var(--sec)] shadow-[var(--shs)] transition-colors">
-               <Moon size={14} />
+             <button className="w-10 h-10 rounded-full border border-[var(--sep)] bg-[var(--gb)] hover:bg-[var(--fill)] flex items-center justify-center text-[var(--sec)] shadow-[var(--shs)] transition-colors min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px]">
+               <Moon size={16} />
              </button>
-             <button className="w-8 h-8 rounded-full border border-[var(--sep)] bg-[var(--gb)] hover:bg-[var(--fill)] flex items-center justify-center text-[var(--sec)] shadow-[var(--shs)] transition-colors">
-               <Bell size={14} />
+             <button className="w-10 h-10 rounded-full border border-[var(--sep)] bg-[var(--gb)] hover:bg-[var(--fill)] flex items-center justify-center text-[var(--sec)] shadow-[var(--shs)] transition-colors min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px]">
+               <Bell size={16} />
              </button>
-             <button className="w-8 h-8 rounded-full border border-[var(--sep)] bg-[var(--gb)] hover:bg-[var(--fill)] flex items-center justify-center text-[var(--sec)] shadow-[var(--shs)] transition-colors">
-               <Settings size={14} />
+             <button className="w-10 h-10 rounded-full border border-[var(--sep)] bg-[var(--gb)] hover:bg-[var(--fill)] flex items-center justify-center text-[var(--sec)] shadow-[var(--shs)] transition-colors min-w-[40px] min-h-[40px] md:min-w-[44px] md:min-h-[44px]">
+               <Settings size={16} />
              </button>
            </div>
         </div>
-        
+
         {/* --- Hero Header --- */}
         <motion.div custom={0} initial="hidden" animate="visible" variants={slideUpVariant} className="mb-6 px-2">
-          <h1 className="text-[44px] md:text-[50px] leading-tight mb-1 tracking-tight flex items-baseline">
+          <h1 className="text-[2.5rem] md:text-[3.2rem] lg:text-[4rem] leading-tight mb-1 tracking-tight flex flex-wrap items-baseline">
             <AnimatePresence mode="wait">
               <motion.span
                 key={greetingIdx}
@@ -119,45 +120,50 @@ export default function MediAssistantDashboard() {
             </AnimatePresence>
             <span className="text-[var(--lb)] font-medium ml-3">Mathew.</span>
           </h1>
-          <p className="text-[14px] md:text-[15px] text-[var(--sec)] font-medium">
+          <p className="text-[0.9rem] md:text-[1rem] text-[var(--sec)] font-medium">
             {formattedDate} · MBBS Finals Workspace
           </p>
         </motion.div>
 
-        {/* GAMIFICATION BAR */}
+        {/* --- Responsive 12-column Grid Layout --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* LEFT COLUMN: Core Study & Tools (8/12) */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* GAMIFICATION BAR */}
         <motion.div custom={0.5} initial="hidden" animate="visible" variants={slideUpVariant} className="mb-6 px-2">
           <GamificationBar />
         </motion.div>
 
-        {/* Action Pills */}
-        <motion.div custom={0.8} initial="hidden" animate="visible" variants={slideUpVariant} className="flex flex-wrap items-center gap-2.5 mb-10 px-2 mt-2">
-           <button onClick={() => router.push('/medico')} className="flex items-center gap-2 bg-[#4b8ff7] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90">
-             <BookOpen size={16} /> Study Hub
-           </button>
-           <button onClick={() => router.push('/ask-medi')} className="flex items-center gap-2 bg-[#a07df0] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90">
-             <MessageCircle size={16} /> Ask Medi
-           </button>
-           <button onClick={() => router.push('/medico/gp-notes')} className="flex items-center gap-2 bg-[#32c97e] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90">
-             <BookMarked size={16} /> GP Notes
-           </button>
-           <button onClick={() => router.push('/calendar')} className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-sm active:scale-95 transition-transform hover:bg-[var(--fill)]">
-             <Clock size={16} /> Calendar
-           </button>
-           <button onClick={() => router.push('/medico/session')} className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-sm active:scale-95 transition-transform hover:bg-[var(--fill)]">
-             <Play size={16} /> Start Session
-           </button>
-           <button onClick={() => router.push('/pro')} className="flex items-center gap-2 bg-gradient-to-r from-[#a07df0] to-[#e83050] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90">
-             <Crown size={16} /> Pro Active
-           </button>
-        </motion.div>
+            {/* Action Pills */}
+            <motion.div custom={0.8} initial="hidden" animate="visible" variants={slideUpVariant} className="flex flex-wrap items-center gap-3 mb-10 px-2 mt-2">
+               <button onClick={() => router.push('/medico')} className="flex items-center justify-center gap-2 bg-[#4b8ff7] text-white px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm drop-shadow-[0_4px_12px_rgba(75,143,247,0.3)] hover:drop-shadow-[0_8px_20px_rgba(75,143,247,0.5)] active:scale-95 transition-all hover:opacity-95 min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
+                 <BookOpen size={17} /> Study Hub
+               </button>
+               <button onClick={() => router.push('/ask-medi')} className="flex items-center justify-center gap-2 bg-[#a07df0] text-white px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm drop-shadow-[0_4px_12px_rgba(160,125,240,0.3)] hover:drop-shadow-[0_8px_20px_rgba(160,125,240,0.5)] active:scale-95 transition-all hover:opacity-95 min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
+                 <MessageCircle size={17} /> Ask Medi
+               </button>
+               <button onClick={() => router.push('/medico/gp-notes')} className="flex items-center justify-center gap-2 bg-[#f7bc26] text-white px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm drop-shadow-[0_4px_12px_rgba(247,188,38,0.3)] hover:drop-shadow-[0_8px_20px_rgba(247,188,38,0.5)] active:scale-95 transition-all hover:opacity-95 min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
+                 <Stethoscope size={17} /> GP note
+               </button>
+               <button onClick={() => router.push('/calendar')} className="flex items-center justify-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm hover:drop-shadow-[0_4px_12px_rgba(255,255,255,0.05)] active:scale-95 transition-all hover:bg-[var(--fill)] min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
+                 <CalendarIcon size={17} /> Calendar
+               </button>
+               <button onClick={() => router.push('/medico/session')} className="flex items-center justify-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm hover:drop-shadow-[0_4px_12px_rgba(255,255,255,0.05)] active:scale-95 transition-all hover:bg-[var(--fill)] min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
+                 <Play size={17} /> Start Session
+               </button>
+               <button onClick={() => router.push('/pro')} className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#a07df0] to-[#e83050] text-white px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm drop-shadow-[0_4px_12px_rgba(232,48,80,0.3)] hover:drop-shadow-[0_8px_20px_rgba(232,48,80,0.5)] active:scale-95 transition-all hover:opacity-95 min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
+                 <Crown size={17} /> Pro Active
+               </button>
+            </motion.div>
 
-        {/* RECENT TOOLS */}
-        <motion.div custom={1} initial="hidden" animate="visible" variants={slideUpVariant} className="mb-8 relative z-10">
-          <div className="flex items-center gap-3 mb-4 px-2">
-            <span className="text-[10px] font-mono tracking-[0.15em] text-[var(--sec)] uppercase font-semibold">Recent Tools</span>
-            <div className="h-px flex-1 bg-[var(--sep)]"></div>
-          </div>
-          <div className="grid grid-cols-2 gap-3 md:gap-4">
+            {/* RECENT TOOLS */}
+            <motion.div custom={1} initial="hidden" animate="visible" variants={slideUpVariant} className="mb-0 relative z-10">
+              <div className="flex items-center gap-3 mb-4 px-2">
+                <span className="text-[10px] font-mono tracking-[0.15em] text-[var(--sec)] uppercase font-semibold">Recent Tools</span>
+                <div className="h-px flex-1 bg-[var(--sep)]"></div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
              {/* Card 1 */}
              <div onClick={() => router.push('/medico/anatomy?topic=Lens%20Anatomy')} className="glass-card rounded-[22px] p-5 flex flex-col justify-between h-[120px] md:h-[130px] hover:scale-[1.02] transition-transform cursor-pointer">
                 <div className="w-8 h-8 rounded-full bg-[#4b8ff7]/10 flex items-center justify-center text-[#4b8ff7]">
@@ -229,6 +235,7 @@ export default function MediAssistantDashboard() {
              <div className="glass-card-content relative z-10 flex flex-col gap-2 p-2">
                {[
                  { name: "Morning Tutor Brief", color: "#4b8ff7", route: "/medico/supervisor", hoverClass: "hover:bg-[#4b8ff7]/10" },
+                 { name: "GP Notes Quick-Ref", color: "#f7bc26", route: "/medico/gp-notes", hoverClass: "hover:bg-[#f7bc26]/10" },
                  { name: "PYQ Simulator", color: "#a07df0", route: "/medico/mock-pyqs", hoverClass: "hover:bg-[#a07df0]/10", activeBg: "bg-[#a07df0]/10" },
                  { name: "Drug Interaction Check", color: "#32c97e", route: "/medico/pharmagenie?topic=Drug%20Interaction%20Check", hoverClass: "hover:bg-[#32c97e]/10" },
                  { name: "Radiology Reader", color: "#e83050", route: "/medico/diagnobot?topic=Radiology", hoverClass: "hover:bg-[#e83050]/10" }
@@ -245,8 +252,13 @@ export default function MediAssistantDashboard() {
           </div>
         </motion.div>
 
-        {/* TODAY'S PROGRESS */}
-        <motion.div custom={3} initial="hidden" animate="visible" variants={slideUpVariant} className="mb-8">
+          </div>
+
+          {/* RIGHT COLUMN: Performance & Schedule (4/12) */}
+          <div className="lg:col-span-4 space-y-8 lg:sticky lg:top-8">
+            
+            {/* TODAY'S PROGRESS */}
+            <motion.div custom={3} initial="hidden" animate="visible" variants={slideUpVariant} className="mb-0">
           <TodaysProgress />
 
           {/* Stat Cards Row */}
@@ -438,7 +450,8 @@ export default function MediAssistantDashboard() {
              </div>
           </div>
         </motion.div>
-
+          </div>
+        </div>
       </main>
 
       {/* FIXED BOTTOM SEARCH / ACTION BAR & SHORTCUTS */}
@@ -457,7 +470,8 @@ export default function MediAssistantDashboard() {
               { label: "Generate Quiz", icon: BrainCircuit, color: "text-[#a07df0]", route: "/medico/mcq" },
               { label: "Search Notes", icon: Search, color: "text-[#4b8ff7]", route: "/medico/library" },
               { label: "Analyze Case", icon: Target, color: "text-[#e83050]", route: "/medico/diagnobot" },
-              { label: "Summarize", icon: FileText, color: "text-[#f7bc26]", route: "/medico/summarizer" }
+              { label: "Summarize", icon: FileText, color: "text-[#f7bc26]", route: "/medico/summarizer" },
+              { label: "GP Note Gen", icon: BookMarked, color: "text-[#00d5c0]", route: "/medico/gp-notes" }
             ].map((action, i) => (
               <button key={i} onClick={() => router.push(action.route)} className="glass-card flex items-center gap-2 px-3.5 py-2 rounded-full bg-[var(--gb)] backdrop-blur-xl border border-[var(--sep)] shadow-[var(--sh),inset_0_1px_0_var(--gs)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
                 <action.icon size={14} className={action.color} />

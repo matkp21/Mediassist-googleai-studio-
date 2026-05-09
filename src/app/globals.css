@@ -44,8 +44,40 @@
   --aiBorder: rgba(8,16,31,0.09);
   --orbOp: 0.35; --dot: rgba(8,16,31,0.05);
 
-  --background: var(--s0);
-  --foreground: var(--lb);
+  --background: 210 33% 98%;
+  --foreground: 220 25% 25%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 25% 25%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 25% 25%;
+
+  --primary-h: 210;
+  --primary-s: 100%;
+  --primary-l: 50%;
+  --primary: var(--primary-h) var(--primary-s) var(--primary-l); /* Vibrant Blue */
+  --primary-foreground: 0 0% 100%; /* White */
+
+  --secondary: 210 25% 96%;
+  --secondary-foreground: 220 25% 35%;
+
+  --muted: 210 20% 90%;
+  --muted-foreground: 220 20% 50%;
+
+  --accent-h: 170;
+  --accent-s: 98%;
+  --accent-l: 52%;
+  --accent: var(--accent-h) var(--accent-s) var(--accent-l); /* Teal */
+  --accent-foreground: 210 100% 10%;
+
+  --destructive: 0 70% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 210 20% 88%;
+  --input: 210 20% 92%;
+  --ring: 210 100% 55%;
+
+  --radius: 0.75rem;
+
   --theme-surface-card: var(--s1);
   --theme-text-muted: var(--sec);
   --theme-border-ui: var(--sep);
@@ -59,12 +91,70 @@
 }
 
 @keyframes gradient-flow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% { background-position: 0% center; }
+  50% { background-position: 200% center; }
+  100% { background-position: 0% center; }
+}
+.animated-gradient-text {
+  background-size: 200% auto;
+  background-image: linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--primary)) 100%);
+  animation: gradient-flow 3s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Firebase Style Multi-color Gradient for special highlights */
+@keyframes firebase-gradient-flow {
+  0% { background-position: 0% center; }
+  50% { background-position: 200% center; }
+  100% { background-position: 0% center; }
+}
+
+.firebase-gradient-text {
+  background-size: 200% auto;
+  background-image: linear-gradient(to right, 
+    #4285F4 0%, 
+    #34A853 25%, 
+    #FBBC05 50%, 
+    #EA4335 75%, 
+    #4285F4 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: firebase-gradient-flow 4s linear infinite;
+}
+
+.glowing-ring-firebase {
+  box-shadow: 0 0 15px rgba(66, 133, 244, 0.4);
+  border: 1px solid rgba(66, 133, 244, 0.5);
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
 }
 
 /* Custom Branding Animations */
+@keyframes pulseMedical {
+  0%, 100% {
+    opacity: var(--medical-pulse-opacity-base, 0.8);
+    transform: scale(1);
+  }
+  50% {
+    opacity: var(--medical-pulse-opacity-peak, 0.5);
+    transform: scale(var(--medical-pulse-scale-peak, 1.2));
+  }
+}
+.animate-pulse-medical {
+  animation: pulseMedical 1.8s infinite ease-in-out;
+  display: inline-flex;
+  align-items: center;
+}
+
 @keyframes subtle-pulse-glow-light {
   0% { text-shadow: 0 0 0px rgba(0, 122, 255, 0); transform: scale(1); }
   50% { text-shadow: 0 0 15px rgba(0, 122, 255, 0.3); transform: scale(1.01); }
@@ -124,6 +214,38 @@
   --shl: 0 24px 80px rgba(0,0,0,0.80);
   --userBubble: linear-gradient(135deg,#1E4BCC,#2563EB); --aiBubble: rgba(11,16,40,0.8);
   --aiBorder: rgba(237,241,255,0.09); --orbOp: 0.30; --dot: rgba(237,241,255,0.05);
+
+  --background: 216 65% 11%;
+  --foreground: 215 100% 95%;
+  --card: 216 54% 20%;
+  --card-foreground: 215 100% 95%;
+  --popover: 216 65% 9%;
+  --popover-foreground: 215 100% 95%;
+
+  --primary-h: 210;
+  --primary-s: 100%;
+  --primary-l: 60%;
+  --primary: var(--primary-h) var(--primary-s) var(--primary-l);
+  --primary-foreground: 216 65% 10%;
+
+  --secondary: 216 50% 25%;
+  --secondary-foreground: 215 20% 85%;
+
+  --muted: 216 45% 18%;
+  --muted-foreground: 215 15% 70%;
+
+  --accent-h: 170;
+  --accent-s: 98%;
+  --accent-l: 52%;
+  --accent: var(--accent-h) var(--accent-s) var(--accent-l);
+  --accent-foreground: 170 90% 10%;
+
+  --destructive: 0 60% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 216 40% 30%;
+  --input: 216 50% 28%;
+  --ring: 210 100% 65%;
 }
 
 body {
@@ -131,6 +253,38 @@ body {
   color: var(--lb);
   font-family: var(--fb);
   transition: background 0.3s, color 0.3s;
+}
+
+body:not(:has(.simple-welcome-screen)) {
+  overflow: auto;
+}
+
+/* --- "Elegant Reveal" Welcome Screen --- */
+.simple-welcome-screen {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top:0; left:0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: hsl(var(--background)); /* Clean, static background from theme */
+  color: hsl(var(--foreground));
+  cursor: pointer; /* Indicate it's clickable to dismiss */
+  z-index: 1000;
+}
+
+.simple-welcome-tagline { /* Styles for the AnimatedTagline component's container */
+  text-align: center;
+  font-weight: 300; /* Poppins Light */
+  letter-spacing: 0.025em;
+  font-size: clamp(1.1rem, 3vw, 1.5rem); /* Adjusted for prominence */
+  color: hsl(var(--foreground));
+}
+.dark .simple-welcome-tagline {
+  color: hsl(var(--foreground));
 }
 
 /* Ambient Canvas */

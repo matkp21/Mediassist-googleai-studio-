@@ -81,12 +81,12 @@ const WelcomeDisplay: React.FC<WelcomeDisplayProps> = ({ onDisplayComplete }) =>
       onClick={onDisplayComplete} // Click anywhere to skip/continue
     >
       <motion.div variants={logoContainerVariants} className="mb-3 sm:mb-4">
-        <Logo simple={false} isReverse={true} /> {/* Using the main Logo component, not simple for prominence */}
+        <Logo simple={false} /> {/* Using the main Logo component, not simple for prominence */}
       </motion.div>
 
       <motion.div variants={taglineVariants}>
         {/* Using the existing AnimatedTagline component which has its own internal animations */}
-        <AnimatedTagline className="simple-welcome-tagline" isReverse={true} />
+        <AnimatedTagline className="simple-welcome-tagline" />
       </motion.div>
 
       <motion.p

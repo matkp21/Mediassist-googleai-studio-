@@ -16,6 +16,7 @@ import { ChatMessage, type Message } from './chat-message';
 import { ChatCommands } from './chat-commands';
 import { ChatThinkingIndicator } from './chat-thinking-indicator';
 import { executeGeminiAction, generateTTS, type ChatOptions } from '@/lib/gemini-client';
+import { extractTextFromFile } from '@/lib/document-extractor';
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -35,7 +36,7 @@ export function ChatInterface() {
   const [activeModel, setActiveModel] = useState<'general' | 'fast' | 'complex'>('general');
   const [useSearchGrounding, setUseSearchGrounding] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [attachedFiles, setAttachedFiles] = useState<Array<{name: string, mimeType: string, data: string}>>([]);
+  const [attachedFiles, setAttachedFiles] = useState<Array<{name: string, mimeType: string, data: string, size?: string, extractedText?: string}>>([]);
   const [nextSteps, setNextSteps] = useState<string[]>([]);
 
   useEffect(() => {
@@ -118,27 +119,42 @@ export function ChatInterface() {
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
     
-    Array.from(files).forEach((file) => {
+    for (const file of Array.from(files)) {
+        const sizeStr = file.size > 1024 * 1024 
+          ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' 
+          : (file.size / 1024).toFixed(2) + ' KB';
+
+        // Check if we need to extract text (for non-native formats)
+        let extractedText = "";
+        const nativeMimeTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif', 'video/mp4', 'video/mpeg', 'video/mov', 'video/avi', 'video/x-flv', 'video/mpg', 'video/webm', 'video/wmv', 'application/pdf'];
+        
+        const isNative = nativeMimeTypes.some(mt => file.type.includes(mt));
+
+        if (!isNative) {
+           const extraction = await extractTextFromFile(file);
+           extractedText = extraction.content;
+        }
+
         const reader = new FileReader();
         reader.onloadend = () => {
             const result = reader.result as string;
-            // The result looks like "data:image/png;base64,....."
-            // We need to extract the base64 part for Gemini inlineData
             const dataParts = result.split(',');
             if (dataParts.length === 2) {
                 setAttachedFiles(prev => [...prev, {
                     name: file.name,
                     mimeType: file.type,
-                    data: dataParts[1]
+                    data: dataParts[1],
+                    size: sizeStr,
+                    extractedText: extractedText
                 }]);
             }
         };
         reader.readAsDataURL(file);
-    });
+    }
   };
 
   const formatMCQResponse = (mcqData: MedicoMCQGeneratorOutput): ReactNode => (
@@ -171,7 +187,13 @@ export function ChatInterface() {
         displayMessage = `[Attached ${attachedFiles.length} file(s)] ` + currentMessage;
     }
 
-    const userMessage: Message = { id: Date.now().toString(), content: displayMessage, sender: 'user', timestamp: new Date() };
+    const userMessage: Message = { 
+      id: Date.now().toString(), 
+      content: displayMessage, 
+      sender: 'user', 
+      timestamp: new Date(),
+      attachments: attachedFiles.map(f => ({ name: f.name, type: f.mimeType, size: f.size }))
+    };
     setMessages((prev) => [...prev, userMessage]);
     
     if (typeof messageContent !== 'string') setInputValue('');
@@ -185,8 +207,19 @@ export function ChatInterface() {
     let isCommandResp = false, isErrorRespFlag = false;
 
     // Process specific nextStep commands seamlessly via Genkit
-    const isActionChip = messageContent.toString().includes("⚡ ") || (typeof messageContent === 'string' && messageContent.startsWith("Take MCQ") || messageContent.startsWith("Give me a Mnemonic") || messageContent.startsWith("Generate Flowchart"));
-    const finalPromptText = isActionChip ? `Action Chip Triggered: ${messageContent}` : currentMessage;
+    const isActionChip = messageContent?.toString().includes("⚡ ") || (typeof messageContent === 'string' && (messageContent.startsWith("Take MCQ") || messageContent.startsWith("Give me a Mnemonic") || messageContent.startsWith("Generate Flowchart")));
+    
+    // Enhance prompt with extracted text for documents
+    let finalPromptText = isActionChip ? `Action Chip Triggered: ${messageContent}` : currentMessage;
+    
+    const documentContexts = currentAttachments
+      .filter(a => a.extractedText)
+      .map(a => `[File Context: ${a.name}]\n${a.extractedText}`)
+      .join('\n\n');
+    
+    if (documentContexts) {
+      finalPromptText = `Use the following document text as context for my request:\n\n${documentContexts}\n\nUser Request: ${finalPromptText}`;
+    }
 
     try {
       if (!isActionChip && userRole === 'medico' && currentMessage.startsWith('/')) {
@@ -261,10 +294,15 @@ export function ChatInterface() {
 
         } else {
             // Advanced Multi-turn Gemini Chat Call!
+            // Filter out files that we've already extracted text for (except PDF which can be native)
+            const nativeFiles = currentAttachments.filter(a => 
+              ['image/png', 'image/jpeg', 'image/webp', 'video/mp4', 'application/pdf'].some(mt => a.mimeType.includes(mt))
+            );
+
             const resultText = await executeGeminiAction(finalPromptText, { 
                 modelType: currentAttachments.length > 0 ? 'vision' : activeModel, 
                 useSearch: useSearchGrounding 
-            }, currentAttachments);
+            }, nativeFiles);
             botResponseContent = resultText;
             setNextSteps([]); // Reset next steps
             if (isVoiceOutputEnabled) speakText(botResponseContent);
@@ -326,8 +364,8 @@ export function ChatInterface() {
            <div className="h-3.5 w-px bg-border/60 mx-1"></div>
            <Button variant="ghost" size="sm" onClick={() => setUseSearchGrounding(!useSearchGrounding)} className={`h-7 px-2 ${useSearchGrounding ? 'bg-primary/10 text-primary' : ''}`}><Search className="w-3.5 h-3.5 mr-1.5"/> Web Grounding</Button>
            <div className="h-3.5 w-px bg-border/60 mx-1"></div>
-           <input type="file" multiple accept="image/*,video/*" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
-           <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()} className="h-7 px-2"><ImageIcon className="w-3.5 h-3.5 mr-1.5"/> Attach Image/Video</Button>
+           <input type="file" multiple accept="image/*,video/*,application/pdf,.docx,.xlsx,.xls,.csv,.txt,.md" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+           <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()} className="h-7 px-2"><ImageIcon className="w-3.5 h-3.5 mr-1.5"/> Attach Items</Button>
            {attachedFiles.length > 0 && <span className="text-primary font-semibold ml-2 text-[11px]">{attachedFiles.length} item(s)</span>}
         </div>
         <div className="flex items-center gap-2 p-3">

@@ -12,10 +12,9 @@ const smartWords = [
 
 interface AnimatedTaglineProps {
   className?: string;
-  isReverse?: boolean; // For high contrast white/light text
 }
 
-export function AnimatedTagline({ className, isReverse = false }: AnimatedTaglineProps) {
+export function AnimatedTagline({ className }: AnimatedTaglineProps) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   useEffect(() => {
@@ -42,7 +41,7 @@ export function AnimatedTagline({ className, isReverse = false }: AnimatedTaglin
   };
 
   return (
-    <div className={cn("flex flex-wrap items-center justify-center text-sm sm:text-md", isReverse ? "text-white/90 drop-shadow-md" : "text-foreground/80", className)}>
+    <div className={cn("flex items-center justify-center text-sm sm:text-md text-foreground/80", className)}>
       <span className="mr-1.5">Simply</span>
       <AnimatePresence mode="wait">
         <motion.span
@@ -51,10 +50,7 @@ export function AnimatedTagline({ className, isReverse = false }: AnimatedTaglin
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className={cn(
-            "font-semibold", 
-            isReverse ? "text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.7)]" : "bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-[#00FFFF] to-cyan-500 animate-[gradient-flow_2.6s_linear_infinite] bg-[length:200%_auto] [text-shadow:_0_0_1px_rgba(255,255,255,0.01)]"
-          )}
+          className="font-semibold firebase-gradient-text" // Keep gradient for the smart word
         >
           #{smartWords[currentWordIndex]}
         </motion.span>
