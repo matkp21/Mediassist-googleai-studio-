@@ -2,6 +2,7 @@ import { GoogleGenAI, Type, ThinkingLevel, Modality, Chat } from "@google/genai"
 
 let aiInstance: GoogleGenAI | null = null;
 let activeChat: Chat | null = null;
+let _active_chat_model: string | null = null;
 
 export const getGeminiClient = () => {
     if (!aiInstance) {
@@ -17,27 +18,27 @@ export interface ChatOptions {
 
 export const executeGeminiAction = async (prompt: string, options: ChatOptions = { modelType: 'general' }, files?: Array<{mimeType: string, data: string}>): Promise<string> => {
   const ai = getGeminiClient();
-  let model = "gemini-3-flash-preview";
+  let model = "gemini-2.5-flash";
   let toolConfig: any = undefined;
   let config: any = {
       systemInstruction: "You are Medi, the Resident Genius Mentor of MediAssistant. You are a highly knowledgeable medical resident, an advanced AI designed to help medical students and doctors with health queries, medical learning, and case analysis. Be empathetic, highly accurate, and use a Socratic teaching style when appropriate. Do not provide definitive medical diagnoses replacing a real doctor."
   };
 
   if (options.modelType === 'fast') {
-      model = "gemini-3.1-flash-lite-preview";
+      model = "gemini-2.5-flash";
   } else if (options.modelType === 'complex') {
-      model = "gemini-3.1-pro-preview";
+      model = "gemini-2.5-pro";
       config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
   } else if (options.modelType === 'vision' || (files && files.length > 0)) {
        // Force pro preview for video/image understanding
-      model = "gemini-3.1-pro-preview";
+      model = "gemini-2.5-pro";
   }
 
   if (options.useSearch) {
       config.tools = [{ googleSearch: {} }];
-      if (model === "gemini-3.1-flash-lite-preview") { 
+      if (model === "gemini-2.5-flash") { 
           // Flash lite doesn't officially support grounding as well as flash, we will use generic flash to be safe if search is toggled
-          model = "gemini-3-flash-preview";
+          model = "gemini-2.5-flash";
       }
   }
 
@@ -54,11 +55,12 @@ export const executeGeminiAction = async (prompt: string, options: ChatOptions =
   }
 
   // Initialize or re-initialize chat if the model logic changes significantly
-  if (!activeChat || activeChat.model !== model) {
+  if (!activeChat || _active_chat_model !== model) {
       activeChat = ai.chats.create({
           model,
           config
       });
+      _active_chat_model = model;
   }
 
   try {

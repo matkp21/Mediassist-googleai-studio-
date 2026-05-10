@@ -1,10 +1,10 @@
-import { defineTool } from '@genkit-ai/ai';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 // Replace with your actual Google Cloud Run URL
 const CRAWL4AI_ENDPOINT = process.env.CRAWL4AI_API_URL || "https://crawl4ai-service-xxxxx-uc.a.run.app/crawl";
 
-export const webScraperTool = defineTool(
+export const webScraperTool = ai.defineTool(
   {
     name: 'webScraper',
     description: 'Extracts clean Markdown text from any webpage URL using Crawl4AI.',

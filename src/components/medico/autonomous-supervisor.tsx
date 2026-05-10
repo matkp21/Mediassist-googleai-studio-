@@ -108,7 +108,7 @@ export default function AutonomousSupervisor({ initialTopic }: { initialTopic?: 
         if (response.status === 'interrupted' && response.reason === 'HUMAN_APPROVAL_REQUIRED') {
           setMessages(prev => [...prev, { 
             role: 'assistant', 
-            content: `### 🛑 Physician Approval Required\n\nThis sensitive clinical action was blocked by governance rules and requires your explicit authorization.\n\n**Action:** \`${response.action}\`\n\nWould you like to proceed?`,
+            content: `### 🛑 Physician Approval Required\n\nThis sensitive clinical action was blocked by governance rules and requires your explicit authorization.\n\n**Action:** `${response.action}`\n\nWould you like to proceed?`,
             metadata: { isHitl: true, action: response.action, originalQuery: userMessage.content }
           }]);
         } else if (response.status === 'success') {
@@ -151,7 +151,7 @@ export default function AutonomousSupervisor({ initialTopic }: { initialTopic?: 
       if (response.status === 'success') {
         setMessages(prev => [...prev, { 
           role: 'assistant', 
-          content: `✅ **Action Executed Successfully**\n\nThe clinical record has been updated. Result: \`${JSON.stringify(response.data)}\``,
+          content: `✅ **Action Executed Successfully**\n\nThe clinical record has been updated. Result: `${JSON.stringify(response.data)}``,
           taskType: 'action'
         }]);
       }

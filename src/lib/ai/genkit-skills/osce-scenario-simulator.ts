@@ -38,7 +38,7 @@ export const osceScenarioSimulatorSkill = ai.defineTool(
     }
 
     const { text } = await ai.generate({
-      model: ai.model('gemini-2.5-flash'), // Fast model for real-time conversation
+      model: 'gemini-2.5-flash', // Fast model for real-time conversation
       system: `
         You are a standardized patient. You must NOT give away your diagnosis. 
         Force the student to ask the right history-taking questions.

@@ -25,7 +25,7 @@ export const ankiDeckGeneratorSkill = ai.defineTool(
     }
 
     const { text } = await ai.generate({
-      model: ai.model('gemini-2.5-pro'),
+      model: 'gemini-2.5-pro',
       system: `
         You are an expert Anki Flashcard Creator.
         Extract high-yield medical facts from the provided text and format them strictly as a CSV.

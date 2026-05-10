@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ai } from "@/ai/genkit";
-import { gemini20Pro } from "@genkit-ai/googleai";
 
 export async function POST(req: NextRequest) {
   try {
     const { intent } = await req.json();
 
     const resp = await ai.generate({
-      model: gemini20Pro,
+      model: 'gemini-2.0-flash',
       prompt: `Act as a medical publisher. Design a 5-chapter book outline for "${intent}".
       
       Return JSON:

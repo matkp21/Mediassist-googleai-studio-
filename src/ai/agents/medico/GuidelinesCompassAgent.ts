@@ -2,7 +2,7 @@
 "use server";
 import { z } from "zod";
 import { genkit } from "genkit";
-import { gemini25Pro, googleAI } from "@genkit-ai/googleai";
+import { gemini15Pro, googleAI } from "@genkit-ai/googleai";
 import { firecrawlScraperTool, firecrawlSearchTool, pubmedSearchTool, crawl4aiScraperTool } from "../../tools/researchTools";
 
 const ai = genkit({
@@ -33,7 +33,7 @@ export async function fetchGuidelines(
   input: GuidelinesCompassInput
 ): Promise<GuidelinesCompassOutput> {
   const { output } = await ai.generate({
-    model: gemini25Pro,
+    model: gemini15Pro,
     tools: [firecrawlScraperTool, firecrawlSearchTool, pubmedSearchTool, crawl4aiScraperTool],
     output: {
         schema: GuidelinesCompassOutputSchema

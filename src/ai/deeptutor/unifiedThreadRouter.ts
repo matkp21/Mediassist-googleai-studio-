@@ -39,7 +39,7 @@ export const unifiedThreadOrchestrator = ai.defineFlow(
    // Utilizes a fast, lightweight model (Gemini Flash) to determine the routing path
    // minimizing latency for the user before the heavy-lifting sub-flow begins.
    const routingDecision = await ai.generate({
-     model: ai.model('googleai/gemini-1.5-flash'),
+     model: 'googleai/gemini-1.5-flash',
      prompt: `
        Analyze the following clinical query: "${query}"
        Classify the user's intent into one of the exact categories below:

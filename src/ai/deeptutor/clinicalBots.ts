@@ -70,7 +70,7 @@ export const triageAgentFlow = ai.defineFlow(
    // Genkit handles the complex orchestration of tool-calling, suspending generation,
    // executing the tool, and resuming generation with the newly acquired context.
    const response = await ai.generate({
-     model: ai.model('googleai/gemini-1.5-pro'),
+     model: 'googleai/gemini-1.5-pro',
      system: systemInstruction,
      prompt: userQuery,
      tools: [fetchPatientLabsTool], // Binding the tool directly into the execution loop

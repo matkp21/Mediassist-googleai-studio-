@@ -34,7 +34,7 @@ export const updatePatientMemoryFlow = ai.defineFlow(
  async ({ patientId, latestMessage, previousSummary }) => {
    // Orchestrate the LLM call to extract structured facts and generate a new running summary
    const extractionResult = await ai.generate({
-     model: ai.model('googleai/gemini-1.5-pro'),
+     model: 'googleai/gemini-1.5-pro',
      prompt: `
        Analyze the patient's latest message in the context of their history:
        Latest Message: "${latestMessage}"

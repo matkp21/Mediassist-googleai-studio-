@@ -28,7 +28,7 @@ User ID for context: ${userId || "unknown"}\n\nUser Input: ${prompt}`;
 
     // We use generateStream to send chunks to the frontend instantly
     const { stream } = await ai.generateStream({
-      model: ai.model('vertexai/gemini-2.5-pro'),
+      model: 'vertexai/gemini-2.5-pro',
       messages: history || [],
       system: systemPrompt,
       prompt: prompt,

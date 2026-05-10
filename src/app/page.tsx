@@ -136,24 +136,21 @@ export default function MediAssistantDashboard() {
         </motion.div>
 
             {/* Action Pills */}
-            <motion.div custom={0.8} initial="hidden" animate="visible" variants={slideUpVariant} className="flex flex-wrap items-center gap-3 mb-10 px-2 mt-2">
-               <button onClick={() => router.push('/medico')} className="flex items-center justify-center gap-2 bg-[#4b8ff7] text-white px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm drop-shadow-[0_4px_12px_rgba(75,143,247,0.3)] hover:drop-shadow-[0_8px_20px_rgba(75,143,247,0.5)] active:scale-95 transition-all hover:opacity-95 min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
-                 <BookOpen size={17} /> Study Hub
+            <motion.div custom={0.8} initial="hidden" animate="visible" variants={slideUpVariant} className="flex flex-wrap items-center gap-2.5 mb-10 px-2 mt-2">
+               <button onClick={() => router.push('/medico')} className="flex items-center gap-2 bg-[#4b8ff7] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90 min-h-[44px]">
+                 <BookOpen size={16} /> Study Hub
                </button>
-               <button onClick={() => router.push('/ask-medi')} className="flex items-center justify-center gap-2 bg-[#a07df0] text-white px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm drop-shadow-[0_4px_12px_rgba(160,125,240,0.3)] hover:drop-shadow-[0_8px_20px_rgba(160,125,240,0.5)] active:scale-95 transition-all hover:opacity-95 min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
-                 <MessageCircle size={17} /> Ask Medi
+               <button onClick={() => router.push('/ask-medi')} className="flex items-center gap-2 bg-[#a07df0] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90 min-h-[44px]">
+                 <MessageCircle size={16} /> Ask Medi
                </button>
-               <button onClick={() => router.push('/medico/gp-notes')} className="flex items-center justify-center gap-2 bg-[#f7bc26] text-white px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm drop-shadow-[0_4px_12px_rgba(247,188,38,0.3)] hover:drop-shadow-[0_8px_20px_rgba(247,188,38,0.5)] active:scale-95 transition-all hover:opacity-95 min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
-                 <Stethoscope size={17} /> GP note
+               <button onClick={() => router.push('/calendar')} className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-sm active:scale-95 transition-transform hover:bg-[var(--fill)] min-h-[44px]">
+                 <CalendarIcon size={16} /> Calendar
                </button>
-               <button onClick={() => router.push('/calendar')} className="flex items-center justify-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm hover:drop-shadow-[0_4px_12px_rgba(255,255,255,0.05)] active:scale-95 transition-all hover:bg-[var(--fill)] min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
-                 <CalendarIcon size={17} /> Calendar
+               <button onClick={() => router.push('/medico/session')} className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-sm active:scale-95 transition-transform hover:bg-[var(--fill)] min-h-[44px]">
+                 <Play size={16} /> Start Session
                </button>
-               <button onClick={() => router.push('/medico/session')} className="flex items-center justify-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm hover:drop-shadow-[0_4px_12px_rgba(255,255,255,0.05)] active:scale-95 transition-all hover:bg-[var(--fill)] min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
-                 <Play size={17} /> Start Session
-               </button>
-               <button onClick={() => router.push('/pro')} className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#a07df0] to-[#e83050] text-white px-5 py-2.5 rounded-full text-[15px] font-bold shadow-sm drop-shadow-[0_4px_12px_rgba(232,48,80,0.3)] hover:drop-shadow-[0_8px_20px_rgba(232,48,80,0.5)] active:scale-95 transition-all hover:opacity-95 min-h-[44px] flex-1 sm:flex-none whitespace-nowrap">
-                 <Crown size={17} /> Pro Active
+               <button onClick={() => router.push('/pro')} className="flex items-center gap-2 bg-gradient-to-r from-[#a07df0] to-[#e83050] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90 min-h-[44px]">
+                 <Crown size={16} /> Pro Active
                </button>
             </motion.div>
 
@@ -365,13 +362,8 @@ export default function MediAssistantDashboard() {
               </h3>
               <button 
                 onClick={() => {
-                  showNotification({
-                    title: 'Swarm Orchestration Complete',
-                    message: 'The Chief Resident has compiled the notes for GI Surgery. Literature review and differential diagnosis are ready.',
-                    type: 'success',
-                    actionLabel: 'View Pod',
-                    actionUrl: '/clinical-pods/gi-surgery',
-                  });
+                  alert('Swarm Orchestration Complete: The Chief Resident has compiled the notes for GI Surgery. Literature review and differential diagnosis are ready.');
+                  router.push('/clinical-pods/gi-surgery');
                 }}
                 className="text-xs px-3 py-1.5 rounded-full bg-[#a07df0]/10 text-[#a07df0] hover:bg-[#a07df0]/20 font-bold transition-colors"
               >

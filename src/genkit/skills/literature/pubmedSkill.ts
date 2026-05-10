@@ -1,7 +1,7 @@
-import { defineTool } from '@genkit-ai/ai';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
-export const pubMedSearchSkill = defineTool(
+export const pubMedSearchSkill = ai.defineTool(
   {
     name: 'pubMedSearchSkill',
     description: 'Queries the NIH PubMed database for peer-reviewed medical literature. Use this to find evidence-based clinical guidelines or recent studies for complex cases.',

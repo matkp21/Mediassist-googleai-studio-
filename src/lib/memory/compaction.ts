@@ -1,28 +1,25 @@
 // src/lib/memory/compaction.ts
-// Mocking firestore for the blueprint since we don't have the full firebase-admin setup here
-const firestore = {
-  collection: (name: string) => ({
-    doc: (id: string) => ({
-      collection: (name: string) => ({
-        orderBy: (field: string) => ({
-          get: async () => ({
-            size: 25,
-            docs: Array(25).fill({ data: () => ({ text: 'mock message' }) })
-          })
-        }),
-        doc: (id: string) => ({})
-      }),
-      update: async (data: any) => { console.log('Updated session', data); }
-    })
-  })
-};
+import { getApps, initializeApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+
+if (!getApps().length) {
+  initializeApp();
+}
+const db = getFirestore();
 
 const generateSummary = async (docs: any[]) => "Summarized context of older messages";
 const extractWeaknesses = (summary: string) => ["Cardiology", "Pharmacology"];
-const batchDelete = async (docs: any[]) => { console.log(`Deleted ${docs.length} old messages`); };
+const batchDelete = async (docs: any[]) => {
+  const batch = db.batch();
+  docs.forEach(doc => {
+    batch.delete(doc.ref);
+  });
+  await batch.commit();
+  console.log(`Deleted ${docs.length} old messages`);
+};
 
 export async function compactSession(userId: string, sessionId: string) {
-  const sessionRef = firestore.collection('users').doc(userId).collection('sessions').doc(sessionId);
+  const sessionRef = db.collection('users').doc(userId).collection('sessions').doc(sessionId);
   const messages = await sessionRef.collection('messages').orderBy('timestamp').get();
   
   if (messages.size > 20) { // Token threshold limit

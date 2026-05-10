@@ -2,7 +2,7 @@
 "use server";
 import { z } from "zod";
 import { genkit } from "genkit";
-import { gemini25Pro, googleAI } from "@genkit-ai/googleai";
+import { gemini15Pro, googleAI } from "@genkit-ai/googleai";
 
 const ai = genkit({
   plugins: [googleAI()],
@@ -26,7 +26,7 @@ export async function augmentKnowledge(
   input: KnowledgeAugmenterInput
 ): Promise<KnowledgeAugmenterOutput> {
   const { output } = await ai.generate({
-    model: gemini25Pro,
+    model: gemini15Pro,
     output: {
         schema: KnowledgeAugmenterOutputSchema
     },

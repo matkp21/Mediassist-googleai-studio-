@@ -37,7 +37,7 @@ export const clinicalNoteFormatterSkill = ai.defineTool(
     // Launch a focused sub-agent that uses the newly loaded reference material
     const { text } = await ai.generate({
       // We leverage the backend model to parse and format the data perfectly
-      model: ai.model('gemini-2.5-pro'),
+      model: 'gemini-2.5-pro',
       system: `You are a strict Clinical Documentation Expert.
                Format the student's raw dictation into a professional SOAP note.
                You must evaluate and format it strictly against this rubric:

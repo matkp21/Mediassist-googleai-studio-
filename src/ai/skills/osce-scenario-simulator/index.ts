@@ -36,7 +36,7 @@ export const osceScenarioSimulatorSkill = ai.defineTool(
       }
 
       // Applying our new Middleware here to track the token ROI!
-      const modelWithMiddleware = ai.model('vertexai/gemini-2.5-flash').use(tokenRoiTrackerMiddleware());
+      const modelWithMiddleware = 'vertexai/gemini-2.5-flash'.use(tokenRoiTrackerMiddleware());
 
       const response = await modelWithMiddleware.generate({
         system: `You are an expert Clinical Simulation Instructor. 

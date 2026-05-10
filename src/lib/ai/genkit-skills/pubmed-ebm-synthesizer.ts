@@ -32,28 +32,32 @@ export const pubmedEbmSynthesizerSkill = ai.defineTool(
     let rawLiteratureResult = "";
 
     try {
-      // 2. Setup the precise MCP SSE Client Transport to an external MCP Server
-      // (This assumes a remote PubMed/NCBI MCP server is exposing an SSE endpoint. You can replace the URL with your production host.)
-      const transport = new SSEClientTransport(new URL("https://mcp-medical-server-endpoint.example.com/sse"));
-      const mcpClient = new Client({ name: "MediAssist-MCP-Client", version: "1.0.0" }, { capabilities: {} });
+            // 2. Fetch directly from PubMed
+      const searchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodeURIComponent(diseaseQuery)}&retmode=json&retmax=3`;
+      const searchRes = await fetch(searchUrl);
+      const searchData = await searchRes.json();
       
-      await mcpClient.connect(transport);
-      
-      // 3. Optional: List tools to verify the server supports 'pubmed_search'
-      // const toolsResult = await mcpClient.request(ListToolsRequestSchema, {});
+      const ids = searchData.esearchresult?.idlist?.join(',');
+      if (!ids) {
+          rawLiteratureResult = "No peer-reviewed articles found for this query.";
+      } else {
+          // Fetch the actual summaries
+          const summaryUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids}&retmode=json`;
+          const summaryRes = await fetch(summaryUrl);
+          const summaryData = await summaryRes.json();
 
-      // 4. Request the MCP Server tool to fetch Grounded Medical Literature
-      const pubmedResponse = await mcpClient.request(CallToolRequestSchema, {
-        name: "pubmed_search",
-        arguments: { query: diseaseQuery }
-      });
-      
-      if (pubmedResponse.isError) {
-         throw new Error(`MCP Tool Error: ${pubmedResponse.content}`);
+          let resultStr = `--- PubMed Results for: ${diseaseQuery} ---\
+`;
+          for (const id of searchData.esearchresult.idlist) {
+            const article = summaryData.result[id];
+            resultStr += `\
+Title: ${article.title}\
+Journal: ${article.fulljournalname}\
+Date: ${article.pubdate}\
+`;
+          }
+          rawLiteratureResult = resultStr;
       }
-      
-      // The content returned by an MCP server tool is an array of text/resource blocks
-      rawLiteratureResult = pubmedResponse.content.map(c => c.type === 'text' ? c.text : '').join('\n');
     } catch (mcpError) {
       console.warn("MCP Server Connection Offline or Invalid. Using simulated fallback data for the demo.", mcpError);
       
@@ -70,7 +74,7 @@ export const pubmedEbmSynthesizerSkill = ai.defineTool(
 
     // 5. Synthesize the raw MCP data into a clinical BLUF using the skill instructions
     const { text } = await ai.generate({
-      model: ai.model('gemini-2.5-pro'),
+      model: 'gemini-2.5-pro',
       system: `
         You are an Evidence-Based Medicine (EBM) synthesizer.
         Format the raw literature from the Model Context Protocol strictly according to these rules: \n${skillInstructions}

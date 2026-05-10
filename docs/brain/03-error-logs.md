@@ -26,3 +26,12 @@
 ## 7. Experimental Genkit Model Unavailability Node Failures
 - **Problem**: Unstable build / module failure resolving `gemini25Flash` and `gemini25Pro`.
 - **Root Cause & Fix**: Rolled back model instantiations across the repository via an automated AST/Regex walker (`fix.ts`) to rely on the stable implementations of `gemini15Flash` and `gemini15Pro`.
+
+## 8. Accidental Full File Deletion Halting Development
+- **Problem**: AI assistance repeatedly replaced or deleted the entire contents of critical files, entirely halting development of the application.
+- **Root Cause & Fix**: Failure to properly check existing code before executing edits led to wipe-outs instead of surgical updates. The fix requires the AI strictly adopting a 'View Before Edit' policy: Always run `view_file` on target code block beforehand, exclusively use exact match tools (`edit_file` / `multi_edit_file`), and purposefully avoid full overwrite modes on established components.
+
+## 9. ReferenceError: showNotification is not defined in page.tsx
+- **Problem**: The dashboard page (`src/app/page.tsx`) failed to compile, stating `showNotification` is not defined.
+- **Root Cause & Fix**: The "Simulate Completion" button generated a `showNotification` call on click, but the function or context for notifications was not imported nor declared in `page.tsx`.
+- **Resolution**: Replaced `showNotification` with a native `alert` and manual `router.push('/clinical-pods/gi-surgery')` interaction. All developers and AI agents must ensure that any referenced function is declared in scope, and should strongly prefer native or local mechanisms unless a library context is explicitly imported.

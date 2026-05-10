@@ -31,7 +31,7 @@ export const usmleQuestionMimicSkill = ai.defineTool(
     }
 
     const { text } = await ai.generate({
-      model: ai.model('gemini-2.5-pro'),
+      model: 'gemini-2.5-pro',
       system: `You are an expert item writer for the National Board of Medical Examiners (NBME).
                Your task is to write a high-fidelity clinical vignette to test the student on the requested topic.
                You must adhere strictly to the following NBME formatting and explanation rules:

@@ -1,5 +1,5 @@
 import { genkit } from 'genkit';
-import { googleAI, gemini25Pro, gemini15Flash } from '@genkit-ai/googleai';
+import { googleAI } from '@genkit-ai/googleai';
 import { getApps, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { pubMedSearchSkill } from '../skills/literature/pubmedSkill';
@@ -33,7 +33,7 @@ export const clinicalAgentFlow = ai.defineFlow(
   async (input) => {
     // Pattern 1: The Fast Router Agent (Uses Flash for speed)
     const routerDecision = await ai.generate({
-      model: gemini15Flash,
+      model: 'gemini-2.5-flash',
       output: { schema: routerSchema },
       prompt: `Analyze the following medical query and determine the primary intent. 
       Extract key medical terms as keywords. 
@@ -51,7 +51,7 @@ export const clinicalAgentFlow = ai.defineFlow(
       // Pattern 3: Prompt Chaining for Pharmacology (Sequential Decomposition)
       // Step A: Plan the core ingredients (using lightweight model)
       const plan = await ai.generate({
-        model: gemini15Flash,
+        model: 'gemini-2.5-flash',
         prompt: `List the specific drugs to cross-reference based on: ${input.prompt}. Return only a comma-separated list of generic drug names.`
       });
       const drugsToVerify = plan.text.split(',').map(d => d.trim());
@@ -60,10 +60,9 @@ export const clinicalAgentFlow = ai.defineFlow(
       
       // Step B: Execute the heavy skill with the parsed inputs (using Pro model)
       const interactionResult = await ai.generate({
-         model: gemini25Pro,
+         model: 'gemini-2.5-pro',
          tools: [drugInteractionSkill],
-         context: { auth: input.userContext },
-         prompt: `Use the drugInteractionSkill to check interactions for: ${drugsToVerify.join(', ')}`
+         prompt: `Use the drugInteractionSkill to check interactions for: ${drugsToVerify.join(', ')}\nProvide user_role: ${input.userContext?.role || 'Unknown'}`
       });
       finalSynthesizedOutput = interactionResult.text;
 
@@ -73,13 +72,13 @@ export const clinicalAgentFlow = ai.defineFlow(
       console.log(`[Parallelization] Triggering parallel searches for:`, route.extractedKeywords);
       
       const pubMedPromise = ai.generate({
-         model: gemini25Pro,
+         model: 'gemini-2.5-pro',
          tools: [pubMedSearchSkill],
          prompt: `Search PubMed for recent guidelines regarding: ${route.extractedKeywords.join(' ')}`
       });
 
       const backgroundKnowledgePromise = ai.generate({
-         model: gemini15Flash,
+         model: 'gemini-2.5-flash',
          prompt: `Summarize the standard of care for: ${route.extractedKeywords.join(' ')} based on established medical knowledge.`
       });
 
@@ -87,7 +86,7 @@ export const clinicalAgentFlow = ai.defineFlow(
 
       // Pattern 3: Prompt Chaining - Synthesize the parallel results
       const synthesis = await ai.generate({
-         model: gemini25Pro,
+         model: 'gemini-2.5-pro',
          prompt: `You are a Chief Medical Officer synthesizing clinical data.
          
          [PubMed Latest Evidence]:
@@ -103,12 +102,12 @@ export const clinicalAgentFlow = ai.defineFlow(
     } else {
        // General fallback orchestrator pattern
        const response = await ai.generate({
-          model: gemini25Pro,
+          model: 'gemini-2.5-pro',
           tools: [pubMedSearchSkill, drugInteractionSkill, webScraperTool],
-          context: { auth: input.userContext }, 
           prompt: `
             You are the MediAssistant Pro Clinical Orchestrator. 
             User Query: ${input.prompt}
+            User Role: ${input.userContext?.role || 'Unknown'} (Pass this as user_role to tools if required)
             Answer using standard DrMat formatting. You may use your tools if needed.
           `,
         });
@@ -127,7 +126,7 @@ export const literatureWorker = ai.defineFlow(
   async (topic) => {
     console.log(`[Worker] Scraping latest guidelines for: ${topic}`);
     const results = await ai.generate({
-      model: gemini25Pro,
+      model: 'gemini-2.5-pro',
       tools: [pubMedSearchSkill],
       prompt: `Find the latest clinical guidelines for ${topic}. Return pure Markdown.`,
     });
@@ -159,7 +158,7 @@ export const chiefResidentOrchestrator = ai.defineFlow(
 
     // 2. AI decides which tasks to delegate based on the command and TODO.md
     const delegationPlan = await ai.generate({
-      model: gemini25Pro,
+      model: 'gemini-2.5-pro',
       prompt: `
         You are the Chief Resident Orchestrator.
         Pod Context: ${contextMd}
@@ -193,7 +192,7 @@ export const chiefResidentOrchestrator = ai.defineFlow(
 
     // 4. Synthesize and Update the Pod's NOTES.md
     const finalSynthesis = await ai.generate({
-      model: gemini25Pro,
+      model: 'gemini-2.5-pro',
       prompt: `Synthesize these worker reports into a cohesive clinical note:\n\n${workerResults.join('\n\n')}`
     });
 
