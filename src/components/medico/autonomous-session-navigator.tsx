@@ -14,7 +14,9 @@ import {
   Trophy,
   Stethoscope,
   Microscope,
-  Code
+  Code,
+  Eye,
+  Brain
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -23,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import ReactMarkdown from 'react-markdown';
 
 interface SessionState {
@@ -31,8 +34,13 @@ interface SessionState {
     flowchartData?: any;
     mnemonic?: string;
     mcqs?: any;
+    visionOcclusion?: any[];
   };
   discoverySteps?: { id: string, label: string, reason: string }[];
+  learningProfile?: {
+    preferredStyle?: 'Visual' | 'Textual' | 'Practical';
+    frequentMistakes?: string[];
+  };
 }
 
 export function AutonomousSessionNavigator({ userId }: { userId: string }) {
@@ -121,6 +129,7 @@ export function AutonomousSessionNavigator({ userId }: { userId: string }) {
     { id: 'flowchart', label: 'Flowchart', icon: Workflow, color: 'text-indigo-500', bg: 'bg-indigo-500/10', data: session.precomputedTools?.flowchartData },
     { id: 'mnemonic', label: 'Mnemonic', icon: BrainCircuit, color: 'text-amber-500', bg: 'bg-amber-500/10', data: session.precomputedTools?.mnemonic },
     { id: 'mcqs', label: 'Take Quiz', icon: CheckSquare, color: 'text-emerald-500', bg: 'bg-emerald-500/10', data: session.precomputedTools?.mcqs },
+    { id: 'vision_occlusion', label: 'Anatomy Lab', icon: Eye, color: 'text-violet-500', bg: 'bg-violet-500/10', data: session.precomputedTools?.visionOcclusion },
   ];
 
   return (
@@ -139,6 +148,33 @@ export function AutonomousSessionNavigator({ userId }: { userId: string }) {
           </div>
 
           <div className="flex flex-col gap-2">
+            {session.learningProfile && (
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-4 bg-zinc-900/90 backdrop-blur-xl border border-white/5 rounded-2xl mb-2 space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                   <span className="text-[9px] font-black uppercase text-zinc-500 tracking-tighter">Neuro Learning Profile</span>
+                   {session.learningProfile.preferredStyle && (
+                     <Badge variant="outline" className="text-[8px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-1 py-0 h-4 uppercase">
+                       {session.learningProfile.preferredStyle} Mode
+                     </Badge>
+                   )}
+                </div>
+                {session.learningProfile.frequentMistakes && session.learningProfile.frequentMistakes.length > 0 && (
+                   <div className="space-y-1">
+                      <p className="text-[8px] font-bold text-rose-400 uppercase">Knowledge Gaps Detected</p>
+                      <div className="flex flex-wrap gap-1">
+                         {session.learningProfile.frequentMistakes.slice(-3).map((gap, i) => (
+                           <span key={i} className="text-[9px] text-zinc-300 bg-white/5 px-1.5 py-0.5 rounded-md truncate max-w-[120px]">{gap}</span>
+                         ))}
+                      </div>
+                   </div>
+                )}
+              </motion.div>
+            )}
+
             {session.discoverySteps && session.discoverySteps.length > 0 && (
               <div className="flex flex-col gap-2 mb-4 animate-in slide-in-from-right duration-500">
                 <span className="text-[9px] font-black uppercase text-sky-500 px-2 flex items-center gap-1">
@@ -328,16 +364,45 @@ export function AutonomousSessionNavigator({ userId }: { userId: string }) {
               <div className="space-y-6">
                 <div className="p-4 bg-violet-500/10 rounded-2xl flex items-center gap-2">
                    <Microscope className="h-5 w-5 text-violet-500" />
-                   <p className="text-xs font-bold text-violet-700 dark:text-violet-400">Anatomy Occlusion Lab</p>
+                   <p className="text-xs font-bold text-violet-700 dark:text-violet-400">Autonomous Anatomy Lab: {session.currentTopic}</p>
                 </div>
-                <div className="aspect-video bg-muted rounded-3xl overflow-hidden relative group">
-                   <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm group-hover:backdrop-blur-none transition-all">
-                      <p className="text-sm font-bold text-white">Detecting anatomical landmarks...</p>
+                <div className="aspect-[4/3] bg-zinc-900 rounded-3xl overflow-hidden relative border border-zinc-200 dark:border-white/10 group">
+                   <img 
+                     src={`https://picsum.photos/seed/${session.currentTopic}/800/600`} 
+                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+                     alt="Anatomy Atlas"
+                   />
+                   <div className="absolute inset-0 pointer-events-none">
+                      {session.precomputedTools?.visionOcclusion?.map((occ: any, idx: number) => (
+                        <div 
+                          key={idx}
+                          className="absolute bg-sky-500 border-2 border-white rounded shadow-lg animate-pulse pointer-events-auto cursor-help transition-all hover:scale-110 hover:animate-none group/occ"
+                          style={{ 
+                            left: `${occ.boundingBox.x}%`, 
+                            top: `${occ.boundingBox.y}%`, 
+                            width: `${occ.boundingBox.width}%`, 
+                            height: `${occ.boundingBox.height}%` 
+                          }}
+                          onClick={() => toast({ title: "Identification", description: `You identified: ${occ.label}. Hint: ${occ.hint}` })}
+                        >
+                           <div className="w-full h-full flex items-center justify-center text-[10px] font-black text-white group-hover/occ:hidden">?</div>
+                           <div className="hidden group-hover/occ:flex w-full h-full items-center justify-center text-[8px] font-bold text-white bg-sky-600 px-1 text-center leading-tight">
+                              REVEAL
+                           </div>
+                        </div>
+                      ))}
                    </div>
-                   {/* Simulated Occlusion Bounding Box */}
-                   <div className="absolute top-1/4 left-1/3 w-20 h-10 bg-sky-500 rounded border-2 border-white animate-pulse" />
                 </div>
-                <p className="text-xs text-center text-muted-foreground italic">Labels identified. Click to reveal.</p>
+                {!session.precomputedTools?.visionOcclusion && (
+                   <div className="py-12 flex flex-col items-center justify-center gap-4 text-center">
+                      <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+                      <p className="text-sm font-medium text-muted-foreground">Medi is identifying landmarks in the anatomical atlas...</p>
+                   </div>
+                )}
+                <div className="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20">
+                   <p className="text-[10px] font-black uppercase text-blue-500 mb-1 leading-none">AI Lab Tech Note</p>
+                   <p className="text-xs text-blue-700 dark:text-blue-300">"Labels have been occluded based on the current context. Hover over boxes for hints, or click to reveal landmarks."</p>
+                </div>
               </div>
             )}
             {activeModal === 'pharmacology' && (

@@ -64,7 +64,9 @@ export default function MediAssistantDashboard() {
     };
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return <div className="relative min-h-screen bg-transparent overflow-x-hidden pt-6 pb-32 px-4 md:px-10" />;
+  }
 
   const formattedDate = new Intl.DateTimeFormat('en-GB', { 
     weekday: 'long', 
@@ -135,23 +137,56 @@ export default function MediAssistantDashboard() {
           <GamificationBar />
         </motion.div>
 
-            {/* Action Pills */}
-            <motion.div custom={0.8} initial="hidden" animate="visible" variants={slideUpVariant} className="flex flex-wrap items-center gap-2.5 mb-10 px-2 mt-2">
-               <button onClick={() => router.push('/medico')} className="flex items-center gap-2 bg-[#4b8ff7] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90 min-h-[44px]">
-                 <BookOpen size={16} /> Study Hub
-               </button>
-               <button onClick={() => router.push('/ask-medi')} className="flex items-center gap-2 bg-[#a07df0] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90 min-h-[44px]">
-                 <MessageCircle size={16} /> Ask Medi
-               </button>
-               <button onClick={() => router.push('/calendar')} className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-sm active:scale-95 transition-transform hover:bg-[var(--fill)] min-h-[44px]">
-                 <CalendarIcon size={16} /> Calendar
-               </button>
-               <button onClick={() => router.push('/medico/session')} className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-sm active:scale-95 transition-transform hover:bg-[var(--fill)] min-h-[44px]">
-                 <Play size={16} /> Start Session
-               </button>
-               <button onClick={() => router.push('/pro')} className="flex items-center gap-2 bg-gradient-to-r from-[#a07df0] to-[#e83050] text-white px-4 py-2.5 rounded-full text-[14px] font-semibold shadow-md active:scale-95 transition-transform hover:opacity-90 min-h-[44px]">
-                 <Crown size={16} /> Pro Active
-               </button>
+            {/* Action Pills: Enhanced Quick-Tools */}
+            <motion.div custom={0.8} initial="hidden" animate="visible" variants={slideUpVariant} className="flex flex-wrap items-center gap-3 mb-10 px-2 mt-2">
+               <motion.button 
+                 whileHover={{ scale: 1.02, opacity: 0.9 }}
+                 whileTap={{ scale: 0.95 }}
+                 onClick={() => router.push('/medico')} 
+                 className="flex items-center gap-2 bg-[#4b8ff7] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-[0_4px_12px_rgba(75,143,247,0.3)] hover:shadow-[0_6px_18px_rgba(75,143,247,0.35)] transition-all min-h-[44px]"
+               >
+                 <BookOpen size={17} /> Study Hub
+               </motion.button>
+               <motion.button 
+                 whileHover={{ scale: 1.02, opacity: 0.9 }}
+                 whileTap={{ scale: 0.95 }}
+                 onClick={() => router.push('/ask-medi')} 
+                 className="flex items-center gap-2 bg-[#a07df0] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-[0_4px_12px_rgba(160,125,240,0.3)] hover:shadow-[0_6px_18px_rgba(160,125,240,0.35)] transition-all min-h-[44px]"
+               >
+                 <MessageCircle size={17} /> Ask Medi
+               </motion.button>
+               <motion.button 
+                 whileHover={{ scale: 1.02, opacity: 0.9 }}
+                 whileTap={{ scale: 0.95 }}
+                 onClick={() => window.dispatchEvent(new CustomEvent('open-opd-palette'))} 
+                 className="flex items-center gap-2 bg-[#f7bc26] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-[0_4px_12px_rgba(247,188,38,0.3)] hover:shadow-[0_6px_18px_rgba(247,188,38,0.35)] transition-all min-h-[44px]"
+               >
+                 <Stethoscope size={17} /> GP note
+               </motion.button>
+               <motion.button 
+                 whileHover={{ scale: 1.02 }}
+                 whileTap={{ scale: 0.95 }}
+                 onClick={() => router.push('/calendar')} 
+                 className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-5 py-2.5 rounded-full text-[14px] font-bold shadow-sm transition-all hover:bg-[var(--fill)] hover:shadow-md min-h-[44px]"
+               >
+                 <CalendarIcon size={17} /> Calendar
+               </motion.button>
+               <motion.button 
+                 whileHover={{ scale: 1.02 }}
+                 whileTap={{ scale: 0.95 }}
+                 onClick={() => router.push('/medico/session')} 
+                 className="flex items-center gap-2 bg-[var(--gb)] border border-[var(--sep)] text-[var(--lb)] px-5 py-2.5 rounded-full text-[14px] font-bold shadow-sm transition-all hover:bg-[var(--fill)] hover:shadow-md min-h-[44px]"
+               >
+                 <Play size={17} /> Start Session
+               </motion.button>
+               <motion.button 
+                 whileHover={{ scale: 1.02, opacity: 0.9 }}
+                 whileTap={{ scale: 0.95 }}
+                 onClick={() => router.push('/pro')} 
+                 className="flex items-center gap-2 bg-gradient-to-r from-[#a07df0] to-[#e83050] text-white px-5 py-2.5 rounded-full text-[14px] font-bold shadow-[0_4px_12px_rgba(232,48,80,0.3)] hover:shadow-[0_6px_18px_rgba(232,48,80,0.35)] transition-all min-h-[44px]"
+               >
+                 <Crown size={17} /> Pro Active
+               </motion.button>
             </motion.div>
 
             {/* RECENT TOOLS */}
@@ -232,12 +267,15 @@ export default function MediAssistantDashboard() {
              <div className="glass-card-content relative z-10 flex flex-col gap-2 p-2">
                {[
                  { name: "Morning Tutor Brief", color: "#4b8ff7", route: "/medico/supervisor", hoverClass: "hover:bg-[#4b8ff7]/10" },
-                 { name: "GP Notes Quick-Ref", color: "#f7bc26", route: "/medico/gp-notes", hoverClass: "hover:bg-[#f7bc26]/10" },
+                 { name: "GP Notes Quick-Ref", color: "#f7bc26", onClick: () => window.dispatchEvent(new CustomEvent('open-opd-palette')), hoverClass: "hover:bg-[#f7bc26]/10" },
                  { name: "PYQ Simulator", color: "#a07df0", route: "/medico/mock-pyqs", hoverClass: "hover:bg-[#a07df0]/10", activeBg: "bg-[#a07df0]/10" },
                  { name: "Drug Interaction Check", color: "#32c97e", route: "/medico/pharmagenie?topic=Drug%20Interaction%20Check", hoverClass: "hover:bg-[#32c97e]/10" },
                  { name: "Radiology Reader", color: "#e83050", route: "/medico/diagnobot?topic=Radiology", hoverClass: "hover:bg-[#e83050]/10" }
                ].map((item, i) => (
-                 <div key={i} onClick={() => router.push(item.route)} className={cn("flex items-center justify-between px-4 py-3.5 rounded-[18px] cursor-pointer transition-colors group border border-[var(--sep)] shadow-[var(--shs)]", item.activeBg || "bg-[var(--fill)]", item.hoverClass)}>
+                 <div key={i} onClick={() => {
+                   if ('onClick' in item) (item as any).onClick();
+                   else if ('route' in item) router.push((item as any).route);
+                 }} className={cn("flex items-center justify-between px-4 py-3.5 rounded-[18px] cursor-pointer transition-colors group border border-[var(--sep)] shadow-[var(--shs)]", item.activeBg || "bg-[var(--fill)]", item.hoverClass)}>
                     <div className="flex items-center gap-3">
                       <span className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: item.color }} />
                       <span className="text-[15px] font-semibold text-[var(--lb)] tracking-tight">{item.name}</span>
@@ -463,9 +501,15 @@ export default function MediAssistantDashboard() {
               { label: "Search Notes", icon: Search, color: "text-[#4b8ff7]", route: "/medico/library" },
               { label: "Analyze Case", icon: Target, color: "text-[#e83050]", route: "/medico/diagnobot" },
               { label: "Summarize", icon: FileText, color: "text-[#f7bc26]", route: "/medico/summarizer" },
-              { label: "GP Note Gen", icon: BookMarked, color: "text-[#00d5c0]", route: "/medico/gp-notes" }
+              { label: "GP Note Gen", icon: BookMarked, color: "text-[#00d5c0]", onClick: () => window.dispatchEvent(new CustomEvent('open-opd-palette')) }
             ].map((action, i) => (
-              <button key={i} onClick={() => router.push(action.route)} className="glass-card flex items-center gap-2 px-3.5 py-2 rounded-full bg-[var(--gb)] backdrop-blur-xl border border-[var(--sep)] shadow-[var(--sh),inset_0_1px_0_var(--gs)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+              <button key={i} onClick={() => {
+                if ('onClick' in action && typeof action.onClick === 'function') {
+                   action.onClick();
+                } else if ('route' in action && typeof action.route === 'string') {
+                   router.push(action.route);
+                }
+              }} className="glass-card flex items-center gap-2 px-3.5 py-2 rounded-full bg-[var(--gb)] backdrop-blur-xl border border-[var(--sep)] shadow-[var(--sh),inset_0_1px_0_var(--gs)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
                 <action.icon size={14} className={action.color} />
                 <span className="text-[13px] font-medium text-[var(--lb)] whitespace-nowrap">{action.label}</span>
               </button>

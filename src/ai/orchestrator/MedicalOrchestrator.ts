@@ -406,11 +406,13 @@ export class MedicalOrchestrator {
         captureToolObservation(userId, taskType, JSON.stringify(result)).catch(console.error);
 
         // Step 2: Automated Fan-Out for educational context
-        if (taskType === 'tutor' || taskType === 'research') {
+        if (userId && (taskType === 'tutor' || taskType === 'research')) {
+          const isVisualTopic = /anatomy|radiology|scan|x-ray|mri|histology|ct/i.test(input.topic || "");
           fanOutPrecomputeFlow({ 
             userId, 
             topic: input.topic || "Current Medical Study",
-            contextData: JSON.stringify(result)
+            contextData: JSON.stringify(result),
+            isVisual: isVisualTopic
           }).catch(err => console.warn("[Orchestrator] Fan-Out background trigger failed", err));
         }
       }

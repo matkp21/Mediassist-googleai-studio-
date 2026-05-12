@@ -252,7 +252,6 @@ body {
   background: var(--s0);
   color: var(--lb);
   font-family: var(--fb);
-  transition: background 0.3s, color 0.3s;
 }
 
 body:not(:has(.simple-welcome-screen)) {
@@ -307,7 +306,6 @@ body:not(:has(.simple-welcome-screen)) {
 .orb {
   position: absolute; border-radius: 50%; filter: blur(110px);
   mix-blend-mode: normal; will-change: transform; opacity: var(--orbOp);
-  transition: opacity 0.3s;
 }
 /* 6-orb radial gradient mesh: blue, purple, green, orange, pink, teal */
 .o1 { width: 70%; height: 60%; top: -10%; left: -10%; background: radial-gradient(ellipse, rgba(0,122,255,1) 0%, transparent 60%); animation: oA 20s ease-in-out infinite alternate; }
@@ -339,7 +337,7 @@ body:not(:has(.simple-welcome-screen)) {
   backdrop-filter: var(--gbl);
   -webkit-backdrop-filter: var(--gbl);
   box-shadow: var(--sh), inset 0 1px 0 var(--gs), inset 0 -0.5px 0 var(--ge);
-  transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+  transition: transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease;
   position: relative;
   overflow: hidden;
 }

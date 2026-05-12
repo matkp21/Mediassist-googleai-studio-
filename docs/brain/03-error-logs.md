@@ -35,3 +35,7 @@
 - **Problem**: The dashboard page (`src/app/page.tsx`) failed to compile, stating `showNotification` is not defined.
 - **Root Cause & Fix**: The "Simulate Completion" button generated a `showNotification` call on click, but the function or context for notifications was not imported nor declared in `page.tsx`.
 - **Resolution**: Replaced `showNotification` with a native `alert` and manual `router.push('/clinical-pods/gi-surgery')` interaction. All developers and AI agents must ensure that any referenced function is declared in scope, and should strongly prefer native or local mechanisms unless a library context is explicitly imported.
+
+## 10. Dashboard Quick-Action Buttons Enhancement
+- **Problem**: Missing "GP note" tool and generic styling for dashboard buttons.
+- **Root Cause & Fix**: Added the missing GP note button linking to `/medico/gp-notes` with a `Stethoscope` icon. Enhanced the visual fidelity of all quick-action buttons in `src/app/page.tsx` using `motion.button`. Applied brand-colored drop-shadows, bold typography, `px-5 py-2.5` padding, and `17px` icon sizes. Implemented smooth scale and opacity transitions for a premium tactile feel.

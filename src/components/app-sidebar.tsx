@@ -65,7 +65,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 
       {/* Desktop Sidebar */}
       <aside 
-        className={`relative z-10 hidden md:flex flex-col flex-shrink-0 bg-[var(--gb)] border-r border-[var(--sep)] backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] shadow-[var(--shm)] ${isRail ? 'w-[64px]' : 'w-[220px]'}`}
+        className={`relative z-10 hidden md:flex flex-col flex-shrink-0 bg-[var(--gb)] border-r border-[var(--sep)] backdrop-blur-2xl transition-[width,background-color] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] shadow-[var(--shm)] ${isRail ? 'w-[64px]' : 'w-[220px]'}`}
       >
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[var(--gs)] to-transparent" />
         
@@ -228,7 +228,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <div key={pathname} className="flex-1 overflow-y-auto overflow-x-hidden p-3 relative animate-[pgIn_0.6s_cubic-bezier(0.34,1.36,0.64,1)_both]">
+        <div key={pathname} className="flex-1 overflow-y-auto overflow-x-hidden p-3 relative">
           {children}
         </div>
       </main>

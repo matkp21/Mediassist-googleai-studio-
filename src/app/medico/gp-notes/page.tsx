@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { 
   Search, ChevronLeft, BookOpen, Pill, Stethoscope, 
   Activity, AlertTriangle, Info, Clock, CheckCircle2,

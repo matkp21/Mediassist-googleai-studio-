@@ -14,21 +14,24 @@ const ai = genkit({
  * FAN-OUT ORCHESTRATION: Step 2 (Parallel Preparation)
  * Simultaneously deploys specialized agents to pre-compute educational aids.
  */
+import { visionOcclusionTool } from '../tools/visionOcclusionTool';
+
 export const fanOutPrecomputeFlow = ai.defineFlow(
   {
     name: 'fanOutPrecompute',
     inputSchema: z.object({ 
       userId: z.string(), 
       topic: z.string(),
-      contextData: z.string().optional()
+      contextData: z.string().optional(),
+      isVisual: z.boolean().optional()
     }),
     outputSchema: z.object({ success: z.boolean() }),
   },
-  async ({ userId, topic, contextData }) => {
+  async ({ userId, topic, contextData, isVisual }) => {
     console.info(`[Fan-Out] Initiating parallel pre-computation for: ${topic}`);
 
     // Parallel Background Execution (inspired by Go routines / Parallel Fan-Out)
-    const [mcqsResult, mnemonicResult, flowchartResult] = await Promise.all([
+    const [mcqsResult, mnemonicResult, flowchartResult, visionResult] = await Promise.all([
       // 1. Examiner Agent
       generateMCQs({ topic, count: 5, difficulty: 'medium' }).catch(err => {
         console.warn("[Fan-Out] MCQ generation failed", err);
@@ -39,11 +42,16 @@ export const fanOutPrecomputeFlow = ai.defineFlow(
         console.warn("[Fan-Out] Mnemonic generation failed", err);
         return null;
       }),
-      // 3. Visual Agent
+      // 3. Visual Agent (Text-based Flowchart)
       createFlowchart({ topic, complexity: 'standard' }).catch(err => {
         console.warn("[Fan-Out] Flowchart generation failed", err);
         return null;
-      })
+      }),
+      // 4. Image Occlusion Agent (if visual topic)
+      isVisual ? visionOcclusionTool.execute({ topic, imageUrl: "auto-detect-atlas" }).catch(err => {
+        console.warn("[Fan-Out] Vision Occlusion failed", err);
+        return null;
+      }) : Promise.resolve(null)
     ]);
 
     // Update Session State with pre-computed results for "Zero-Prompt" UX
@@ -52,7 +60,8 @@ export const fanOutPrecomputeFlow = ai.defineFlow(
       precomputedTools: {
         mcqs: mcqsResult,
         mnemonic: mnemonicResult?.mnemonic,
-        flowchartData: flowchartResult // Storing the nodes/edges structure
+        flowchartData: flowchartResult, // Storing the nodes/edges structure
+        visionOcclusion: visionResult?.output?.occlusions
       }
     });
 
