@@ -10,3 +10,26 @@ export const MasterStudyGuideSchema = z.object({
     explanation: z.string().describe("Why this is the correct answer based on the lecture.")
   }))
 });
+
+// Flow 2: Output from MedGemma 4B
+export const TopicTreeSchema = z.object({
+  mainTopic: z.string(),
+  hierarchicalConcepts: z.array(z.object({
+    concept: z.string(),
+    subConcepts: z.array(z.string()),
+    associatedAnatomy: z.array(z.string()).optional()
+  })),
+  keyMedicalTerms: z.array(z.string())
+});
+
+// Flow 4: Output from Enhancement Agent
+export const EnhancedSessionSchema = z.object({
+  learningObjectives: z.array(z.string()),
+  keyConceptSummary: z.string(),
+  mermaidDiagram: z.string().describe("Mermaid syntax for the TopicTree"),
+  mcqFlashcards: z.array(z.object({
+    frontQuestion: z.string(),
+    backAnswer: z.string(),
+    explanation: z.string()
+  }))
+});

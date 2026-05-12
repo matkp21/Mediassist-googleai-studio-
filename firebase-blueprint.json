@@ -79,6 +79,65 @@
     "/patients/{patientId}/labs/{labId}": {
       "schema": "PatientLabs",
       "description": "Structured laboratory history."
+    },
+    "/lectures/{lectureId}": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "date": { "type": "string", "format": "date-time" },
+              "duration": { "type": "number" },
+              "status": { "type": "string", "enum": ["live", "processing", "completed"] }
+            }
+          },
+          "outputs": {
+            "type": "object",
+            "properties": {
+              "finalSummary": { "type": "string" },
+              "markdownNotes": { "type": "string" },
+              "mermaidMindMap": { "type": "string" }
+            }
+          }
+        }
+      },
+      "description": "Master lecture container with metadata and final outputs."
+    },
+    "/lectures/{lectureId}/chunks/{chunkId}": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "number" },
+          "rawTranscript": { "type": "string" },
+          "correctedTranscript": { "type": "string" },
+          "keywords": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "description": "Atomic 30-60s audio transcription chunks."
+    },
+    "/lectures/{lectureId}/slides/{slideId}": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "number" },
+          "imageUrl": { "type": "string" },
+          "ocrText": { "type": "string" },
+          "diagramAnalysis": { "type": "string" }
+        }
+      },
+      "description": "Visual slide context captured during the lecture."
+    },
+    "/lectures/{lectureId}/assessments/{assessmentId}": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["mcq", "flashcard"] },
+          "content": { "type": "object" }
+        }
+      },
+      "description": "AI-generated quiz and flashcard materials."
     }
   }
 }

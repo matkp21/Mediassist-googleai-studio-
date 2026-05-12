@@ -16,6 +16,7 @@ import {
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { TimeScheduleWidget } from "@/components/homepage/time-schedule-widget";
+import { useProMode } from "@/contexts/pro-mode-context";
 
 import { GamificationBar } from "@/components/homepage/gamification-bar";
 import { TodaysProgress } from "@/components/homepage/todays-progress";
@@ -35,6 +36,7 @@ const GREETINGS = ["നമസ്കാരം", "Hello", "Bonjour", "Hola", "Nama
 
 export default function MediAssistantDashboard() {
   const router = useRouter();
+  const { user, loading: authLoading } = useProMode();
   const [greetingIdx, setGreetingIdx] = useState(2); // Start with Bonjour
   const [mounted, setMounted] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -51,6 +53,12 @@ export default function MediAssistantDashboard() {
       clearInterval(timer);
     };
   }, []);
+
+  useEffect(() => {
+    if (!authLoading && !user && mounted) {
+      router.push("/login");
+    }
+  }, [user, authLoading, router, mounted]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -120,7 +128,9 @@ export default function MediAssistantDashboard() {
                 {GREETINGS[greetingIdx]},
               </motion.span>
             </AnimatePresence>
-            <span className="text-[var(--lb)] font-medium ml-3">Mathew.</span>
+            <span className="text-[var(--lb)] font-medium ml-3">
+              {user?.displayName || user?.email?.split('@')[0] || "User"}.
+            </span>
           </h1>
           <p className="text-[0.9rem] md:text-[1rem] text-[var(--sec)] font-medium">
             {formattedDate} · MBBS Finals Workspace
